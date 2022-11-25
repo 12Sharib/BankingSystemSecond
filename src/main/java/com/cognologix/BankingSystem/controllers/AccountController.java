@@ -6,43 +6,59 @@ import com.cognologix.BankingSystem.Exceptions.NotEligibleForCreditCard;
 import com.cognologix.BankingSystem.Exceptions.MinimumAccountBalance;
 import com.cognologix.BankingSystem.Exceptions.NotPresentAnyAccount;
 import com.cognologix.BankingSystem.Model.Account;
+import com.cognologix.BankingSystem.Model.Transactions;
+import com.cognologix.BankingSystem.Services.AccountService;
+import com.cognologix.BankingSystem.dto.TransactionDTO;
 import org.springframework.web.bind.annotation.*;
 import com.cognologix.BankingSystem.Repository.AccountRepo;
-import com.cognologix.BankingSystem.Services.ServicesImpl.AccountServiceImpl;
+//import com.cognologix.BankingSystem.Services.ServicesImpl.AccountServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import javax.transaction.Transaction;
 import java.util.List;
 
 
 @RestController
-@RequestMapping("/Bank")
+@RequestMapping("/bank")
 public class AccountController {
     @Autowired
     private AccountRepo accountRepo;
     @Autowired
-    private AccountServiceImpl accountService;
+    AccountService accountService;
+    /*
+     * Account Controller
+     * transfer one account to another account
+     * deposit Money
+     * withdraw Money
+     * get all account
+     * delete account
+     * find savings account
+     * find current accounts
+     * get debit card
+     * get credit card
+     */
     @PatchMapping(value = "/transferOneToAnother/{firstAccountNumber}/{secondAccountNumber}/{amount}")
-    public ResponseEntity<List<Account>> transferOneToAnother(@PathVariable Integer firstAccountNumber, @PathVariable Integer secondAccountNumber, @PathVariable Double amount) throws MinimumAccountBalance,InvalidAccountNumber {
+    public ResponseEntity<TransactionDTO> transferOneToAnother(@PathVariable Integer firstAccountNumber, @PathVariable Integer secondAccountNumber, @PathVariable Double amount) throws MinimumAccountBalance,InvalidAccountNumber {
         if(accountRepo.existsById(firstAccountNumber)){
             if(accountRepo.existsById(secondAccountNumber)){
-                List<Account> transfer = accountService.transferOneToAnother(firstAccountNumber, secondAccountNumber, amount);
+                TransactionDTO transfer = accountService.transferOneToAnother(firstAccountNumber, secondAccountNumber, amount);
                 return new ResponseEntity<>(transfer,HttpStatus.OK);
             }else throw new InvalidAccountNumber("provide valid second account number");
         } else throw new InvalidAccountNumber("provide valid first account Number");
 
     }
     @PatchMapping(value = "/deposit/{accountNumber}/{depositedAmount}")
-    public ResponseEntity<Account> DepositAmount(@PathVariable Integer accountNumber, @PathVariable Double depositedAmount) throws InvalidAccountNumber,AmountLessThanZero{
-        Account Deposit =  accountService.DepositAmount(accountNumber,depositedAmount);
+    public ResponseEntity<TransactionDTO> DepositAmount(@PathVariable Integer accountNumber, @PathVariable Double depositedAmount) throws InvalidAccountNumber,AmountLessThanZero{
+        TransactionDTO Deposit =  accountService.DepositAmount(accountNumber,depositedAmount);
 
         return new ResponseEntity<>(Deposit , HttpStatus.OK);
     }
 
     @PatchMapping("/withdraw/{AccountNumber}/{WithdrawAmount}")
-    public ResponseEntity<Account> WithdrawAmount(@PathVariable Integer AccountNumber, @PathVariable Double WithdrawAmount) throws AmountLessThanZero,InvalidAccountNumber,MinimumAccountBalance{
-        Account Withdraw =  accountService.WithdrawAmount(AccountNumber,WithdrawAmount);
+    public ResponseEntity<TransactionDTO> WithdrawAmount(@PathVariable Integer AccountNumber, @PathVariable Double WithdrawAmount) throws AmountLessThanZero,InvalidAccountNumber,MinimumAccountBalance{
+        TransactionDTO Withdraw =  accountService.WithdrawAmount(AccountNumber,WithdrawAmount);
          return new ResponseEntity<>(Withdraw , HttpStatus.OK);
     }
 

@@ -51,35 +51,21 @@ class AccountServicesTest {
     @Test
     void deposit(){
         Account account1 = accountRepo.findById(7).get();
-        Customer customer1 = customerRepository.findById(7).get();
-
         Double intitialBalance = account1.getAccountInitialBalance() + 500.0;
         account1.setAccountInitialBalance(intitialBalance);
-        customer1.setCustomerAccountBalance(intitialBalance);
 
         Account depositInAccount = accountRepo.save(account1);
-        Customer depositInCustomer = customerRepository.save(customer1);
 
         Assertions.assertEquals(2700,depositInAccount.getAccountInitialBalance());
-        Assertions.assertEquals(2700,depositInCustomer.getCustomerAccountBalance());
-
-
     }
     @Test
     void withdraw(){
         Account account1 = accountRepo.findById(7).get();
-        Customer customer1 = customerRepository.findById(7).get();
-
         Double intitialBalance = account1.getAccountInitialBalance() - 500.0;
         account1.setAccountInitialBalance(intitialBalance);
-        customer1.setCustomerAccountBalance(intitialBalance);
-
         Account depositInAccount = accountRepo.save(account1);
-        Customer depositInCustomer = customerRepository.save(customer1);
 
         Assertions.assertEquals(2200,depositInAccount.getAccountInitialBalance());
-        Assertions.assertEquals(2200,depositInCustomer.getCustomerAccountBalance());
-
     }
     @Test
     void allAccounts(){
@@ -88,7 +74,7 @@ class AccountServicesTest {
     }
     @Test
     void allAccountsInOneId(){
-        List<Account> accountList = accountRepo.findAllByAccountCustomerId(2);
+        List<Account> accountList = accountRepo.findAllByCustomerId(2);
         Assertions.assertEquals(2,accountList.size());
     }
     @Test
@@ -100,8 +86,6 @@ class AccountServicesTest {
     @Test
     void deleteAccount() {
         accountRepo.deleteById(29);
-        customerRepository.deleteById(29);
-        //  Boolean result = accountRepo.existsById(46);
         Boolean result = customerRepository.existsById(29);
         Assertions.assertEquals(false,result);
     }

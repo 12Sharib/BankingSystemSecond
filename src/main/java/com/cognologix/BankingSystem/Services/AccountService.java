@@ -2,6 +2,8 @@ package com.cognologix.BankingSystem.Services;
 
 import com.cognologix.BankingSystem.Exceptions.*;
 import com.cognologix.BankingSystem.Model.Account;
+import com.cognologix.BankingSystem.Model.Transactions;
+import com.cognologix.BankingSystem.dto.TransactionDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,15 +15,15 @@ public interface AccountService {
 
    // Customer CreateAccount(account);
 
-    Account WithdrawAmount(Integer AccountNumber, Double WithdrawAmount) throws InvalidAccountNumber,MinimumAccountBalance, AmountLessThanZero;
+    TransactionDTO WithdrawAmount(Integer AccountNumber, Double WithdrawAmount) throws InvalidAccountNumber,MinimumAccountBalance, AmountLessThanZero;
 
-    Account DepositAmount(Integer AccountNumber, Double DepositedAmount) throws InvalidAccountNumber,AmountLessThanZero;
+    TransactionDTO DepositAmount(Integer AccountNumber, Double DepositedAmount) throws InvalidAccountNumber,AmountLessThanZero;
 
     Iterable<Account> GetAllAccount();
 
     Boolean DeleteAccount(Integer AccountNumber) throws InvalidAccountNumber;
 
-    List transferOneToAnother(Integer firstAccountNumber, Integer secondAccountNumber, Double amount) throws MinimumAccountBalance;
+    TransactionDTO transferOneToAnother(Integer firstAccountNumber, Integer secondAccountNumber, Double amount) throws MinimumAccountBalance;
 
     List findSavingsAccounts() throws NotPresentAnyAccount;
 

@@ -17,12 +17,18 @@ import javax.persistence.*;
 @Table
 public class Account {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer accountNumber;
+    private Integer customerId;
     private String accountName;
     private String accountType;
     private Double accountInitialBalance;
-    private Integer accountCustomerId;
+    private String accountStatus;
+
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "customer_fk")
+    private Customer customer;
+
 
 }
 

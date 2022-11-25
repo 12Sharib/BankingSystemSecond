@@ -1,40 +1,51 @@
 package com.cognologix.BankingSystem.controllers;
 
-import com.cognologix.BankingSystem.Exceptions.InvalidAccountNumber;
-import com.cognologix.BankingSystem.Exceptions.InvalidDocument;
-import com.cognologix.BankingSystem.Model.Account;
 import com.cognologix.BankingSystem.Model.Customer;
 import com.cognologix.BankingSystem.Repository.CustomerRepository;
 import com.cognologix.BankingSystem.Services.CustomerService;
-import com.cognologix.BankingSystem.dto.CustomerDTO;
+import com.cognologix.BankingSystem.dto.AccountDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/customer")
 public class CustomerController {
-   
+
     @Autowired
     private CustomerRepository customerRepository;
+
     @Autowired
     private CustomerService customerService;
-/*
-    @PostMapping(value = "/createCustomer")
-    public ResponseEntity<Account> createCustomer(@Valid @RequestBody Customer customer) throws InvalidDocument {
-        Account newCustomer = customerService.createCustomer(customer);
-        return new ResponseEntity<>(newCustomer, HttpStatus.OK);
+    /*
+    * create customer
+     */
+    @PostMapping("/createCustomer")
+    public ResponseEntity<AccountDTO> createCustomer(@RequestBody Customer customer) {
+        AccountDTO account = customerService.createCustomer(customer);
+        return new ResponseEntity<>(account,HttpStatus.OK);
+    }
+    /*
+    * get all customers
+     */
+    @GetMapping(value = "/getAllCustomers")
+    public ResponseEntity<List<Customer>> getAllCustomers(){
+        List<Customer> allCustomer = customerService.getAllCustomer();
+        return new ResponseEntity<>(allCustomer, HttpStatus.OK);
     }
 
- */
-    @PostMapping("/createCustomer")
-    public Customer createCustomer(@RequestBody CustomerDTO customerDTO){
-        Customer customer = customerRepository.save(customerDTO.getCustomer());
-        return customer;
+    /*
+    * get customer with customerId in the database with account
+     */
+    @GetMapping(value = "/getCustomerById/{customerId}")
+    public ResponseEntity<List<Customer>> getById(@PathVariable Integer customerId){
+        List<Customer> sameIdCustomers = customerRepository.findByCustomerId(customerId);
+        return new ResponseEntity<>(sameIdCustomers,HttpStatus.OK);
     }
+     /*
     @PutMapping(value = "/updateCustomerDetails/{accountNumber}")
     public ResponseEntity<String> updateCustomerDetails(@RequestBody Customer updatedDetails, @PathVariable Integer accountNumber) throws InvalidAccountNumber {
         if (customerRepository.existsById(accountNumber)) {
@@ -42,15 +53,5 @@ public class CustomerController {
             return new ResponseEntity<>("customer Details Updated: \n" + updateCustomer,HttpStatus.OK);
         }else throw new InvalidAccountNumber("provide valid account number for update customer details");
     }
-    @GetMapping(value = "/getAllCustomers")
-    public ResponseEntity<Iterable<Customer>> getAllCustomers(){
-        Iterable<Customer> allCustomer = customerService.getAllCustomer();
-        return new ResponseEntity<>(allCustomer, HttpStatus.OK);
-    }
-    @GetMapping(value = "/getCustomerById/{customerId}")
-    public ResponseEntity<Customer> getById(@PathVariable Integer customerId){
-        return new ResponseEntity<>(customerRepository.findById(customerId).get(),HttpStatus.OK);
-    }
-
-
+    */
 }

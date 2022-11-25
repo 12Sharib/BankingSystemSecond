@@ -13,14 +13,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table
 public class Customer {
     @Id
-    private Integer customerAccountNumber;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    private Integer customerId;
+
     @NotBlank(message = "Provide Valid Name")
     private String customerName;
+
     @NotBlank(message = "Provide Valid Account Type")
     private String cutomerAccountType;
-
-    private Double customerAccountBalance;
-    private Integer customerId;
 
     @NotEmpty(message = "Provide Email")
     private String customerEmail;
@@ -33,17 +34,13 @@ public class Customer {
     @Size(min = 12,max = 14)
     private String customerAadharNumber;
 
-    @NotEmpty(message = "provide valid valid PanCard")
+    @NotEmpty(message = "provide valid valid Pancard")
     @Size(min = 10,max = 10)
     private String customerPancard;
 
     @NotBlank(message = "provide valid Address")
     @Size(min = 5,max = 30)
     private String customerAddress;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "account_key")
-    private Account accountList;
 
 
 

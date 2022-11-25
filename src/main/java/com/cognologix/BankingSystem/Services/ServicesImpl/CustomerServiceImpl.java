@@ -1,19 +1,20 @@
 package com.cognologix.BankingSystem.Services.ServicesImpl;
 
 import com.cognologix.BankingSystem.Exceptions.InvalidDocument;
-import com.cognologix.BankingSystem.Exceptions.MoreThanTwoAccountInOneDocument;
 import com.cognologix.BankingSystem.Model.Account;
 import com.cognologix.BankingSystem.Model.Customer;
 import com.cognologix.BankingSystem.Repository.AccountRepo;
 import com.cognologix.BankingSystem.Repository.CustomerRepository;
 import com.cognologix.BankingSystem.Services.CustomerService;
+import com.cognologix.BankingSystem.dto.AccountDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Random;
 
 @Service
-public class CustomerServiceImpl implements CustomerService {
+public class CustomerServiceImpl implements CustomerService{
     @Autowired
     private CustomerRepository customerRepository;
     @Autowired
@@ -21,55 +22,76 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private AccountRepo accountRepo;
 
-/*
-    create customer as well as account;
- */
+    /*
+    * create a customer with account details;
+    * returns a customer with account details with account number and customer id;
+     */
     @Override
-    public Account createCustomer(Customer newCustomer) throws InvalidDocument {
+    public AccountDTO createCustomer(Customer newCustomer) {
+        Random  random = new Random();
 
-        Random random = new Random();
-        newCustomer.setCustomerAccountNumber(random.nextInt(50));
-        newCustomer.setCustomerAccountBalance(1000.0);
-        newCustomer.setCustomerId(random.nextInt(100));
-
+        //check is there any customer in this aadhar number;
         Customer prevCustomer = customerRepository.findBycustomerAadharNumber(newCustomer.getCustomerAadharNumber());
 
-  //      System.out.println(prevCustomer);
         if (prevCustomer == null) {
-            //new account current aur savings
-            account.setAccountCustomerId(newCustomer.getCustomerId());
-            account.setAccountNumber(newCustomer.getCustomerAccountNumber());
+            //new account current aur savings;
+            account.setAccountNumber(random.nextInt(50));
+
+            //set customer id for account because for one or more account
+            Integer customerId = random.nextInt(50);
+            account.setCustomerId(customerId);
+            account.setAccountStatus("Active");
             account.setAccountName(newCustomer.getCustomerName());
             account.setAccountType(newCustomer.getCutomerAccountType());
-            account.setAccountInitialBalance(newCustomer.getCustomerAccountBalance());
+            account.setAccountInitialBalance(1000.0);
 
-            customerRepository.save(newCustomer);
+            //set new customer customer id;
+            newCustomer.setCustomerId(customerId);
+            //set customer in account
+            account.setCustomer(newCustomer);
+            //save account in database;
             accountRepo.save(account);
+            //return new account it is savings aur current
 
-            return account;
-        } else if (prevCustomer.getCustomerAadharNumber().equals(newCustomer.getCustomerAadharNumber())) {
-            if (prevCustomer.getCutomerAccountType().equals(newCustomer.getCutomerAccountType())){
-                throw new InvalidDocument("Account already exist");
-            }else{
-                account.setAccountCustomerId(prevCustomer.getCustomerId());
-                account.setAccountNumber(newCustomer.getCustomerAccountNumber());
-                account.setAccountName(newCustomer.getCustomerName());
-                account.setAccountType(newCustomer.getCutomerAccountType());
-                account.setAccountInitialBalance(newCustomer.getCustomerAccountBalance());
+        } else {
+            if (prevCustomer.getCustomerAadharNumber().equals(newCustomer.getCustomerAadharNumber())) {
+                if (prevCustomer.getCutomerAccountType().equals(newCustomer.getCutomerAccountType())) {
+                    throw new InvalidDocument("Account already exist");
+                } else {
+                    //make newCustomer with his previous aadhar card
+                    //if previous account is savings then new account will be current or reverse;
+                    account.setAccountNumber(random.nextInt(50));
+                    account.setAccountStatus("Active");
+                    account.setAccountName(newCustomer.getCustomerName());
+                    account.setAccountType(newCustomer.getCutomerAccountType());
+                    account.setAccountInitialBalance(100.0);
 
-                newCustomer.setCustomerId(prevCustomer.getCustomerId());
+                    //set customer id for new customer with previous customer id on savings or current
+                    newCustomer.setCustomerId(prevCustomer.getCustomerId());
+                    account.setCustomerId(prevCustomer.getCustomerId());
 
-                customerRepository.save(newCustomer);
-                accountRepo.save(account);
-
-                return account;
+                    account.setCustomer(newCustomer);
+                    accountRepo.save(account);
+                }
             }
         }
-        return null;
+
+        return convertEntityToDTO(account);
     }
-/*
-    Update customer details;
- */
+
+    private AccountDTO convertEntityToDTO(Account account) {
+        AccountDTO accountDTO = new AccountDTO();
+        accountDTO.setCustomerId(account.getCustomerId());
+        accountDTO.setAccountName(account.getAccountName());
+        accountDTO.setAccountNumber(account.getAccountNumber());
+        accountDTO.setAccountStatus(account.getAccountStatus());
+        accountDTO.setAccountInitialBalance(account.getAccountInitialBalance());
+        accountDTO.setAccountType(account.getAccountType());
+        accountDTO.setAccountStatus(account.getAccountStatus());
+
+        return accountDTO;
+    }
+
     @Override
     public Customer updateCustomerDetails(Customer updatedDetails,Integer accountNumber){
 
@@ -81,18 +103,21 @@ public class CustomerServiceImpl implements CustomerService {
             prevCustomer.setCustomerMobileNumber(updatedDetails.getCustomerMobileNumber());
 
             customerRepository.save(prevCustomer);
-            Account prevAccount = accountRepo.findById(accountNumber).get();
-            prevAccount.setAccountName(prevCustomer.getCustomerName());
-            accountRepo.save(prevAccount);
 
             return prevCustomer;
 
     }
-/*
-    get all customers;
- */
+
+
+
     @Override
-    public Iterable<Customer> getAllCustomer() {
-        return customerRepository.findAll();
+    public List<Customer> getAllCustomer() {
+       return customerRepository.findAll();
+
+
     }
+
+
 }
+
+
