@@ -1,14 +1,25 @@
 package com.cognologix.BankingSystem.Model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.GenerationType;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 @Component
 @XmlRootElement
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table
 public class Customer {
@@ -17,28 +28,28 @@ public class Customer {
     private Integer id;
     private Integer customerId;
 
-    @NotBlank(message = "Provide Valid Name")
+    @NotBlank(message = "Invalid Name, Provide Valid Name")
     private String customerName;
 
-    @NotBlank(message = "Provide Valid Account Type")
+    @NotBlank(message = "Invalid Account Type, Provide Valid Account Type")
     private String cutomerAccountType;
 
-    @NotEmpty(message = "Provide Email")
+    @NotEmpty(message = "Invalid Email, Provide valid email")
     private String customerEmail;
 
-    @NotBlank(message = "Provide Valid Mobile Number")
+    @NotBlank(message = "Invalid Mobile number, should contain 10 characters only")
     @Size(min = 10,max = 10)
     private String customerMobileNumber;
 
-    @NotBlank(message = "provide valid Aadhar number")
+    @NotBlank(message = "Invalid Aadhar number, should contain 12 characters only")
     @Size(min = 12,max = 14)
     private String customerAadharNumber;
 
-    @NotEmpty(message = "provide valid valid Pancard")
+    @NotEmpty(message = "Invalid Pancard number, should contain 10 characters only")
     @Size(min = 10,max = 10)
     private String customerPancard;
 
-    @NotBlank(message = "provide valid Address")
+    @NotBlank(message = "Invalid Address, Provide valid address")
     @Size(min = 5,max = 30)
     private String customerAddress;
 

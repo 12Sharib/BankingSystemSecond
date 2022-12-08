@@ -1,6 +1,10 @@
 package com.cognologix.BankingSystem.Services;
 
-import com.cognologix.BankingSystem.Exceptions.*;
+import com.cognologix.BankingSystem.Exceptions.InvalidAccountNumber;
+import com.cognologix.BankingSystem.Exceptions.NotEligibleForCreditCard;
+import com.cognologix.BankingSystem.Exceptions.NotPresentAnyAccount;
+import com.cognologix.BankingSystem.Exceptions.AmountLessThanZero;
+import com.cognologix.BankingSystem.Exceptions.MinimumAccountBalance;
 import com.cognologix.BankingSystem.Model.Account;
 import com.cognologix.BankingSystem.Model.Transactions;
 import com.cognologix.BankingSystem.dto.TransactionDTO;
@@ -10,28 +14,25 @@ import java.util.List;
 
 @Service
 public interface AccountService {
-   // Account CreateAccount(Account account) ;
-  //  Account CreateAccount(Account account);
+    TransactionDTO withdrawAmount(Integer AccountNumber, Double WithdrawAmount) throws InvalidAccountNumber,MinimumAccountBalance, AmountLessThanZero;
 
-   // Customer CreateAccount(account);
+    TransactionDTO depositAmount(Integer accountNumber, Double depositedAmount) throws InvalidAccountNumber,AmountLessThanZero;
 
-    TransactionDTO WithdrawAmount(Integer AccountNumber, Double WithdrawAmount) throws InvalidAccountNumber,MinimumAccountBalance, AmountLessThanZero;
+    List<Account> allAccount();
 
-    TransactionDTO DepositAmount(Integer AccountNumber, Double DepositedAmount) throws InvalidAccountNumber,AmountLessThanZero;
+    Boolean deleteAccount(Integer accountNumber) throws InvalidAccountNumber;
 
-    Iterable<Account> GetAllAccount();
+    TransactionDTO transferAmount(Integer firstAccountNumber, Integer secondAccountNumber, Double amount) throws MinimumAccountBalance;
 
-    Boolean DeleteAccount(Integer AccountNumber) throws InvalidAccountNumber;
+    List savingsAccounts() throws NotPresentAnyAccount;
 
-    TransactionDTO transferOneToAnother(Integer firstAccountNumber, Integer secondAccountNumber, Double amount) throws MinimumAccountBalance;
+    List currentAccounts() throws NotPresentAnyAccount;
 
-    List findSavingsAccounts() throws NotPresentAnyAccount;
+    List<String> debitCard(Integer accountNumber);
+    List<String> creditCard(Integer accountNumber) throws NotEligibleForCreditCard;
 
-    List findCurrentAccounts() throws NotPresentAnyAccount;
+    List<Account> accountsInSameId(Integer customerId);
 
-    List<String> getDebitCard(Integer accountNumber);
-    List<String> getCreditCard(Integer accountNumber) throws NotEligibleForCreditCard;
-
-    List<Account> findAccountInOneId(Integer customerId);
+    String deleteAll();
 }
 

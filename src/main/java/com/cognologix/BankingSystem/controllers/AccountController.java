@@ -6,22 +6,26 @@ import com.cognologix.BankingSystem.Exceptions.NotEligibleForCreditCard;
 import com.cognologix.BankingSystem.Exceptions.MinimumAccountBalance;
 import com.cognologix.BankingSystem.Exceptions.NotPresentAnyAccount;
 import com.cognologix.BankingSystem.Model.Account;
-import com.cognologix.BankingSystem.Model.Transactions;
 import com.cognologix.BankingSystem.Services.AccountService;
 import com.cognologix.BankingSystem.dto.TransactionDTO;
-import org.springframework.web.bind.annotation.*;
 import com.cognologix.BankingSystem.Repository.AccountRepo;
-//import com.cognologix.BankingSystem.Services.ServicesImpl.AccountServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
-import javax.transaction.Transaction;
+
 import java.util.List;
 
 
 @RestController
-@RequestMapping("/bank")
+@RequestMapping("/account")
 public class AccountController {
     @Autowired
     private AccountRepo accountRepo;
@@ -39,66 +43,68 @@ public class AccountController {
      * get debit card
      * get credit card
      */
-    @PatchMapping(value = "/transferOneToAnother/{firstAccountNumber}/{secondAccountNumber}/{amount}")
-    public ResponseEntity<TransactionDTO> transferOneToAnother(@PathVariable Integer firstAccountNumber, @PathVariable Integer secondAccountNumber, @PathVariable Double amount) throws MinimumAccountBalance,InvalidAccountNumber {
+    @PutMapping(value = "/transferAmount/{firstAccountNumber}/{secondAccountNumber}/{amount}")
+    public ResponseEntity<TransactionDTO> transferAmount(@PathVariable Integer firstAccountNumber, @PathVariable Integer secondAccountNumber, @PathVariable Double amount) throws MinimumAccountBalance,InvalidAccountNumber {
         if(accountRepo.existsById(firstAccountNumber)){
             if(accountRepo.existsById(secondAccountNumber)){
-                TransactionDTO transfer = accountService.transferOneToAnother(firstAccountNumber, secondAccountNumber, amount);
+                TransactionDTO transfer = accountService.transferAmount(firstAccountNumber, secondAccountNumber, amount);
                 return new ResponseEntity<>(transfer,HttpStatus.OK);
             }else throw new InvalidAccountNumber("provide valid second account number");
         } else throw new InvalidAccountNumber("provide valid first account Number");
 
     }
-    @PatchMapping(value = "/deposit/{accountNumber}/{depositedAmount}")
-    public ResponseEntity<TransactionDTO> DepositAmount(@PathVariable Integer accountNumber, @PathVariable Double depositedAmount) throws InvalidAccountNumber,AmountLessThanZero{
-        TransactionDTO Deposit =  accountService.DepositAmount(accountNumber,depositedAmount);
+    @PutMapping(value = "/deposit/{accountNumber}/{depositedAmount}")
+    public ResponseEntity<TransactionDTO> depositAmount(@PathVariable Integer accountNumber, @PathVariable Double depositedAmount) throws InvalidAccountNumber,AmountLessThanZero{
+        TransactionDTO Deposit =  accountService.depositAmount(accountNumber,depositedAmount);
 
         return new ResponseEntity<>(Deposit , HttpStatus.OK);
     }
 
-    @PatchMapping("/withdraw/{AccountNumber}/{WithdrawAmount}")
-    public ResponseEntity<TransactionDTO> WithdrawAmount(@PathVariable Integer AccountNumber, @PathVariable Double WithdrawAmount) throws AmountLessThanZero,InvalidAccountNumber,MinimumAccountBalance{
-        TransactionDTO Withdraw =  accountService.WithdrawAmount(AccountNumber,WithdrawAmount);
-         return new ResponseEntity<>(Withdraw , HttpStatus.OK);
+    @PutMapping("/withdraw/{accountNumber}/{withdrawAmount}")
+    public ResponseEntity<TransactionDTO> withdrawAmount(@PathVariable Integer accountNumber, @PathVariable Double withdrawAmount) throws AmountLessThanZero,InvalidAccountNumber,MinimumAccountBalance{
+        TransactionDTO withdraw =  accountService.withdrawAmount(accountNumber,withdrawAmount);
+         return new ResponseEntity<>(withdraw , HttpStatus.OK);
     }
 
     @GetMapping("/allAccounts")
-    public ResponseEntity<Iterable<Account>> GetAllAccounts(){
-      Iterable<Account> allAccounts =  accountService.GetAllAccount();
-      return new ResponseEntity<>(allAccounts, HttpStatus.ACCEPTED);
+    public ResponseEntity<List<Account>> all(){
+      List<Account> all =  accountService.allAccount();
+      return new ResponseEntity<>(all, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/delete/{AccountNumber}")
-    public ResponseEntity<Iterable<Account>> DeleteAccount(@PathVariable Integer AccountNumber) throws InvalidAccountNumber {
-        accountService.DeleteAccount(AccountNumber);
-
-        return new ResponseEntity<>(accountRepo.findAll(),HttpStatus.ACCEPTED);
+    @DeleteMapping(value = "/delete/{accountNumber}")
+    public ResponseEntity<Iterable<Account>> deleteAccount(@PathVariable Integer accountNumber) throws InvalidAccountNumber {
+        accountService.deleteAccount(accountNumber);
+        return new ResponseEntity<>(accountRepo.findAll(),HttpStatus.OK);
     }
     @GetMapping(value = "/savings")
-    public ResponseEntity<List<Account>> findSavingAccount() throws NotPresentAnyAccount {
-        List<Account> savingsAccounts = accountService.findSavingsAccounts();
-
-        return new ResponseEntity<>(savingsAccounts,HttpStatus.ACCEPTED);
+    public ResponseEntity<List<Account>> savingAccounts() throws NotPresentAnyAccount {
+        List<Account> savingsAccounts = accountService.savingsAccounts();
+        return new ResponseEntity<>(savingsAccounts,HttpStatus.OK);
     }
     @GetMapping(value = "/current")
-    public ResponseEntity<List<Account>> findCurrentAccount() throws NotPresentAnyAccount{
-        List<Account> currentAccount = accountService.findCurrentAccounts();
-        return new ResponseEntity<>(currentAccount,HttpStatus.ACCEPTED);
+    public ResponseEntity<List<Account>> currentAccounts() throws NotPresentAnyAccount{
+        List<Account> currentAccount = accountService.currentAccounts();
+        return new ResponseEntity<>(currentAccount,HttpStatus.OK);
     }
-    @GetMapping(value = "/getDebitCard/{accountNumber}")
-    public ResponseEntity<List<String>> getDebitCard(@PathVariable Integer accountNumber) throws InvalidAccountNumber{
-        List<String> debitCard = accountService.getDebitCard(accountNumber);
-        return new ResponseEntity<>(debitCard,HttpStatus.ACCEPTED);
+    @GetMapping(value = "/debitCard/{accountNumber}")
+    public ResponseEntity<List<String>> debitCard(@PathVariable Integer accountNumber) throws InvalidAccountNumber{
+        List<String> debitCard = accountService.debitCard(accountNumber);
+        return new ResponseEntity<>(debitCard,HttpStatus.OK);
     }
-    @GetMapping(value = "/getCreditCard/{accountNumber}")
-    public ResponseEntity<List<String>> getCreditCard(@PathVariable Integer accountNumber) throws NotEligibleForCreditCard {
-        List<String> creditCard = accountService.getCreditCard(accountNumber);
-        return new ResponseEntity<>(creditCard,HttpStatus.ACCEPTED);
+    @GetMapping(value = "/creditCard/{accountNumber}")
+    public ResponseEntity<List<String>> creditCard(@PathVariable Integer accountNumber) throws NotEligibleForCreditCard {
+        List<String> creditCard = accountService.creditCard(accountNumber);
+        return new ResponseEntity<>(creditCard,HttpStatus.OK);
     }
     @GetMapping(value = "/findAccountsInCustomerId/{customerId}")
-    public ResponseEntity<List<Account>> findAccountInOneId(@PathVariable Integer customerId){
-        List<Account> accountList = accountService.findAccountInOneId(customerId);
+    public ResponseEntity<List<Account>> accountsInSameId(@PathVariable Integer customerId){
+        List<Account> accountList = accountService.accountsInSameId(customerId);
         return new ResponseEntity<>(accountList,HttpStatus.OK);
+    }
+    @DeleteMapping("/deleteAll")
+    public ResponseEntity<String> deleteAll(){
+        return new ResponseEntity<>(accountService.deleteAll(),HttpStatus.OK);
     }
 
 }

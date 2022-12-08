@@ -10,10 +10,18 @@ import java.util.Optional;
 public interface TransactionService {
 
     //all transactions
-    List<Transactions> getAllTransactions();
+    List<Transactions> all();
 
     //transactions in one account number;
-    List<Transactions> getOneAccountTransaction(Integer accountNumber);
+    List<Transactions> oneAccountTransactions(Integer accountNumber);
 
     Optional<Transactions> findTransactionOnTransactionId(Integer transactionId);
+
+    String deleteOneTransaction(Integer transactionId);
+
+    List byDate(String date);
+
+    List previousFive(Integer accountNumber);
+
+    String deleteAll();
 }

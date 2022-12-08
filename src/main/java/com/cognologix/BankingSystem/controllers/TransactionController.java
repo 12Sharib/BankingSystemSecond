@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.List;
 import java.util.Optional;
 
@@ -28,18 +29,18 @@ public class TransactionController {
     /*
     * get all transactions
      */
-    @GetMapping("/getAllTransaction")
-    public ResponseEntity<List<Transactions>> getAllTransaction(){
-        List<Transactions> transactions = transactionService.getAllTransactions();
+    @GetMapping("/allTransaction")
+    public ResponseEntity<List<Transactions>> all(){
+        List<Transactions> transactions = transactionService.all();
         return new ResponseEntity<>(transactions,HttpStatus.OK);
     }
 
     /*
     * get transaction on one account number;
      */
-    @GetMapping("/getOneAccountTransaction/{accountNumber}")
-    public ResponseEntity<List<Transactions>> getOneAccountTransaction(@PathVariable Integer accountNumber){
-        List<Transactions> transactions = transactionService.getOneAccountTransaction(accountNumber);
+    @GetMapping("/oneAccountTransactions/{accountNumber}")
+    public ResponseEntity<List<Transactions>> oneAccountTransactions(@PathVariable Integer accountNumber){
+        List<Transactions> transactions = transactionService.oneAccountTransactions(accountNumber);
         return new ResponseEntity<>(transactions,HttpStatus.OK);
     }
     /*
@@ -50,4 +51,30 @@ public class TransactionController {
         Optional<Transactions> transactions = transactionService.findTransactionOnTransactionId(transactionId);
         return new ResponseEntity<>(transactions,HttpStatus.OK);
     }
+    /*
+    * delete one transaction
+     */
+    @DeleteMapping("/deleteTransaction/{transactionId}")
+    public ResponseEntity<String> deleteOneTransaction(@PathVariable Integer transactionId){
+        return new ResponseEntity<>(transactionService.deleteOneTransaction(transactionId),HttpStatus.OK);
+    }
+    /*
+    * get transaction by custom date
+     */
+    @GetMapping("/byDate/{date}")
+    public ResponseEntity<List<Transactions>> byDate(@PathVariable String date){
+        return new ResponseEntity<>(transactionService.byDate(date),HttpStatus.OK);
+    }
+    /*
+    * previous five Transactions
+     */
+    @GetMapping("/previousFiveTransactions/{accountNumber}")
+    public ResponseEntity<List<Transactions>> previousFive(@PathVariable Integer accountNumber){
+        return new ResponseEntity<>(transactionService.previousFive(accountNumber),HttpStatus.OK);
+    }
+    @DeleteMapping("/deleteAll")
+    public ResponseEntity<String> deleteAll(){
+        return new ResponseEntity<>(transactionService.deleteAll(),HttpStatus.OK);
+    }
+
 }

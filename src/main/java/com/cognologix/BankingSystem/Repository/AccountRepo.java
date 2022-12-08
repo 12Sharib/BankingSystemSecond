@@ -8,8 +8,7 @@ import java.util.List;
 
 @Repository
 public interface AccountRepo extends JpaRepository<Account, Integer> {
-    List<Account> findAllByCustomerId(Integer customerId);
+    public List<Account> findAllByCustomerId(Integer customerId);
 
-
-    //List<Account> findAllByAccountCustomerId(Integer customerId);
+    public Boolean existsByCustomerId(Integer customerId);
 }

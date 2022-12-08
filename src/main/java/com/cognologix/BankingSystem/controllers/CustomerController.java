@@ -7,7 +7,14 @@ import com.cognologix.BankingSystem.dto.AccountDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 import java.util.List;
 
@@ -31,8 +38,8 @@ public class CustomerController {
     /*
     * get all customers
      */
-    @GetMapping(value = "/getAllCustomers")
-    public ResponseEntity<List<Customer>> getAllCustomers(){
+    @GetMapping(value = "/allCustomers")
+    public ResponseEntity<List<Customer>> allCustomers(){
         List<Customer> allCustomer = customerService.getAllCustomer();
         return new ResponseEntity<>(allCustomer, HttpStatus.OK);
     }
@@ -40,18 +47,20 @@ public class CustomerController {
     /*
     * get customer with customerId in the database with account
      */
-    @GetMapping(value = "/getCustomerById/{customerId}")
-    public ResponseEntity<List<Customer>> getById(@PathVariable Integer customerId){
+    @GetMapping(value = "/customerById/{customerId}")
+    public ResponseEntity<List<Customer>> findById(@PathVariable Integer customerId){
         List<Customer> sameIdCustomers = customerRepository.findByCustomerId(customerId);
         return new ResponseEntity<>(sameIdCustomers,HttpStatus.OK);
     }
-     /*
-    @PutMapping(value = "/updateCustomerDetails/{accountNumber}")
-    public ResponseEntity<String> updateCustomerDetails(@RequestBody Customer updatedDetails, @PathVariable Integer accountNumber) throws InvalidAccountNumber {
-        if (customerRepository.existsById(accountNumber)) {
-            Customer updateCustomer = customerService.updateCustomerDetails(updatedDetails,accountNumber);
-            return new ResponseEntity<>("customer Details Updated: \n" + updateCustomer,HttpStatus.OK);
-        }else throw new InvalidAccountNumber("provide valid account number for update customer details");
+    /*
+    * delete all customer
+     */
+    @DeleteMapping("/deleteAll")
+    public ResponseEntity<String> deleteAll(){
+        return new ResponseEntity<>(customerService.deleteAll(),HttpStatus.OK);
     }
-    */
+    @PostMapping("updateCustomer/{accountNumber}")
+    public ResponseEntity<Customer> updateCustomer(@RequestBody Customer updatedCustomer,@PathVariable Integer accountNumber){
+        return new ResponseEntity<>(customerService.updateCustomerDetails(updatedCustomer,accountNumber),HttpStatus.OK);
+    }
 }

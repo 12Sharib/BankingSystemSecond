@@ -8,11 +8,9 @@ import java.util.List;
 
 @Service
 public interface CustomerService {
-  //  Account createCustomer(Customer customer) throws InvalidDocument;
-
     Customer updateCustomerDetails(Customer updatedDetails,Integer accountNumber);
-
     List<Customer> getAllCustomer();
-
     AccountDTO createCustomer(Customer customer);
+
+    String deleteAll();
 }

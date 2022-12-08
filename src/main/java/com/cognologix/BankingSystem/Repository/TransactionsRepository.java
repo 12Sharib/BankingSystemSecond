@@ -8,5 +8,7 @@ import java.util.List;
 
 @Repository
 public interface TransactionsRepository extends JpaRepository<Transactions,Integer> {
-    List<Transactions> findByToAccountNumber(String toString);
+    List<Transactions> findByAccountNumber(Integer accountNumber);
+    // public List<Transactions> findByToAccountNumber(String toString);
+
 }

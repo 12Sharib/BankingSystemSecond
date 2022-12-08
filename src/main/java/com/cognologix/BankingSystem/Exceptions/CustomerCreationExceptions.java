@@ -12,8 +12,9 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class CustomerCreationExceptions {
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String,String>> HandleMethodArgumentNotValidException(MethodArgumentNotValidException exception){
+    public ResponseEntity<Map<String,String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception){
         Map<String,String> errors = new HashMap<>();
 
         exception.getBindingResult().getAllErrors().forEach(
