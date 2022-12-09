@@ -12,7 +12,6 @@ import com.cognologix.BankingSystem.Repository.AccountRepo;
 import com.cognologix.BankingSystem.Repository.CustomerRepository;
 import com.cognologix.BankingSystem.Repository.TransactionsRepository;
 import com.cognologix.BankingSystem.Services.AccountService;
-import com.cognologix.BankingSystem.convertor.AccountConvertor;
 import com.cognologix.BankingSystem.convertor.TransactorConvertor;
 import com.cognologix.BankingSystem.dto.TransactionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 
@@ -246,8 +246,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public List<Account> accountsInSameId(Integer customerId) {
         if (accountRepo.existsByCustomerId(customerId)){
-            List<Account> accountList = accountRepo.findAllByCustomerId(customerId);
-            return accountList;
+            return accountRepo.findAllByCustomerId(customerId);
         }else throw new InvalidAccountNumber("Invalid Customer Id");
     }
 
@@ -255,6 +254,16 @@ public class AccountServiceImpl implements AccountService {
     public String deleteAll() {
         accountRepo.deleteAll();
         return "Delete Successfully";
+    }
+
+    @Override
+    public Optional<Account> singleAccount(Integer accountNumber) {
+        if (accountRepo.existsById(accountNumber)){
+            return accountRepo.findById(accountNumber);
+
+        }else {
+            throw new InvalidAccountNumber("Invalid Account Number");
+        }
     }
 }
 

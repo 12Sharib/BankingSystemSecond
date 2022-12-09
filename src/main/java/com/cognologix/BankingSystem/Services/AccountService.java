@@ -6,11 +6,11 @@ import com.cognologix.BankingSystem.Exceptions.NotPresentAnyAccount;
 import com.cognologix.BankingSystem.Exceptions.AmountLessThanZero;
 import com.cognologix.BankingSystem.Exceptions.MinimumAccountBalance;
 import com.cognologix.BankingSystem.Model.Account;
-import com.cognologix.BankingSystem.Model.Transactions;
 import com.cognologix.BankingSystem.dto.TransactionDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public interface AccountService {
@@ -34,5 +34,7 @@ public interface AccountService {
     List<Account> accountsInSameId(Integer customerId);
 
     String deleteAll();
+
+    Optional<Account> singleAccount(Integer accountNumber);
 }
 

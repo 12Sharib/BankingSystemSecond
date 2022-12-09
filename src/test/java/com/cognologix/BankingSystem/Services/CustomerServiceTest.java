@@ -2,6 +2,7 @@ package com.cognologix.BankingSystem.Services;
 
 import com.cognologix.BankingSystem.Model.Account;
 import com.cognologix.BankingSystem.Model.Customer;
+import com.cognologix.BankingSystem.Repository.AccountRepo;
 import com.cognologix.BankingSystem.Repository.CustomerRepository;
 import com.cognologix.BankingSystem.Services.ServicesImpl.CustomerServiceImpl;
 import com.cognologix.BankingSystem.convertor.AccountConvertor;
@@ -16,6 +17,7 @@ import org.mockito.InjectMocks;
 
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -34,20 +36,13 @@ import java.util.Optional;
 @ExtendWith(SpringExtension.class)
 class CustomerServiceTest {
     @MockBean
-    CustomerRepository customerRepository;
+    private CustomerRepository customerRepository;
+
+    @MockBean
+    private AccountRepo accountRepo;
 
     @Autowired
     private CustomerServiceImpl customerService;
-
-    @Test
-    void updateCustomerDetails() {
-         Customer customer = new Customer(1, 21, " ",
-                "Savings", "SharibSaifi.SS@gmail.com", "8006590554",
-                " ", "OGHPS2812E", "Muradanagar");
-
-        doThrow(new Throwable("Invalid details"))
-                .when(customerService).updateCustomerDetails(customer,1);
-    }
 
     @Test
     void getAllCustomer() {
@@ -73,9 +68,27 @@ class CustomerServiceTest {
     void createCustomer() {
         Customer customer = new Customer(1,21,"Sharib Saifi",
                 "Savings", "SharibSaifi.SS@gmail.com","8006590554",
-                "1111 2222 3333","OGHPS2812E","Muradanagar");
+                "1111 2222 3334","OGHPS2812E","Muradanagar");
 
-        Mockito.when(customerRepository.save(customer)).thenReturn(customer);
-        Assertions.assertEquals(customer,customerRepository.save(customer));
+        Account account = new Account();
+        account.setCustomerId(1);
+        account.setAccountName("Sharib Saifi");
+
+        when(customerRepository.findBycustomerAadharNumber(customer.getCustomerAadharNumber())).thenReturn(null);
+        when(accountRepo.save(account)).thenReturn(account);
+        when(accountRepo.save(account)).thenReturn(account);
+
+        AccountDTO accountDTO = customerService.createCustomer(customer);
+
+        Assertions.assertEquals("Active",accountDTO.getAccountStatus());
+    }
+    @Test
+    void updateCustomerDetails() {
+        Customer customer = new Customer(1, 21, "Sharib Saifi",
+                "Savings", "SharibSaifi.SS@gmail.com", "8006590554",
+                " ", "OGHPS2812E", "Muradanagar");
+
+        doThrow(new Throwable("Invalid details"))
+                .when(customerService).updateCustomerDetails(customer,1);
     }
 }

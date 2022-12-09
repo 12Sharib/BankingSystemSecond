@@ -15,7 +15,7 @@ public interface TransactionService {
     //transactions in one account number;
     List<Transactions> oneAccountTransactions(Integer accountNumber);
 
-    Optional<Transactions> findTransactionOnTransactionId(Integer transactionId);
+    Transactions findTransactionOnTransactionId(Integer transactionId);
 
     String deleteOneTransaction(Integer transactionId);
 

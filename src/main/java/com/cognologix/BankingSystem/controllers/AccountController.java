@@ -21,7 +21,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -56,7 +58,6 @@ public class AccountController {
     @PutMapping(value = "/deposit/{accountNumber}/{depositedAmount}")
     public ResponseEntity<TransactionDTO> depositAmount(@PathVariable Integer accountNumber, @PathVariable Double depositedAmount) throws InvalidAccountNumber,AmountLessThanZero{
         TransactionDTO Deposit =  accountService.depositAmount(accountNumber,depositedAmount);
-
         return new ResponseEntity<>(Deposit , HttpStatus.OK);
     }
 
@@ -105,6 +106,10 @@ public class AccountController {
     @DeleteMapping("/deleteAll")
     public ResponseEntity<String> deleteAll(){
         return new ResponseEntity<>(accountService.deleteAll(),HttpStatus.OK);
+    }
+    @GetMapping("/singleAccount/{accountNumber}")
+    public ResponseEntity<Optional<Account>> singleAccount(@PathVariable Integer accountNumber){
+        return new ResponseEntity<>(accountService.singleAccount(accountNumber),HttpStatus.OK);
     }
 
 }

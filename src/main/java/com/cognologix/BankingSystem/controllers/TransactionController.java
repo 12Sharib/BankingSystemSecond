@@ -47,8 +47,8 @@ public class TransactionController {
     * find transaction on trasaction id
      */
     @GetMapping("/findByTransactionId/{transactionId}")
-    public ResponseEntity<Optional<Transactions>> findByTransactionId(@PathVariable Integer transactionId){
-        Optional<Transactions> transactions = transactionService.findTransactionOnTransactionId(transactionId);
+    public ResponseEntity<Transactions> findByTransactionId(@PathVariable Integer transactionId){
+        Transactions transactions = transactionService.findTransactionOnTransactionId(transactionId);
         return new ResponseEntity<>(transactions,HttpStatus.OK);
     }
     /*
