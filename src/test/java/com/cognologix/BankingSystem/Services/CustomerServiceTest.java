@@ -4,6 +4,7 @@ import com.cognologix.BankingSystem.Model.Account;
 import com.cognologix.BankingSystem.Model.Customer;
 import com.cognologix.BankingSystem.Repository.AccountRepo;
 import com.cognologix.BankingSystem.Repository.CustomerRepository;
+import com.cognologix.BankingSystem.Response.SuccessResponse;
 import com.cognologix.BankingSystem.Services.ServicesImpl.CustomerServiceImpl;
 import com.cognologix.BankingSystem.convertor.AccountConvertor;
 import com.cognologix.BankingSystem.dto.AccountDTO;
@@ -45,7 +46,7 @@ class CustomerServiceTest {
     private CustomerServiceImpl customerService;
 
     @Test
-    void getAllCustomer() {
+    void allCustomers() {
         List<Customer> customers = new ArrayList<>();
 
         Customer firstCustomer = new Customer(1,21,"Sharib Saifi",
@@ -61,7 +62,7 @@ class CustomerServiceTest {
         customerRepository.saveAll(customers);
 
         Mockito.when(customerRepository.findAll()).thenReturn(customers);
-        Assertions.assertEquals(2,customerService.getAllCustomer().size());
+        Assertions.assertEquals(2,customerService.allCustomer().size());
     }
 
     @Test
@@ -86,9 +87,18 @@ class CustomerServiceTest {
     void updateCustomerDetails() {
         Customer customer = new Customer(1, 21, "Sharib Saifi",
                 "Savings", "SharibSaifi.SS@gmail.com", "8006590554",
-                " ", "OGHPS2812E", "Muradanagar");
+                "3334 3221 5548", "OGHPS2812E", "Muradanagar");
 
-        doThrow(new Throwable("Invalid details"))
-                .when(customerService).updateCustomerDetails(customer,1);
+        when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
+        customer.setCustomerName("Suhail Saifi");
+
+        when(customerRepository.save(customer)).thenReturn(customer);
+        Customer newCustomer = customerService.updateCustomerDetails(customer,1);
+        Assertions.assertEquals("Suhail Saifi",newCustomer.getCustomerName());
+    }
+    @Test
+    void deleteAll(){
+        SuccessResponse response = customerService.deleteAll();
+        Assertions.assertEquals(true,response.getSuccess());
     }
 }

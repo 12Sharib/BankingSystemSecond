@@ -17,6 +17,6 @@ public class InvalidAccountNumber extends RuntimeException {
     }
     @ExceptionHandler(value = InvalidAccountNumber.class)
     public ResponseEntity<ExceptionResponse> invalidAccountNumber(Exception exception) {
-        return new ResponseEntity<ExceptionResponse>(new ExceptionResponse(exception.getMessage(),false), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<ExceptionResponse>(new ExceptionResponse(exception.getMessage(),false), HttpStatus.BAD_REQUEST);
     }
 }

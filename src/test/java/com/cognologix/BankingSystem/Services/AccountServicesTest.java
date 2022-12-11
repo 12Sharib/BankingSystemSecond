@@ -1,11 +1,10 @@
 package com.cognologix.BankingSystem.Services;
 
 import com.cognologix.BankingSystem.Model.Account;
-import com.cognologix.BankingSystem.Model.Transactions;
 import com.cognologix.BankingSystem.Repository.AccountRepo;
 import com.cognologix.BankingSystem.Repository.TransactionsRepository;
+import com.cognologix.BankingSystem.Response.SuccessResponse;
 import com.cognologix.BankingSystem.Services.ServicesImpl.AccountServiceImpl;
-import com.cognologix.BankingSystem.dto.TransactionDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,83 +39,7 @@ class AccountServicesTest {
 
         Assertions.assertEquals(101,accountService.singleAccount(101).get().getAccountNumber());
     }
-    @Test
-    void amountTransfer(){
-        Account firstAccount = new Account();
-        firstAccount.setAccountNumber(1);
-        firstAccount.setAccountInitialBalance(500.0);
 
-        Account secondAccount = new Account();
-        secondAccount.setAccountNumber(2);
-        secondAccount.setAccountInitialBalance(0.0);
-
-        Optional<Account> firstAccountOp = Optional.of(firstAccount);
-        Optional<Account> secondAccountOp = Optional.of(secondAccount);
-
-        Transactions firstTransaction = new Transactions();
-        firstTransaction.setTransactionId(1);
-        firstTransaction.setTransactionMessage("withdraw");
-
-        Transactions secondTransaction = new Transactions();
-        secondTransaction.setTransactionId(1);
-        secondTransaction.setTransactionMessage("deposit");
-
-
-        when(accountRepo.findById(1)).thenReturn(firstAccountOp);
-        when(accountRepo.save(firstAccount)).thenReturn(firstAccount);
-        when(transactionsRepository.save(firstTransaction)).thenReturn(firstTransaction);
-
-        when(accountRepo.findById(2)).thenReturn(secondAccountOp);
-        when(accountRepo.save(secondAccount)).thenReturn(secondAccount);
-        when(transactionsRepository.save(secondTransaction)).thenReturn(secondTransaction);
-
-        TransactionDTO transactionDTO = accountService.transferAmount(1,2,300.0);
-        Assertions.assertEquals("Money Transfer successfully",transactionDTO.getTransactionMessage());
-
-    }
-    @Test
-    void deposit(){
-        //account
-        Account account = new Account();
-        account.setAccountNumber(1);
-        account.setAccountInitialBalance(500.0);
-
-        Optional<Account> prevAccount = Optional.of(account);
-        //transaction in account
-        Transactions transactions = new Transactions(12,1,"03/02/02","12:22",100.0,"withdraw",500.0);
-
-        Double depositedAmount =100.0;
-        when(accountRepo.existsById(account.getAccountNumber())).thenReturn(true);
-        when(accountRepo.findById(account.getAccountNumber())).thenReturn(prevAccount);
-        when(accountRepo.save(prevAccount.get())).thenReturn(prevAccount.get());
-        when(transactionsRepository.save(transactions)).thenReturn(transactions);
-
-        TransactionDTO transactionDTO = accountService.depositAmount(1,depositedAmount);
-        Assertions.assertEquals(100.0,transactionDTO.getTransactionAmount());
-
-    }
-    @Test
-    void withdraw(){
-        //account
-        Account account = new Account();
-        account.setAccountNumber(1);
-        account.setAccountInitialBalance(500.0);
-
-        Optional<Account> prevAccount = Optional.of(account);
-
-        //transaction in account
-        Transactions transactions = new Transactions(12,1,"03/02/02","12:22",100.0,"withdraw",500.0);
-
-        Double withdrawAmount =100.0;
-        when(accountRepo.existsById(account.getAccountNumber())).thenReturn(true);
-        when(accountRepo.findById(account.getAccountNumber())).thenReturn(prevAccount);
-        when(accountRepo.save(prevAccount.get())).thenReturn(prevAccount.get());
-        when(transactionsRepository.save(transactions)).thenReturn(transactions);
-
-        TransactionDTO transactionDTO = accountService.withdrawAmount(1,withdrawAmount);
-        Assertions.assertEquals(100.0,transactionDTO.getTransactionAmount());
-
-    }
     @Test
     void allAccounts() throws Exception{
         Account firstAccount = new Account(2,21,"Sharib Saifi",
@@ -135,7 +58,7 @@ class AccountServicesTest {
 
     }
     @Test
-    void allAccountsInOneId(){
+    void accountsWithSameId(){
         Account firstAccount = new Account(5,21,"Sharib Saifi","Savings",
                 600.0,"Active",null);
 
@@ -149,21 +72,26 @@ class AccountServicesTest {
         when(accountRepo.existsByCustomerId(21)).thenReturn(true);
         when(accountRepo.findAllByCustomerId(21)).thenReturn(accountList);
 
-        Assertions.assertEquals(2,accountService.accountsInSameId(21).size());
+        Assertions.assertEquals(2,accountService.accountsWithSameId(21).size());
     }
 
     @Test
     void deleteAccount() {
         Account account = new Account();
         account.setAccountNumber(101);
+        account.setAccountInitialBalance(0.0);
 
         Optional<Account> prevAccount = Optional.of(account);
-        when(accountRepo.findById(2)).thenReturn(prevAccount);
-        when(accountRepo.existsById(account.getAccountNumber())).thenReturn(true);
+        when(accountRepo.findById(101)).thenReturn(prevAccount);
 
-        Boolean result =  accountService.deleteAccount(account.getAccountNumber());
-        Assertions.assertEquals(true,result);
+        SuccessResponse result =  accountService.deleteAccount(account.getAccountNumber());
+        Assertions.assertEquals(true,result.getSuccess());
 
+    }
+    @Test
+    void deleteAll(){
+        SuccessResponse response = accountService.deleteAll();
+        Assertions.assertEquals(true,response.getSuccess());
     }
     @Test
     void savingsAccounts() {
@@ -174,8 +102,8 @@ class AccountServicesTest {
         List<Account> accountList = new ArrayList<>();
         accountList.add(account);
 
-        when(accountRepo.findAll()).thenReturn(accountList);
-        Assertions.assertEquals(1,accountService.currentAccounts().size());
+        when(accountRepo.findByAccountType("savings")).thenReturn(accountList);
+        Assertions.assertEquals(1,accountService.savingsAccounts().size());
     }
 
     @Test
@@ -187,7 +115,7 @@ class AccountServicesTest {
         List<Account> accountList = new ArrayList<>();
         accountList.add(account);
 
-        when(accountRepo.findAll()).thenReturn(accountList);
+        when(accountRepo.findByAccountType("current")).thenReturn(accountList);
         Assertions.assertEquals(1,accountService.currentAccounts().size());
     }
     @Test
@@ -201,6 +129,36 @@ class AccountServicesTest {
 
         when(accountRepo.findById(101)).thenReturn(Optional.of(account));
         Assertions.assertEquals("Sharib",accountRepo.findById(101).get().getAccountName());
+    }
+    @Test
+    void creditCard(){
+        Account account = new Account();
+        account.setAccountNumber(20);
+        account.setAccountInitialBalance(5000.0);
+        account.setAccountName("Sharib Saifi");
+
+        Optional<Account> prevAccount = Optional.of(account);
+
+        when(accountRepo.existsById(20)).thenReturn(true);
+        when(accountRepo.findById(20)).thenReturn(prevAccount);
+
+        List<String> creditCard = accountService.creditCard(20);
+        Assertions.assertEquals("Credit Card",creditCard.get(4));
+    }
+    @Test
+    void debitCard(){
+        Account account = new Account();
+        account.setAccountNumber(20);
+        account.setAccountInitialBalance(500.0);
+        account.setAccountName("Sharib Saifi");
+
+        Optional<Account> prevAccount = Optional.of(account);
+
+        when(accountRepo.existsById(20)).thenReturn(true);
+        when(accountRepo.findById(20)).thenReturn(prevAccount);
+
+        List<String> debitCard = accountService.debitCard(20);
+        Assertions.assertEquals("Debit Card",debitCard.get(4));
     }
 
 }

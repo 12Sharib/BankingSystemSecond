@@ -16,7 +16,7 @@ public class AmountLessThanZero extends RuntimeException {
     }
     @ExceptionHandler(AmountLessThanZero.class)
     public ResponseEntity<ExceptionResponse> amountLessThanZero(Exception exception){
-        return new ResponseEntity<ExceptionResponse>(new ExceptionResponse(exception.getMessage(),false), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<ExceptionResponse>(new ExceptionResponse(exception.getMessage(),false), HttpStatus.BAD_REQUEST);
     }
 
 }

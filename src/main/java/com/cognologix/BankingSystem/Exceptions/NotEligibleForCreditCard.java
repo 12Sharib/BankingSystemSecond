@@ -16,7 +16,7 @@ public class NotEligibleForCreditCard extends RuntimeException {
     }
     @ExceptionHandler(value = NotEligibleForCreditCard.class)
     public ResponseEntity<ExceptionResponse> notEligibleForCreditCard(Exception exception) {
-        return new ResponseEntity<ExceptionResponse>(new ExceptionResponse(exception.getMessage(),false), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<ExceptionResponse>(new ExceptionResponse(exception.getMessage(),false), HttpStatus.BAD_REQUEST);
 
     }
 }

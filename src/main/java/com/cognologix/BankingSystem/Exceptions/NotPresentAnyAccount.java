@@ -16,7 +16,7 @@ public class NotPresentAnyAccount extends RuntimeException {
     }
     @ExceptionHandler(value = NotPresentAnyAccount.class)
     public ResponseEntity<ExceptionResponse> notPresentAnyAccount(Exception exception) {
-        return new ResponseEntity<ExceptionResponse>(new ExceptionResponse(exception.getMessage(),false), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<ExceptionResponse>(new ExceptionResponse(exception.getMessage(),false), HttpStatus.BAD_REQUEST);
     }
 
 }

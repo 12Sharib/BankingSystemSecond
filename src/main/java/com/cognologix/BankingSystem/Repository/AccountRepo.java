@@ -9,6 +9,7 @@ import java.util.List;
 @Repository
 public interface AccountRepo extends JpaRepository<Account, Integer> {
     public List<Account> findAllByCustomerId(Integer customerId);
-
     public Boolean existsByCustomerId(Integer customerId);
+
+    Iterable<Account> findByAccountType(String type);
 }

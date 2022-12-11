@@ -16,7 +16,7 @@ public class InvalidDocument extends RuntimeException {
     }
     @ExceptionHandler(value = InvalidDocument.class)
     public ResponseEntity<ExceptionResponse> invalidDocument(Exception exception) {
-        return new ResponseEntity<ExceptionResponse>(new ExceptionResponse(exception.getMessage(),false), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<ExceptionResponse>(new ExceptionResponse(exception.getMessage(),false), HttpStatus.BAD_REQUEST);
 
     }
 }

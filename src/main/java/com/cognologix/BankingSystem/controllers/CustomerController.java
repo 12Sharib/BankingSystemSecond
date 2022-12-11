@@ -2,6 +2,7 @@ package com.cognologix.BankingSystem.controllers;
 
 import com.cognologix.BankingSystem.Model.Customer;
 import com.cognologix.BankingSystem.Repository.CustomerRepository;
+import com.cognologix.BankingSystem.Response.SuccessResponse;
 import com.cognologix.BankingSystem.Services.CustomerService;
 import com.cognologix.BankingSystem.dto.AccountDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class CustomerController {
      */
     @GetMapping(value = "/allCustomers")
     public ResponseEntity<List<Customer>> allCustomers(){
-        List<Customer> allCustomer = customerService.getAllCustomer();
+        List<Customer> allCustomer = customerService.allCustomer();
         return new ResponseEntity<>(allCustomer, HttpStatus.OK);
     }
 
@@ -56,7 +57,7 @@ public class CustomerController {
     * delete all customer
      */
     @DeleteMapping("/deleteAll")
-    public ResponseEntity<String> deleteAll(){
+    public ResponseEntity<SuccessResponse> deleteAll(){
         return new ResponseEntity<>(customerService.deleteAll(),HttpStatus.OK);
     }
     @PostMapping("updateCustomer/{accountNumber}")

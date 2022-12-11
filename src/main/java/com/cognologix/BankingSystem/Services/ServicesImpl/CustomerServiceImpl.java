@@ -5,6 +5,7 @@ import com.cognologix.BankingSystem.Model.Account;
 import com.cognologix.BankingSystem.Model.Customer;
 import com.cognologix.BankingSystem.Repository.AccountRepo;
 import com.cognologix.BankingSystem.Repository.CustomerRepository;
+import com.cognologix.BankingSystem.Response.SuccessResponse;
 import com.cognologix.BankingSystem.Services.CustomerService;
 import com.cognologix.BankingSystem.convertor.AccountConvertor;
 import com.cognologix.BankingSystem.dto.AccountDTO;
@@ -33,7 +34,6 @@ public class CustomerServiceImpl implements CustomerService{
         Customer prevCustomer = customerRepository.findBycustomerAadharNumber(newCustomer.getCustomerAadharNumber());
         if (prevCustomer == null) {
             //new account current aur savings
-            //set customer id for account because for one or more account
             account = setCustomerInAccount(newCustomer);
             //set new customer customer id;
             newCustomer.setCustomerId(account.getCustomerId());
@@ -62,13 +62,16 @@ public class CustomerServiceImpl implements CustomerService{
         return AccountConvertor.convertEntityToDTO(account);
     }
 
+    /*
+    * delete all customers
+     */
     @Override
-    public String deleteAll() {
+    public SuccessResponse deleteAll() {
         customerRepository.deleteAll();
-        return "Delete Successfully";
+        return new SuccessResponse("Delete Successfully",true);
     }
 
-    public Account setCustomerInAccount(Customer newCustomer){
+    private Account setCustomerInAccount(Customer newCustomer){
         Random random = new Random();
         Integer customerId = random.nextInt(50);
         account.setAccountNumber(random.nextInt(50));
@@ -79,8 +82,6 @@ public class CustomerServiceImpl implements CustomerService{
         account.setAccountInitialBalance(1000.0);
         return account;
     }
-
-
 
     @Override
     public Customer updateCustomerDetails(Customer updatedDetails,Integer accountNumber){
@@ -96,8 +97,11 @@ public class CustomerServiceImpl implements CustomerService{
             return prevCustomer;
     }
 
+    /*
+    * get all customers
+     */
     @Override
-    public List<Customer> getAllCustomer() {
+    public List<Customer> allCustomer() {
         return customerRepository.findAll();
     }
 

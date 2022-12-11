@@ -1,17 +1,19 @@
 package com.cognologix.BankingSystem.controllers;
 
-import com.cognologix.BankingSystem.Model.Account;
+import com.cognologix.BankingSystem.Exceptions.AmountLessThanZero;
+import com.cognologix.BankingSystem.Exceptions.InvalidAccountNumber;
+import com.cognologix.BankingSystem.Exceptions.MinimumAccountBalance;
 import com.cognologix.BankingSystem.Model.Transactions;
 import com.cognologix.BankingSystem.Repository.AccountRepo;
+import com.cognologix.BankingSystem.Response.SuccessResponse;
 import com.cognologix.BankingSystem.Services.TransactionService;
+import com.cognologix.BankingSystem.dto.TransactionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/transactions")
@@ -24,8 +26,27 @@ public class TransactionController {
     * get all transactions;
     * get how many transactions in one account
      */
+    @PutMapping(value = "/transferAmount/{firstAccountNumber}/{secondAccountNumber}/{amount}")
+    public ResponseEntity<TransactionDTO> transferAmount(@PathVariable Integer firstAccountNumber, @PathVariable Integer secondAccountNumber, @PathVariable Double amount) throws MinimumAccountBalance, InvalidAccountNumber {
+        if(accountRepo.existsById(firstAccountNumber)){
+            if(accountRepo.existsById(secondAccountNumber)){
+                TransactionDTO transfer = transactionService.transferAmount(firstAccountNumber, secondAccountNumber, amount);
+                return new ResponseEntity<>(transfer,HttpStatus.OK);
+            }else throw new InvalidAccountNumber("provide valid second account number");
+        } else throw new InvalidAccountNumber("provide valid first account Number");
 
+    }
+    @PutMapping(value = "/deposit/{accountNumber}/{depositedAmount}")
+    public ResponseEntity<TransactionDTO> depositAmount(@PathVariable Integer accountNumber, @PathVariable Double depositedAmount) throws InvalidAccountNumber, AmountLessThanZero {
+        TransactionDTO Deposit =  transactionService.depositAmount(accountNumber,depositedAmount);
+        return new ResponseEntity<>(Deposit , HttpStatus.OK);
+    }
 
+    @PutMapping("/withdraw/{accountNumber}/{withdrawAmount}")
+    public ResponseEntity<TransactionDTO> withdrawAmount(@PathVariable Integer accountNumber, @PathVariable Double withdrawAmount) throws AmountLessThanZero,InvalidAccountNumber,MinimumAccountBalance{
+        TransactionDTO withdraw =  transactionService.withdrawAmount(accountNumber,withdrawAmount);
+        return new ResponseEntity<>(withdraw , HttpStatus.OK);
+    }
     /*
     * get all transactions
      */
@@ -47,16 +68,16 @@ public class TransactionController {
     * find transaction on trasaction id
      */
     @GetMapping("/findByTransactionId/{transactionId}")
-    public ResponseEntity<Transactions> findByTransactionId(@PathVariable Integer transactionId){
-        Transactions transactions = transactionService.findTransactionOnTransactionId(transactionId);
+    public ResponseEntity<Transactions> transactionId(@PathVariable Integer transactionId){
+        Transactions transactions = transactionService.transactionId(transactionId);
         return new ResponseEntity<>(transactions,HttpStatus.OK);
     }
     /*
     * delete one transaction
      */
     @DeleteMapping("/deleteTransaction/{transactionId}")
-    public ResponseEntity<String> deleteOneTransaction(@PathVariable Integer transactionId){
-        return new ResponseEntity<>(transactionService.deleteOneTransaction(transactionId),HttpStatus.OK);
+    public ResponseEntity<SuccessResponse> deleteTransaction(@PathVariable Integer transactionId){
+        return new ResponseEntity<>(transactionService.deleteTransaction(transactionId),HttpStatus.OK);
     }
     /*
     * get transaction by custom date
@@ -73,7 +94,7 @@ public class TransactionController {
         return new ResponseEntity<>(transactionService.previousFive(accountNumber),HttpStatus.OK);
     }
     @DeleteMapping("/deleteAll")
-    public ResponseEntity<String> deleteAll(){
+    public ResponseEntity<SuccessResponse> deleteAll(){
         return new ResponseEntity<>(transactionService.deleteAll(),HttpStatus.OK);
     }
 
