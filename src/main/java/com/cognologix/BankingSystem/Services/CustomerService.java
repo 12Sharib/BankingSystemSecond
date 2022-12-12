@@ -13,4 +13,6 @@ public interface CustomerService {
     List<Customer> allCustomer();
     AccountDTO createCustomer(Customer customer);
     SuccessResponse deleteAll();
+
+    List<Customer> findById(Integer customerId);
 }

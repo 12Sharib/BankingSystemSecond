@@ -1,8 +1,6 @@
 package com.cognologix.BankingSystem.dto;
 
-import com.cognologix.BankingSystem.Model.Account;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

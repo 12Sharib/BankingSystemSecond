@@ -69,9 +69,9 @@ public class AccountController {
         List<String> creditCard = accountService.creditCard(accountNumber);
         return new ResponseEntity<>(creditCard,HttpStatus.OK);
     }
-    @GetMapping(value = "/accountsInSameId/{customerId}")
-    public ResponseEntity<List<Account>> accountsInSameId(@PathVariable Integer customerId){
-        List<Account> accountList = accountService.accountsWithSameId(customerId);
+    @GetMapping(value = "/accountsWithSameId/{customerId}")
+    public ResponseEntity<List<Account>> sameId(@PathVariable Integer customerId){
+        List<Account> accountList = accountService.sameId(customerId);
         return new ResponseEntity<>(accountList,HttpStatus.OK);
     }
     @DeleteMapping("/deleteAll")

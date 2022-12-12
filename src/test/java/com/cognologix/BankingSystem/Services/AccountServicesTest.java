@@ -72,7 +72,7 @@ class AccountServicesTest {
         when(accountRepo.existsByCustomerId(21)).thenReturn(true);
         when(accountRepo.findAllByCustomerId(21)).thenReturn(accountList);
 
-        Assertions.assertEquals(2,accountService.accountsWithSameId(21).size());
+        Assertions.assertEquals(2,accountService.sameId(21).size());
     }
 
     @Test

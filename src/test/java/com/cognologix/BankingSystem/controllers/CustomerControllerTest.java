@@ -1,8 +1,8 @@
 package com.cognologix.BankingSystem.controllers;
 
 import com.cognologix.BankingSystem.Model.Customer;
-import com.cognologix.BankingSystem.Repository.AccountRepo;
 import com.cognologix.BankingSystem.Repository.CustomerRepository;
+import com.cognologix.BankingSystem.Response.SuccessResponse;
 import com.cognologix.BankingSystem.Services.CustomerService;
 import com.cognologix.BankingSystem.dto.AccountDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,6 +21,8 @@ import java.util.List;
 
 import static org.mockito.Mockito.when;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CustomerController.class)
 class CustomerControllerTest {
@@ -28,11 +30,9 @@ class CustomerControllerTest {
     private ObjectMapper objectMapper;
     @MockBean
     private CustomerRepository customerRepository;
-    @MockBean
-    private AccountRepo accountRepo;
+
     @MockBean
     private CustomerService customerService;
-
     @Autowired
     MockMvc mockMvc;
 
@@ -50,13 +50,14 @@ class CustomerControllerTest {
 
         when(customerService.createCustomer(customer)).thenReturn(accountDTO);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/customer/createCustomer/customer")
+        mockMvc.perform(MockMvcRequestBuilders.post("/customer/createCustomer")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(accountDTO)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.accountNumber",is(accountDTO.getAccountNumber())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.accountName",is(accountDTO.getAccountName())))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
+
     }
 
     @Test
@@ -79,19 +80,59 @@ class CustomerControllerTest {
                 .content(objectMapper.writeValueAsString(customers)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].customerId",is(firstCustomer.getCustomerId())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.size()").value(customers.size()))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(status().isOk())
                 .andReturn();
     }
 
     @Test
-    void findById() {
-    }
+    void findById() throws Exception{
+        Customer customer = new Customer();
+        customer.setCustomerId(1);
+        customer.setCustomerName("Sharib Saifi");
 
-    @Test
-    void deleteAll() {
-    }
+        List<Customer> customers = new ArrayList<>();
+        customers.add(customer);
 
+        when(customerService.findById(customer.getCustomerId())).thenReturn(customers);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/customer/customerById/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(customer)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].customerId",is(customer.getCustomerId())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].customerName",is(customer.getCustomerName())))
+                .andExpect(status().isOk())
+                .andReturn();
+    }
     @Test
-    void updateCustomer() {
+    void deleteAll() throws Exception {
+        SuccessResponse response = new SuccessResponse("Delete Successfully",true);
+        when(customerService.deleteAll()).thenReturn(response);
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/customer/deleteAll")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(response)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message",is(response.getMessage())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success",is(true)))
+                .andExpect(status().isOk())
+                .andReturn();
+    }
+    @Test
+    void updateCustomer() throws Exception{
+        //failed
+        Customer customer = new Customer();
+        customer.setCustomerName("Sharib Saifi");
+        customer.setCustomerId(1);
+
+        Customer updateDetails = new Customer();
+        updateDetails.setCustomerName("Suhail");
+
+        when(customerService.updateCustomerDetails(customer,customer.getCustomerId())).thenReturn(updateDetails);
+
+        mockMvc.perform(post("/customer/updateCustomer/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updateDetails)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.customerName",is(updateDetails.getCustomerName())))
+                .andExpect(status().isOk())
+                .andReturn();
     }
 }

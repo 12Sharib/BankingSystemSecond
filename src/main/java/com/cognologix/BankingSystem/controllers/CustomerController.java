@@ -50,7 +50,7 @@ public class CustomerController {
      */
     @GetMapping(value = "/customerById/{customerId}")
     public ResponseEntity<List<Customer>> findById(@PathVariable Integer customerId){
-        List<Customer> sameIdCustomers = customerRepository.findByCustomerId(customerId);
+        List<Customer> sameIdCustomers =    customerService.findById(customerId);
         return new ResponseEntity<>(sameIdCustomers,HttpStatus.OK);
     }
     /*

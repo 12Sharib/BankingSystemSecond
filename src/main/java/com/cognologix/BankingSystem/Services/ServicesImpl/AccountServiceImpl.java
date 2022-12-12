@@ -129,7 +129,7 @@ public class AccountServiceImpl implements AccountService {
     * check how many accounts with same id;
     */
     @Override
-    public List<Account> accountsWithSameId(Integer customerId) {
+    public List<Account> sameId(Integer customerId) {
         if (accountRepo.existsByCustomerId(customerId)){
             return accountRepo.findAllByCustomerId(customerId);
         }else throw new InvalidAccountNumber("Invalid Customer Id");

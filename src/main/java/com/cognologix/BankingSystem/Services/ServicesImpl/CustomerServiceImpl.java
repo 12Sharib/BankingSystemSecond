@@ -1,5 +1,6 @@
 package com.cognologix.BankingSystem.Services.ServicesImpl;
 
+import com.cognologix.BankingSystem.Exceptions.InvalidAccountNumber;
 import com.cognologix.BankingSystem.Exceptions.InvalidDocument;
 import com.cognologix.BankingSystem.Model.Account;
 import com.cognologix.BankingSystem.Model.Customer;
@@ -69,6 +70,14 @@ public class CustomerServiceImpl implements CustomerService{
     public SuccessResponse deleteAll() {
         customerRepository.deleteAll();
         return new SuccessResponse("Delete Successfully",true);
+    }
+
+    @Override
+    public List<Customer> findById(Integer customerId) {
+        if(accountRepo.existsByCustomerId(customerId)){
+            List<Customer> customers = customerRepository.findByCustomerId(customerId);
+            return customers;
+        }else throw new InvalidAccountNumber("Invalid Customer Id");
     }
 
     private Account setCustomerInAccount(Customer newCustomer){

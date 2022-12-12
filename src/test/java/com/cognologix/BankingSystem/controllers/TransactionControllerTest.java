@@ -76,28 +76,29 @@ class TransactionControllerTest {
     }
     @Test
     void transferAmount() throws Exception{
-        //failed
         Account firstAccount = new Account();
         firstAccount.setAccountInitialBalance(500.0);
-        firstAccount.setAccountNumber(15);
+        firstAccount.setAccountNumber(1);
 
         Account secondAccount = new Account();
         secondAccount.setAccountInitialBalance(300.0);
-        secondAccount.setAccountNumber(6);
+        secondAccount.setAccountNumber(2);
 
         TransactionDTO transactionDTO = new TransactionDTO();
         transactionDTO.setTransactionId(3);
         transactionDTO.setTransactionAmount(100.0);
         transactionDTO.setTransactionMessage("Money Transfer Successfully");
 
+        when(accountRepo.existsById(firstAccount.getAccountNumber())).thenReturn(true);
+        when(accountRepo.existsById(secondAccount.getAccountNumber())).thenReturn(true);
         when(transactionService.transferAmount(firstAccount.getAccountNumber(), secondAccount.getAccountNumber(), 100.0)).thenReturn(transactionDTO);
 
         mockMvc.perform(MockMvcRequestBuilders.put("/transactions/transferAmount/1/2/100")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(transactionDTO)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.transactionId",is(transactionDTO.getTransactionId())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.transactionAmount",is(100.0)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.transacionMessage",is("Money Transfer Successfully")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.transactionAmount",is(transactionDTO.getTransactionAmount())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.transactionMessage",is(transactionDTO.getTransactionMessage())))
                 .andExpect(status().isOk())
                 .andReturn();
     }
@@ -144,8 +145,6 @@ class TransactionControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].accountNumber",is(firstTransactions.getAccountNumber())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.size()").value(transactionsList.size()))
                 .andExpect(MockMvcResultMatchers.status().isOk());
-
-
     }
 
     @Test
@@ -185,14 +184,14 @@ class TransactionControllerTest {
         //failed
         Transactions transactions = new Transactions();
         transactions.setTransactionId(1);
-        transactions.setTransactionDate("02/02/02");
+        transactions.setTransactionDate("02-02-2022");
 
         List<Transactions> transactionsList = new ArrayList<>();
         transactionsList.add(transactions);
 
         when(transactionService.byDate(transactions.getTransactionDate())).thenReturn(transactionsList);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/transactions/byDate/02/02/02")
+        mockMvc.perform(MockMvcRequestBuilders.get("/transactions/byDate/02-02-2022")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(transactionsList)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].transactionId",is(1)))
