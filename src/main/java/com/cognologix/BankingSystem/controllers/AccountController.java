@@ -8,6 +8,7 @@ import com.cognologix.BankingSystem.Model.Account;
 import com.cognologix.BankingSystem.Response.SuccessResponse;
 import com.cognologix.BankingSystem.Services.AccountService;
 import com.cognologix.BankingSystem.Repository.AccountRepo;
+import com.cognologix.BankingSystem.dto.AccountDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,8 +36,7 @@ public class AccountController {
       List<Account> all =  accountService.allAccount();
       if (all.isEmpty()) {
           return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-      }
-      else return new ResponseEntity<>(all, HttpStatus.FOUND);
+      }else return new ResponseEntity<>(all, HttpStatus.OK);
     }
     /*
     * Delete Account
@@ -88,8 +88,8 @@ public class AccountController {
     * Both Current and Savings Account
      */
     @GetMapping(value = "/accountsWithSameId/{customerId}")
-    public ResponseEntity<List<Account>> sameId(@PathVariable Integer customerId) throws InvalidCustomerId {
-        List<Account> accountList = accountService.sameId(customerId);
+    public ResponseEntity<List<AccountDTO>> sameId(@PathVariable Integer customerId) throws InvalidCustomerId {
+        List<AccountDTO> accountList = accountService.sameId(customerId);
         if (accountList.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }else return new ResponseEntity<>(accountList,HttpStatus.FOUND);
@@ -105,8 +105,8 @@ public class AccountController {
     * single Account
      */
     @GetMapping("/singleAccount/{accountNumber}")
-    public ResponseEntity<Optional<Account>> singleAccount(@PathVariable Integer accountNumber) throws InvalidAccountNumber{
-        return new ResponseEntity<>(accountService.singleAccount(accountNumber),HttpStatus.CREATED);
+    public ResponseEntity<AccountDTO> singleAccount(@PathVariable Integer accountNumber) throws InvalidAccountNumber{
+        return new ResponseEntity<>(accountService.singleAccount(accountNumber),HttpStatus.FOUND);
     }
 
 }

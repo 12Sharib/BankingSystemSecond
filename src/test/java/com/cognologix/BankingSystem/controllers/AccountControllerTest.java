@@ -4,6 +4,7 @@ import com.cognologix.BankingSystem.Model.Account;
 import com.cognologix.BankingSystem.Repository.AccountRepo;
 import com.cognologix.BankingSystem.Response.SuccessResponse;
 import com.cognologix.BankingSystem.Services.AccountService;
+import com.cognologix.BankingSystem.dto.AccountDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,12 +43,11 @@ class AccountControllerTest {
         account.setAccountNumber(1);
         account.setAccountInitialBalance(300.0);
 
-        List<Account> accountList = new ArrayList<>();
-        accountList.add(account);
+        List<Account> accountList = List.of(account);
 
         when(accountService.allAccount()).thenReturn(accountList);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/account/allAccounts")
+        mockMvc.perform(MockMvcRequestBuilders.get("/account/accounts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(accountList)))
                 .andExpect(status().isOk())
@@ -79,14 +79,13 @@ class AccountControllerTest {
         account.setAccountNumber(1);
         account.setAccountType("Savings");
 
-        List<Account> accountList = new ArrayList<>();
-        accountList.add(account);
+        List<Account> accountList = List.of(account);
 
         when(accountService.savingsAccounts()).thenReturn(accountList);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/account/savings")
                         .content(objectMapper.writeValueAsString(accountList)))
-                .andExpect(status().isOk())
+                .andExpect(status().isFound())
                 .andExpect(jsonPath("$[0].accountType",is("Savings")))
                 .andExpect(jsonPath("$.size()").value(accountList.size()))
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
@@ -99,14 +98,13 @@ class AccountControllerTest {
         account.setAccountNumber(1);
         account.setAccountType("current");
 
-        List<Account> accountList = new ArrayList<>();
-        accountList.add(account);
+        List<Account> accountList = List.of(account);
 
         when(accountService.currentAccounts()).thenReturn(accountList);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/account/current")
                         .content(objectMapper.writeValueAsString(accountList)))
-                .andExpect(status().isOk())
+                .andExpect(status().isFound())
                 .andExpect(jsonPath("$[0].accountType",is("current")))
                 .andExpect(jsonPath("$.size()").value(accountList.size()))
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
@@ -131,7 +129,7 @@ class AccountControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/account/debitCard/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(debitCard)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0]",is("Name: " + account.getAccountName())))
                 .andExpect(jsonPath("$[4]",is("Debit Card")))
@@ -157,7 +155,7 @@ class AccountControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/account/creditCard/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(creditCard)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0]",is("Name: " + account.getAccountName())))
                 .andExpect(jsonPath("$[4]",is("Credit Card")))
@@ -166,23 +164,21 @@ class AccountControllerTest {
 
     @Test
     void accountWithSameId() throws Exception {
-        Account firstAccount = new Account();
+        AccountDTO firstAccount = new AccountDTO();
         firstAccount.setAccountNumber(1);
         firstAccount.setCustomerId(12);
 
-        Account secondAccount = new Account();
+        AccountDTO secondAccount = new AccountDTO();
         secondAccount.setCustomerId(12);
 
-        List<Account> accountList = new ArrayList<>();
-        accountList.add(firstAccount);
-        accountList.add(secondAccount);
+        List<AccountDTO> accountList = List.of(firstAccount,secondAccount);
 
         when(accountService.sameId(firstAccount.getCustomerId())).thenReturn(accountList);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/account/accountsWithSameId/12")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(accountList)))
-                .andExpect(status().isOk())
+                .andExpect(status().isFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].customerId",is(firstAccount.getCustomerId())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].customerId",is(secondAccount.getCustomerId())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.size()").value(accountList.size()))
@@ -204,17 +200,16 @@ class AccountControllerTest {
     }
     @Test
     void singleAccount() throws Exception {
-        Account account = new Account();
+        AccountDTO account = new AccountDTO();
         account.setAccountNumber(1);
         account.setAccountName("Sharib Saifi");
 
-        Optional<Account> prevAccount = Optional.of(account);
-        when(accountService.singleAccount(1)).thenReturn(prevAccount);
+        when(accountService.singleAccount(account.getAccountNumber())).thenReturn(account);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/account/singleAccount/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(prevAccount)))
-                .andExpect(status().isOk())
+                        .content(objectMapper.writeValueAsString(account)))
+                .andExpect(status().isFound())
                 .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
                 .andExpect(jsonPath("$.accountNumber",is(account.getAccountNumber())))
                 .andReturn();

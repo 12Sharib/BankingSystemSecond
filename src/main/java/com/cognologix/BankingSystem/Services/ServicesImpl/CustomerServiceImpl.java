@@ -9,10 +9,13 @@ import com.cognologix.BankingSystem.Repository.CustomerRepository;
 import com.cognologix.BankingSystem.Response.SuccessResponse;
 import com.cognologix.BankingSystem.Services.CustomerService;
 import com.cognologix.BankingSystem.convertor.AccountConvertor;
+import com.cognologix.BankingSystem.convertor.CustomerConvertor;
 import com.cognologix.BankingSystem.dto.AccountDTO;
+import com.cognologix.BankingSystem.dto.CustomerDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -73,10 +76,13 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public List<Customer> customer(Integer customerId) throws InvalidAccountNumber {
+    public List<CustomerDTO> customer(Integer customerId) throws InvalidAccountNumber {
         if(accountRepo.existsByCustomerId(customerId)){
-            List<Customer> customers = customerRepository.findByCustomerId(customerId);
-            return customers;
+            List<CustomerDTO> customerDTO = new ArrayList<>();
+            customerRepository.findByCustomerId(customerId).forEach(customer -> {
+                customerDTO.add(CustomerConvertor.entityToDto(customer));
+            });
+            return customerDTO;
         }else throw new InvalidAccountNumber("Invalid Customer Id");
     }
 
@@ -110,8 +116,12 @@ public class CustomerServiceImpl implements CustomerService{
     * get all customers
      */
     @Override
-    public List<Customer> allCustomer() {
-        return customerRepository.findAll();
+    public List<CustomerDTO> allCustomer() {
+        List<CustomerDTO> customerDTOS = new ArrayList<>();
+        customerRepository.findAll().forEach(
+                customer -> customerDTOS.add(CustomerConvertor.entityToDto(customer))
+        );
+        return customerDTOS;
     }
 
 

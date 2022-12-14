@@ -94,9 +94,4 @@ public class TransactionController {
     public ResponseEntity<List<Transactions>> previousFive(@PathVariable Integer accountNumber) throws InvalidAccountNumber{
         return new ResponseEntity<>(transactionService.previousFive(accountNumber),HttpStatus.OK);
     }
-    @DeleteMapping("/deleteAll")
-    public ResponseEntity<SuccessResponse> deleteAll(){
-        return new ResponseEntity<>(transactionService.deleteAll(),HttpStatus.OK);
-    }
-
 }

@@ -5,6 +5,7 @@ import com.cognologix.BankingSystem.Repository.CustomerRepository;
 import com.cognologix.BankingSystem.Response.SuccessResponse;
 import com.cognologix.BankingSystem.Services.CustomerService;
 import com.cognologix.BankingSystem.dto.AccountDTO;
+import com.cognologix.BankingSystem.dto.CustomerDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,14 +62,14 @@ class CustomerControllerTest {
 
     @Test
     void allCustomers() throws Exception {
-        Customer firstCustomer = new Customer();
+        CustomerDTO firstCustomer = new CustomerDTO();
         firstCustomer.setCustomerName("Sharib Saifi");
         firstCustomer.setCustomerId(101);
 
-        Customer secondCustomer = new Customer();
+        CustomerDTO secondCustomer = new CustomerDTO();
         secondCustomer.setCustomerId(102);
 
-        List<Customer> customers = new ArrayList<>();
+        List<CustomerDTO> customers = new ArrayList<>();
         customers.add(firstCustomer);
         customers.add(secondCustomer);
 
@@ -79,17 +80,17 @@ class CustomerControllerTest {
                 .content(objectMapper.writeValueAsString(customers)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].customerId",is(firstCustomer.getCustomerId())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.size()").value(customers.size()))
-                .andExpect(status().isOk())
+                .andExpect(status().isFound())
                 .andReturn();
     }
 
     @Test
     void customer() throws Exception{
-        Customer customer = new Customer();
+        CustomerDTO customer = new CustomerDTO();
         customer.setCustomerId(1);
         customer.setCustomerName("Sharib Saifi");
 
-        List<Customer> customers = new ArrayList<>();
+        List<CustomerDTO> customers = new ArrayList<>();
         customers.add(customer);
 
         when(customerService.customer(customer.getCustomerId())).thenReturn(customers);
@@ -99,7 +100,7 @@ class CustomerControllerTest {
                 .content(objectMapper.writeValueAsString(customer)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].customerId",is(customer.getCustomerId())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].customerName",is(customer.getCustomerName())))
-                .andExpect(status().isOk())
+                .andExpect(status().isFound())
                 .andReturn();
     }
     @Test
@@ -131,7 +132,7 @@ class CustomerControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateDetails)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.customerName",is(updateDetails.getCustomerName())))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn();
     }
 }

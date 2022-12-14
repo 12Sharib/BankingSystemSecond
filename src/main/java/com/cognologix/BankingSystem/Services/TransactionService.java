@@ -25,7 +25,6 @@ public interface TransactionService {
 
     List previousFive(Integer accountNumber) throws InvalidAccountNumber;
 
-    SuccessResponse deleteAll();
     TransactionDTO withdrawAmount(Integer accountNumber, Double withdrawAmount) throws InvalidAccountNumber, InsufficientBalance, InvalidAmount;
 
     TransactionDTO depositAmount(Integer accountNumber, Double depositedAmount) throws InvalidAccountNumber, InvalidAmount;

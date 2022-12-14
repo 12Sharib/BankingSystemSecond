@@ -8,6 +8,7 @@ import com.cognologix.BankingSystem.Repository.CustomerRepository;
 import com.cognologix.BankingSystem.Response.SuccessResponse;
 import com.cognologix.BankingSystem.Services.CustomerService;
 import com.cognologix.BankingSystem.dto.AccountDTO;
+import com.cognologix.BankingSystem.dto.CustomerDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,19 +44,18 @@ public class CustomerController {
     * get all customers
      */
     @GetMapping(value = "/allCustomers")
-    public ResponseEntity<List<Customer>> allCustomers(){
-        List<Customer> allCustomer = customerService.allCustomer();
+    public ResponseEntity<List<CustomerDTO>> allCustomers(){
+        List<CustomerDTO> allCustomer = customerService.allCustomer();
         if (allCustomer.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }else return new ResponseEntity<>(allCustomer, HttpStatus.FOUND);
     }
-
     /*
     * get customer with customerId in the database with account
      */
     @GetMapping(value = "/customerById/{customerId}")
-    public ResponseEntity<List<Customer>> customer(@PathVariable Integer customerId) throws InvalidCustomerId {
-        List<Customer> sameIdCustomers =    customerService.customer(customerId);
+    public ResponseEntity<List<CustomerDTO>> customer(@PathVariable Integer customerId) throws InvalidCustomerId {
+        List<CustomerDTO> sameIdCustomers = customerService.customer(customerId);
         if (sameIdCustomers.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }else return new ResponseEntity<>(sameIdCustomers,HttpStatus.FOUND);

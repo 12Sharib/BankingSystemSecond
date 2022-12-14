@@ -2,7 +2,6 @@ package com.cognologix.BankingSystem.Services;
 
 import com.cognologix.BankingSystem.Exceptions.AccountsNotExist;
 import com.cognologix.BankingSystem.Exceptions.InvalidAccountNumber;
-import com.cognologix.BankingSystem.Exceptions.InvalidAmount;
 import com.cognologix.BankingSystem.Exceptions.InvalidCustomerId;
 import com.cognologix.BankingSystem.Exceptions.NotEligibleForCreditCard;
 import com.cognologix.BankingSystem.Model.Account;
@@ -10,6 +9,7 @@ import com.cognologix.BankingSystem.Repository.AccountRepo;
 import com.cognologix.BankingSystem.Repository.TransactionsRepository;
 import com.cognologix.BankingSystem.Response.SuccessResponse;
 import com.cognologix.BankingSystem.Services.ServicesImpl.AccountServiceImpl;
+import com.cognologix.BankingSystem.dto.AccountDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,7 +41,9 @@ class AccountServicesTest {
                     .thenThrow(new InvalidAccountNumber("Invalid Account Number"));
             when(accountRepo.findById(101)).thenReturn(Optional.of(account));
 
-            Assertions.assertEquals(101, accountService.singleAccount(101).get().getAccountNumber());
+        AccountDTO accountDTO = accountService.singleAccount(101);
+
+            Assertions.assertEquals(101, accountDTO.getAccountNumber());
     }
     @Test
     void allAccounts() throws Exception{

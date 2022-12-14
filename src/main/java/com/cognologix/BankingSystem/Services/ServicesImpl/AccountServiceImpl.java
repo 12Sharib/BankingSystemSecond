@@ -134,9 +134,15 @@ public class AccountServiceImpl implements AccountService {
     * check how many accounts with same id;
     */
     @Override
-    public List<Account> sameId(Integer customerId) {
+    public List<AccountDTO> sameId(Integer customerId) {
+        List<AccountDTO> accountDTO = new ArrayList<>();
         if (accountRepo.existsByCustomerId(customerId)){
-            return accountRepo.findAllByCustomerId(customerId);
+            accountRepo.findAllByCustomerId(customerId).forEach(
+                    account -> {
+                        accountDTO.add(AccountConvertor.convertEntityToDTO(account));
+                    }
+            );
+            return accountDTO;
         }else throw new InvalidCustomerId("Invalid Customer Id");
     }
     /*
@@ -151,9 +157,11 @@ public class AccountServiceImpl implements AccountService {
     * account by account number
      */
     @Override
-    public Optional<Account> singleAccount(Integer accountNumber) {
+    public AccountDTO singleAccount(Integer accountNumber) {
+        AccountDTO accountDTO = new AccountDTO();
         if (accountRepo.existsById(accountNumber)){
-            return accountRepo.findById(accountNumber);
+            return AccountConvertor.convertEntityToDTO(accountRepo.findById(accountNumber).get());
+
         }else {
             throw new InvalidAccountNumber("Invalid Account Number");
         }

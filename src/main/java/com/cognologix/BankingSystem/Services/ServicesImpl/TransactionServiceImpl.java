@@ -201,9 +201,4 @@ public class TransactionServiceImpl implements TransactionService {
         return previousFive;
     }
 
-    @Override
-    public SuccessResponse deleteAll() {
-        transactionsRepository.deleteAll();
-        return new SuccessResponse("Delete successfully",true);
-    }
 }

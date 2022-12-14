@@ -23,8 +23,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.mockito.Mockito.when;
 
@@ -121,7 +119,6 @@ class TransactionServiceTest {
     void withdraw() throws InsufficientBalance,InvalidAmount,InvalidAccountNumber{
         //account
         try {
-
             Account account = new Account();
             account.setAccountNumber(1);
             account.setAccountInitialBalance(500.0);

@@ -5,6 +5,7 @@ import com.cognologix.BankingSystem.Exceptions.NotEligibleForCreditCard;
 import com.cognologix.BankingSystem.Exceptions.AccountsNotExist;
 import com.cognologix.BankingSystem.Model.Account;
 import com.cognologix.BankingSystem.Response.SuccessResponse;
+import com.cognologix.BankingSystem.dto.AccountDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,8 +19,8 @@ public interface AccountService {
     List currentAccounts() throws AccountsNotExist;
     List<String> debitCard(Integer accountNumber) throws InvalidAccountNumber;
     List<String> creditCard(Integer accountNumber) throws NotEligibleForCreditCard;
-    List<Account> sameId(Integer customerId);
+    List<AccountDTO> sameId(Integer customerId);
     SuccessResponse deleteAll();
-    Optional<Account> singleAccount(Integer accountNumber) throws InvalidAccountNumber;
+    AccountDTO singleAccount(Integer accountNumber) throws InvalidAccountNumber;
 }
 

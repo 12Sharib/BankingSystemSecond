@@ -51,7 +51,7 @@ class TransactionControllerTest {
                  .content(objectMapper.writeValueAsString(transactionDTO)))
                  .andExpect(MockMvcResultMatchers.jsonPath("$.transactionId",is(transactionDTO.getTransactionId())))
                  .andExpect(MockMvcResultMatchers.jsonPath("$.transactionAmount",is(transactionDTO.getTransactionAmount())))
-                 .andExpect(status().isOk())
+                 .andExpect(status().isCreated())
                  .andReturn();
     }
     @Test
@@ -71,7 +71,7 @@ class TransactionControllerTest {
                         .content(objectMapper.writeValueAsString(transactionDTO)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.transactionId",is(transactionDTO.getTransactionId())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.transactionAmount",is(transactionDTO.getTransactionAmount())))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn();
     }
     @Test
@@ -99,7 +99,7 @@ class TransactionControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.transactionId",is(transactionDTO.getTransactionId())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.transactionAmount",is(transactionDTO.getTransactionAmount())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.transactionMessage",is(transactionDTO.getTransactionMessage())))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn();
     }
 
@@ -199,17 +199,4 @@ class TransactionControllerTest {
                 .andReturn();
     }
 
-    @Test
-    void deleteAll() throws Exception{
-        SuccessResponse response = new SuccessResponse("Delete Successfully",true);
-        when(transactionService.deleteAll()).thenReturn(response);
-
-        mockMvc.perform(MockMvcRequestBuilders.delete("/transactions/deleteAll")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(response)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message",is(response.getMessage())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.success",is(response.getSuccess())))
-                .andExpect(status().isOk())
-                .andReturn();
-    }
 }

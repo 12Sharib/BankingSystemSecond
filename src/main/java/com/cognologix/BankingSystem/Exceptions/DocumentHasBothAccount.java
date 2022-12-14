@@ -13,6 +13,6 @@ import javax.persistence.PersistenceException;
 public class DocumentHasBothAccount extends PersistenceException {
     @ExceptionHandler(IncorrectResultSizeDataAccessException.class)
     public ResponseEntity<ExceptionResponse> moreThanTwoAccountInOneDocument(Exception exception){
-       return new ResponseEntity<ExceptionResponse>(new ExceptionResponse(exception.getMessage(),false), HttpStatus.BAD_REQUEST);
+       return new ResponseEntity<ExceptionResponse>(new ExceptionResponse("Invalid Document, Document has both Current And Saving Account",false), HttpStatus.BAD_REQUEST);
     }
 }
