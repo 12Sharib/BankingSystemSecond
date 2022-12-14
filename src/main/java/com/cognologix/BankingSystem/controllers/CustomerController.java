@@ -37,7 +37,7 @@ public class CustomerController {
     @PostMapping("/createCustomer")
     public ResponseEntity<AccountDTO> createCustomer(@RequestBody Customer customer) throws InvalidDocument {
         AccountDTO account = customerService.createCustomer(customer);
-        return new ResponseEntity<>(account,HttpStatus.OK);
+        return new ResponseEntity<>(account,HttpStatus.CREATED);
     }
     /*
     * get all customers
@@ -45,7 +45,9 @@ public class CustomerController {
     @GetMapping(value = "/allCustomers")
     public ResponseEntity<List<Customer>> allCustomers(){
         List<Customer> allCustomer = customerService.allCustomer();
-        return new ResponseEntity<>(allCustomer, HttpStatus.OK);
+        if (allCustomer.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }else return new ResponseEntity<>(allCustomer, HttpStatus.FOUND);
     }
 
     /*
@@ -54,7 +56,9 @@ public class CustomerController {
     @GetMapping(value = "/customerById/{customerId}")
     public ResponseEntity<List<Customer>> customer(@PathVariable Integer customerId) throws InvalidCustomerId {
         List<Customer> sameIdCustomers =    customerService.customer(customerId);
-        return new ResponseEntity<>(sameIdCustomers,HttpStatus.OK);
+        if (sameIdCustomers.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }else return new ResponseEntity<>(sameIdCustomers,HttpStatus.FOUND);
     }
     /*
     * delete all customer
@@ -65,6 +69,6 @@ public class CustomerController {
     }
     @PostMapping("updateCustomer/{accountNumber}")
     public ResponseEntity<Customer> updateCustomer(@RequestBody Customer updatedCustomer,@PathVariable Integer accountNumber) throws InvalidAccountNumber {
-        return new ResponseEntity<>(customerService.updateCustomerDetails(updatedCustomer,accountNumber),HttpStatus.OK);
+        return new ResponseEntity<>(customerService.updateCustomerDetails(updatedCustomer,accountNumber),HttpStatus.CREATED);
     }
 }

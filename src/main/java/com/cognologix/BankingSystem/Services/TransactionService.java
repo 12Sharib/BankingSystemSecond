@@ -14,7 +14,6 @@ import java.util.List;
 @Service
 public interface TransactionService {
 
-    List<Transactions> all();
 
     List<Transactions> oneAccountTransactions(Integer accountNumber) throws InvalidAccountNumber;
 

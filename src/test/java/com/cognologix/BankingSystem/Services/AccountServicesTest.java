@@ -90,6 +90,8 @@ class AccountServicesTest {
         account.setAccountInitialBalance(0.0);
 
         Optional<Account> prevAccount = Optional.of(account);
+        when(accountRepo.existsById(account.getAccountNumber())).thenReturn(true)
+                .thenThrow(new InvalidAccountNumber("Invalid Account Number for Delete"));
         when(accountRepo.findById(101)).thenReturn(prevAccount)
                 .thenThrow(new InvalidAccountNumber("Invalid Account Number for Delete Account"));
 

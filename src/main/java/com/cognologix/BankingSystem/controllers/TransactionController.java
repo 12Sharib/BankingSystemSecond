@@ -35,7 +35,7 @@ public class TransactionController {
         if(accountRepo.existsById(firstAccountNumber)){
             if(accountRepo.existsById(secondAccountNumber)){
                 TransactionDTO transfer = transactionService.transferAmount(firstAccountNumber, secondAccountNumber, amount);
-                return new ResponseEntity<>(transfer,HttpStatus.OK);
+                return new ResponseEntity<>(transfer,HttpStatus.CREATED);
             }else throw new InvalidAccountNumber("provide valid second account number");
         } else throw new InvalidAccountNumber("provide valid first account Number");
 
@@ -46,7 +46,7 @@ public class TransactionController {
     @PutMapping(value = "/deposit/{accountNumber}/{depositedAmount}")
     public ResponseEntity<TransactionDTO> depositAmount(@PathVariable Integer accountNumber, @PathVariable Double depositedAmount) throws InvalidAccountNumber, InsufficientBalance {
         TransactionDTO Deposit =  transactionService.depositAmount(accountNumber,depositedAmount);
-        return new ResponseEntity<>(Deposit , HttpStatus.OK);
+        return new ResponseEntity<>(Deposit , HttpStatus.CREATED);
     }
     /*
     withdraw
@@ -54,15 +54,7 @@ public class TransactionController {
     @PutMapping("/withdraw/{accountNumber}/{withdrawAmount}")
     public ResponseEntity<TransactionDTO> withdrawAmount(@PathVariable Integer accountNumber, @PathVariable Double withdrawAmount) throws InsufficientBalance,InvalidAccountNumber {
         TransactionDTO withdraw =  transactionService.withdrawAmount(accountNumber,withdrawAmount);
-        return new ResponseEntity<>(withdraw , HttpStatus.OK);
-    }
-    /*
-    * get all transactions
-     */
-    @GetMapping("/allTransaction")
-    public ResponseEntity<List<Transactions>> all(){
-        List<Transactions> transactions = transactionService.all();
-        return new ResponseEntity<>(transactions,HttpStatus.OK);
+        return new ResponseEntity<>(withdraw , HttpStatus.CREATED);
     }
 
     /*

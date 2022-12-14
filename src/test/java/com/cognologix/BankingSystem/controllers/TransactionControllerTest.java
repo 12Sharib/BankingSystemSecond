@@ -102,26 +102,7 @@ class TransactionControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
     }
-    @Test
-    void all() throws Exception {
-        Transactions firstTransactions = new Transactions();
-        firstTransactions.setTransactionId(1);
 
-        Transactions secondTransactions = new Transactions();
-        secondTransactions.setTransactionId(2);
-
-        List<Transactions> transactionsList = new ArrayList<>();
-        transactionsList.add(firstTransactions);
-        transactionsList.add(secondTransactions);
-
-        when(transactionService.all()).thenReturn(transactionsList);
-        mockMvc.perform(MockMvcRequestBuilders.get("/transactions/allTransaction")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(transactionsList)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].transactionId",is(firstTransactions.getTransactionId())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].transactionId",is(secondTransactions.getTransactionId())))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-    }
 
     @Test
     void oneAccountTransactions() throws Exception {

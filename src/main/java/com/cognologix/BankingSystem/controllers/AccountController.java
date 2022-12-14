@@ -30,17 +30,23 @@ public class AccountController {
   /*
   * all Accounts
    */
-    @GetMapping("/allAccounts")
+    @GetMapping("/accounts")
     public ResponseEntity<List<Account>> all(){
       List<Account> all =  accountService.allAccount();
-      return new ResponseEntity<>(all, HttpStatus.OK);
+      if (all.isEmpty()) {
+          return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+      }
+      else return new ResponseEntity<>(all, HttpStatus.FOUND);
     }
     /*
     * Delete Account
      */
     @DeleteMapping(value = "/delete/{accountNumber}")
     public ResponseEntity<SuccessResponse> deleteAccount(@PathVariable Integer accountNumber) throws InvalidAccountNumber {
-        return new ResponseEntity<>(accountService.deleteAccount(accountNumber),HttpStatus.OK);
+        SuccessResponse response = accountService.deleteAccount(accountNumber);
+        if (response.getSuccess().equals(false)){
+            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+        }else return new ResponseEntity<>(response,HttpStatus.OK);
     }
     /*
     * Savings Account
@@ -48,7 +54,9 @@ public class AccountController {
     @GetMapping(value = "/savings")
     public ResponseEntity<List<Account>> savingAccounts() throws AccountsNotExist {
         List<Account> savingsAccounts = accountService.savingsAccounts();
-        return new ResponseEntity<>(savingsAccounts,HttpStatus.OK);
+        if (savingsAccounts.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }else return new ResponseEntity<>(savingsAccounts,HttpStatus.FOUND);
     }
     /*
     * Current Accounts
@@ -56,7 +64,9 @@ public class AccountController {
     @GetMapping(value = "/current")
     public ResponseEntity<List<Account>> currentAccounts() throws AccountsNotExist {
         List<Account> currentAccount = accountService.currentAccounts();
-        return new ResponseEntity<>(currentAccount,HttpStatus.OK);
+        if (currentAccount.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }else return new ResponseEntity<>(currentAccount,HttpStatus.FOUND);
     }
     /*
     * Debit Card
@@ -64,7 +74,7 @@ public class AccountController {
     @GetMapping(value = "/debitCard/{accountNumber}")
     public ResponseEntity<List<String>> debitCard(@PathVariable Integer accountNumber) throws InvalidAccountNumber{
         List<String> debitCard = accountService.debitCard(accountNumber);
-        return new ResponseEntity<>(debitCard,HttpStatus.OK);
+        return new ResponseEntity<>(debitCard,HttpStatus.CREATED);
     }
     /*
     * Credit Card
@@ -72,7 +82,7 @@ public class AccountController {
     @GetMapping(value = "/creditCard/{accountNumber}")
     public ResponseEntity<List<String>> creditCard(@PathVariable Integer accountNumber) throws NotEligibleForCreditCard {
         List<String> creditCard = accountService.creditCard(accountNumber);
-        return new ResponseEntity<>(creditCard,HttpStatus.OK);
+        return new ResponseEntity<>(creditCard,HttpStatus.CREATED);
     }
     /*
     * Both Current and Savings Account
@@ -80,7 +90,9 @@ public class AccountController {
     @GetMapping(value = "/accountsWithSameId/{customerId}")
     public ResponseEntity<List<Account>> sameId(@PathVariable Integer customerId) throws InvalidCustomerId {
         List<Account> accountList = accountService.sameId(customerId);
-        return new ResponseEntity<>(accountList,HttpStatus.OK);
+        if (accountList.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }else return new ResponseEntity<>(accountList,HttpStatus.FOUND);
     }
     /*
     * Delete All Accounts
@@ -94,7 +106,7 @@ public class AccountController {
      */
     @GetMapping("/singleAccount/{accountNumber}")
     public ResponseEntity<Optional<Account>> singleAccount(@PathVariable Integer accountNumber) throws InvalidAccountNumber{
-        return new ResponseEntity<>(accountService.singleAccount(accountNumber),HttpStatus.OK);
+        return new ResponseEntity<>(accountService.singleAccount(accountNumber),HttpStatus.CREATED);
     }
 
 }

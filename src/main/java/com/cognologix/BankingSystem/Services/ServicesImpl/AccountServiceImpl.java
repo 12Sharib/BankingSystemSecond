@@ -102,7 +102,7 @@ public class AccountServiceImpl implements AccountService {
                 creditCard.add("Credit Card");
                 return creditCard;
             } else throw new NotEligibleForCreditCard("Balance Less than 2000, Not Eligible for Credit Card");
-        } else throw new InvalidAccountNumber("Invalid account number for Debit card");
+        } else throw new InvalidAccountNumber("Invalid account number for credit card");
     }
     /*
     * all accounts
@@ -118,13 +118,17 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     public SuccessResponse deleteAccount(Integer accountNumber) throws InvalidAccountNumber,InsufficientBalance {
-        Account account = accountRepo.findById(accountNumber).get();
-        if (account.getAccountInitialBalance() > 0) {
-            throw new InsufficientBalance("Account has some balance, Withdraw balance : " + account.getAccountInitialBalance());
-        } else if (account.getAccountInitialBalance() == 0) {
-            accountRepo.deleteById(accountNumber);
-            return new SuccessResponse("Delete successfully",true);
-        } else throw new InvalidAccountNumber("Invalid account number for delete account");
+        if (accountRepo.existsById(accountNumber)) {
+            Account account = accountRepo.findById(accountNumber).get();
+            if (account.getAccountInitialBalance() > 0) {
+                throw new InsufficientBalance("Account has some balance, Withdraw balance : " + account.getAccountInitialBalance());
+            } else {
+                accountRepo.deleteById(accountNumber);
+                return new SuccessResponse("Delete successfully", true);
+            }
+        } else {
+            return new SuccessResponse("Invalid Account Number", false);
+        }
     }
    /*
     * check how many accounts with same id;

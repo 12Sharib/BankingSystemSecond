@@ -151,15 +151,6 @@ class TransactionServiceTest {
         }
 
     }
-    @Test
-    void allTransactions(){
-        when(transactionsRepository.findAll()).thenReturn(Stream.of(new Transactions(1, 2,
-                "03/02/2001",
-                "10:24", 5000.0,
-                "hello",0,0, 15000.0)).collect(Collectors.toList()));
-
-        Assertions.assertEquals(1, transactionService.all().size());
-    }
 
     @Test
     void oneAccountTransaction() throws InvalidAccountNumber {

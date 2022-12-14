@@ -159,11 +159,6 @@ public class TransactionServiceImpl implements TransactionService {
         }
     }
 
-    @Override
-    public List<Transactions> all() {
-        List<Transactions> transactionsList = transactionsRepository.findAll();
-        return transactionsList;
-    }
 
     @Override
     public List<Transactions> oneAccountTransactions(Integer accountNumber) throws InvalidAccountNumber {
