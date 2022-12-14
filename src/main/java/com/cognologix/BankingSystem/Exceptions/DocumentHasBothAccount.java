@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import javax.persistence.PersistenceException;
 
 @RestControllerAdvice
-public class MoreThanTwoAccountInOneDocument extends PersistenceException {
+public class DocumentHasBothAccount extends PersistenceException {
     @ExceptionHandler(IncorrectResultSizeDataAccessException.class)
     public ResponseEntity<ExceptionResponse> moreThanTwoAccountInOneDocument(Exception exception){
        return new ResponseEntity<ExceptionResponse>(new ExceptionResponse(exception.getMessage(),false), HttpStatus.BAD_REQUEST);

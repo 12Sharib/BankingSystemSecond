@@ -7,16 +7,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-public class NotPresentAnyAccount extends RuntimeException {
-    public NotPresentAnyAccount(){
+public class InvalidAmount extends RuntimeException{
+    public InvalidAmount(){
         super();
     }
-    public NotPresentAnyAccount(String message){
+    public InvalidAmount(String message){
         super(message);
     }
-    @ExceptionHandler(value = NotPresentAnyAccount.class)
-    public ResponseEntity<ExceptionResponse> notPresentAnyAccount(Exception exception) {
-        return new ResponseEntity<ExceptionResponse>(new ExceptionResponse(exception.getMessage(),false), HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(InvalidAmount.class)
+    public ResponseEntity<ExceptionResponse> invalidAmounts(Exception exception){
+        return new ResponseEntity<>(new ExceptionResponse(exception.getMessage(),false), HttpStatus.BAD_REQUEST);
     }
 
 }

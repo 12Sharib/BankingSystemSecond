@@ -1,8 +1,9 @@
 package com.cognologix.BankingSystem.Services.ServicesImpl;
 
-import com.cognologix.BankingSystem.Exceptions.AmountLessThanZero;
+import com.cognologix.BankingSystem.Exceptions.InsufficientBalance;
 import com.cognologix.BankingSystem.Exceptions.InvalidAccountNumber;
-import com.cognologix.BankingSystem.Exceptions.MinimumAccountBalance;
+import com.cognologix.BankingSystem.Exceptions.InvalidAmount;
+import com.cognologix.BankingSystem.Exceptions.InvalidTransactionId;
 import com.cognologix.BankingSystem.Model.Account;
 import com.cognologix.BankingSystem.Model.Transactions;
 import com.cognologix.BankingSystem.Repository.AccountRepo;
@@ -37,17 +38,17 @@ public class TransactionServiceImpl implements TransactionService {
      * return account with new balance;
      */
     @Override
-    public TransactionDTO withdrawAmount(Integer accountNumber, Double withdrawAmount) throws InvalidAccountNumber, MinimumAccountBalance, AmountLessThanZero {
+    public TransactionDTO withdrawAmount(Integer accountNumber, Double withdrawAmount) throws InvalidAccountNumber, InsufficientBalance,InvalidAmount {
         Double withdraw = null;
         if (withdrawAmount <= 0)
-            throw new AmountLessThanZero("Amount is less than zero or Equal to Zero, Invalid amount for withdraw");
+            throw new InvalidAmount("Amount is less than zero or Equal to Zero, Invalid amount for withdraw");
         else {
             if (accountRepo.existsById(accountNumber)) {
                 Account prevAccount = accountRepo.findById(accountNumber).get();
                 Double prevBalance = prevAccount.getAccountInitialBalance();
 
                 if (prevBalance < withdrawAmount) {
-                    throw new MinimumAccountBalance("WithdrawAmount is greater than Current Account Balance");
+                    throw new InsufficientBalance("WithdrawAmount is greater than Current Account Balance");
                 } else withdraw = prevBalance - withdrawAmount;
 
                 prevAccount.setAccountInitialBalance(withdraw);
@@ -91,10 +92,10 @@ public class TransactionServiceImpl implements TransactionService {
      */
 
     @Override
-    public TransactionDTO depositAmount(Integer accountNumber, Double depositedAmount) throws InvalidAccountNumber, AmountLessThanZero {
+    public TransactionDTO depositAmount(Integer accountNumber, Double depositedAmount) throws InvalidAccountNumber, InvalidAmount {
         if (depositedAmount <= 0) {
             //"Amount is less than zero or Equal to Zero, Provide valid amount for Deposit"
-            throw new AmountLessThanZero("Amount is less than zero or Equal to Zero, Invalid amount for Deposit");
+            throw new InvalidAmount("Amount is less than zero or Equal to Zero, Invalid amount for Deposit");
         } else {
             if (accountRepo.existsById(accountNumber)) {
                 //account
@@ -117,41 +118,45 @@ public class TransactionServiceImpl implements TransactionService {
      * return both first and second account with new balances;
      */
     @Override
-    public TransactionDTO transferAmount(Integer firstAccountNumber, Integer secondAccountNumber, Double amount) throws MinimumAccountBalance {
+    public TransactionDTO transferAmount(Integer firstAccountNumber, Integer secondAccountNumber, Double amount) throws InsufficientBalance,InvalidAmount,InvalidAccountNumber {
         // first account for withdraw
-        Account getFirstAccount = accountRepo.findById(firstAccountNumber).get();
-        Double balanceInFirstAccount = getFirstAccount.getAccountInitialBalance();
-        if (balanceInFirstAccount < amount) {
-            throw new MinimumAccountBalance("Invalid balance in first Account, because of less balance in first account");
-        } else balanceInFirstAccount = balanceInFirstAccount - amount;
+        if(amount<=0){
+            throw new InvalidAmount("Invalid Amount, provide valid amount");
+        }else {
+            Account getFirstAccount = accountRepo.findById(firstAccountNumber).get();
+            Double balanceInFirstAccount = getFirstAccount.getAccountInitialBalance();
+            if (balanceInFirstAccount < amount) {
+                throw new InsufficientBalance("Invalid balance, because of less balance in first account");
+            } else balanceInFirstAccount = balanceInFirstAccount - amount;
 
-        getFirstAccount.setAccountInitialBalance(balanceInFirstAccount);
-        //save first account
-        accountRepo.save(getFirstAccount);
-        //saved sender transaction
-        Transactions firstAccountTransactions =  saveTransactions(amount,getFirstAccount,"Money Paid, Sent Successfully");
-        firstAccountTransactions.setTransactionToAccount(secondAccountNumber);
-        firstAccountTransactions.setTransactionFromAccount(firstAccountNumber);
-        transactionsRepository.save(firstAccountTransactions);
+            getFirstAccount.setAccountInitialBalance(balanceInFirstAccount);
+            //save first account
+            accountRepo.save(getFirstAccount);
+            //saved sender transaction
+            Transactions firstAccountTransactions = saveTransactions(amount, getFirstAccount, "Money Paid, Sent Successfully");
+            firstAccountTransactions.setTransactionToAccount(secondAccountNumber);
+            firstAccountTransactions.setTransactionFromAccount(firstAccountNumber);
+            transactionsRepository.save(firstAccountTransactions);
 
-        //find second account
-        Account getSecondAccount = accountRepo.findById(secondAccountNumber).get();
+            //find second account
+            Account getSecondAccount = accountRepo.findById(secondAccountNumber).get();
 
-        Double balanceInSecondAccount = getSecondAccount.getAccountInitialBalance() + amount;
-        getSecondAccount.setAccountInitialBalance(balanceInSecondAccount);
+            Double balanceInSecondAccount = getSecondAccount.getAccountInitialBalance() + amount;
+            getSecondAccount.setAccountInitialBalance(balanceInSecondAccount);
 
-        // save second amount
-        accountRepo.save(getSecondAccount);
-        //save receiver transaction
-        Transactions secondAccountTransactions = saveTransactions(amount,getSecondAccount,"Receive, Received Successfully");
-        //transaction credentials
-        secondAccountTransactions.setTransactionFromAccount(firstAccountNumber);
-        transactionsRepository.save(secondAccountTransactions);
+            // save second amount
+            accountRepo.save(getSecondAccount);
+            //save receiver transaction
+            Transactions secondAccountTransactions = saveTransactions(amount, getSecondAccount, "Receive, Received Successfully");
+            //transaction credentials
+            secondAccountTransactions.setTransactionFromAccount(firstAccountNumber);
+            transactionsRepository.save(secondAccountTransactions);
 
-        //money transfer message
-        TransactionDTO transferDTO =  TransactorConvertor.convertTransactionsEntityToDTO(secondAccountTransactions);
-        transferDTO.setTransactionMessage("Money Transfer successfully");
-        return transferDTO;
+            //money transfer message
+            TransactionDTO transferDTO = TransactorConvertor.convertTransactionsEntityToDTO(secondAccountTransactions);
+            transferDTO.setTransactionMessage("Money Transfer successfully");
+            return transferDTO;
+        }
     }
 
     @Override
@@ -161,24 +166,28 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<Transactions> oneAccountTransactions(Integer accountNumber) {
-        List<Transactions> transactionsList = transactionsRepository.findByAccountNumber(accountNumber);
-        return transactionsList;
+    public List<Transactions> oneAccountTransactions(Integer accountNumber) throws InvalidAccountNumber {
+        if (transactionsRepository.existsByAccountNumber(accountNumber)) {
+            List<Transactions> transactionsList = transactionsRepository.findByAccountNumber(accountNumber);
+            return transactionsList;
+        }else throw new InvalidAccountNumber("Invalid Account Number for Single Account Transactions");
 
     }
 
     @Override
-    public Transactions transactionId(Integer transactionId) {
-        return transactionsRepository.findById(transactionId).get();
+    public Transactions transactionId(Integer transactionId) throws InvalidTransactionId{
+        if (transactionsRepository.existsById(transactionId)) {
+            return transactionsRepository.findById(transactionId).get();
+        }else throw new InvalidTransactionId("Invalid TransactionId");
     }
 
     @Override
-    public SuccessResponse deleteTransaction(Integer transactionId) {
+    public SuccessResponse deleteTransaction(Integer transactionId) throws InvalidTransactionId{
         String message = null;
         if(transactionsRepository.existsById(transactionId)){
             transactionsRepository.deleteById(transactionId);
             return new SuccessResponse("Delete Successfully",true);
-        }else throw new InvalidAccountNumber("Invalid transactionId");
+        }else throw new InvalidTransactionId("Invalid transactionId");
     }
 
     @Override
@@ -188,7 +197,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List previousFive(Integer accountNumber) {
+    public List previousFive(Integer accountNumber) throws InvalidAccountNumber{
         List<Transactions> previousFive = null;
         if(transactionsRepository.existsByAccountNumber(accountNumber)){
            previousFive = transactionsRepository.previousFiveTransactions(accountNumber);

@@ -30,7 +30,7 @@ public class CustomerServiceImpl implements CustomerService{
     * returns a customer with account details with account number and customer id;
      */
     @Override
-    public AccountDTO createCustomer(Customer newCustomer) {
+    public AccountDTO createCustomer(Customer newCustomer) throws InvalidDocument{
         //check is there any customer in this aadhar number;
         Customer prevCustomer = customerRepository.findBycustomerAadharNumber(newCustomer.getCustomerAadharNumber());
         if (prevCustomer == null) {
@@ -73,7 +73,7 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public List<Customer> findById(Integer customerId) {
+    public List<Customer> customer(Integer customerId) throws InvalidAccountNumber {
         if(accountRepo.existsByCustomerId(customerId)){
             List<Customer> customers = customerRepository.findByCustomerId(customerId);
             return customers;
@@ -93,7 +93,7 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public Customer updateCustomerDetails(Customer updatedDetails,Integer accountNumber){
+    public Customer updateCustomerDetails(Customer updatedDetails,Integer accountNumber) throws InvalidAccountNumber{
 
             Customer prevCustomer = customerRepository.findById(accountNumber).get();
             prevCustomer.setCustomerName(updatedDetails.getCustomerName());

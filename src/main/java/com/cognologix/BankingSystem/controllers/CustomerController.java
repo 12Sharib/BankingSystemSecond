@@ -1,5 +1,8 @@
 package com.cognologix.BankingSystem.controllers;
 
+import com.cognologix.BankingSystem.Exceptions.InvalidAccountNumber;
+import com.cognologix.BankingSystem.Exceptions.InvalidCustomerId;
+import com.cognologix.BankingSystem.Exceptions.InvalidDocument;
 import com.cognologix.BankingSystem.Model.Customer;
 import com.cognologix.BankingSystem.Repository.CustomerRepository;
 import com.cognologix.BankingSystem.Response.SuccessResponse;
@@ -32,7 +35,7 @@ public class CustomerController {
     * create customer
      */
     @PostMapping("/createCustomer")
-    public ResponseEntity<AccountDTO> createCustomer(@RequestBody Customer customer) {
+    public ResponseEntity<AccountDTO> createCustomer(@RequestBody Customer customer) throws InvalidDocument {
         AccountDTO account = customerService.createCustomer(customer);
         return new ResponseEntity<>(account,HttpStatus.OK);
     }
@@ -49,8 +52,8 @@ public class CustomerController {
     * get customer with customerId in the database with account
      */
     @GetMapping(value = "/customerById/{customerId}")
-    public ResponseEntity<List<Customer>> findById(@PathVariable Integer customerId){
-        List<Customer> sameIdCustomers =    customerService.findById(customerId);
+    public ResponseEntity<List<Customer>> customer(@PathVariable Integer customerId) throws InvalidCustomerId {
+        List<Customer> sameIdCustomers =    customerService.customer(customerId);
         return new ResponseEntity<>(sameIdCustomers,HttpStatus.OK);
     }
     /*
@@ -61,7 +64,7 @@ public class CustomerController {
         return new ResponseEntity<>(customerService.deleteAll(),HttpStatus.OK);
     }
     @PostMapping("updateCustomer/{accountNumber}")
-    public ResponseEntity<Customer> updateCustomer(@RequestBody Customer updatedCustomer,@PathVariable Integer accountNumber){
+    public ResponseEntity<Customer> updateCustomer(@RequestBody Customer updatedCustomer,@PathVariable Integer accountNumber) throws InvalidAccountNumber {
         return new ResponseEntity<>(customerService.updateCustomerDetails(updatedCustomer,accountNumber),HttpStatus.OK);
     }
 }

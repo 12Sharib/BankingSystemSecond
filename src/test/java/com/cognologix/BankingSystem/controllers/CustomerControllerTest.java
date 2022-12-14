@@ -30,7 +30,6 @@ class CustomerControllerTest {
     private ObjectMapper objectMapper;
     @MockBean
     private CustomerRepository customerRepository;
-
     @MockBean
     private CustomerService customerService;
     @Autowired
@@ -50,7 +49,7 @@ class CustomerControllerTest {
 
         when(customerService.createCustomer(customer)).thenReturn(accountDTO);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/customer/createCustomer")
+        mockMvc.perform(MockMvcRequestBuilders.post("/customer/createCustomer/customer")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(accountDTO)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.accountNumber",is(accountDTO.getAccountNumber())))
@@ -85,7 +84,7 @@ class CustomerControllerTest {
     }
 
     @Test
-    void findById() throws Exception{
+    void customer() throws Exception{
         Customer customer = new Customer();
         customer.setCustomerId(1);
         customer.setCustomerName("Sharib Saifi");
@@ -93,7 +92,7 @@ class CustomerControllerTest {
         List<Customer> customers = new ArrayList<>();
         customers.add(customer);
 
-        when(customerService.findById(customer.getCustomerId())).thenReturn(customers);
+        when(customerService.customer(customer.getCustomerId())).thenReturn(customers);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/customer/customerById/1")
                 .contentType(MediaType.APPLICATION_JSON)

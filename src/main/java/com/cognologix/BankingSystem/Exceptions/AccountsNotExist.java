@@ -7,16 +7,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-public class MinimumAccountBalance extends RuntimeException {
-    public MinimumAccountBalance() {
+public class AccountsNotExist extends RuntimeException {
+    public AccountsNotExist(){
         super();
     }
-    public MinimumAccountBalance(String message) {
+    public AccountsNotExist(String message){
         super(message);
     }
-    @ExceptionHandler(value=MinimumAccountBalance.class)
-    public ResponseEntity<ExceptionResponse> minimumAccountBalance(Exception exception){
+    @ExceptionHandler(value = AccountsNotExist.class)
+    public ResponseEntity<ExceptionResponse> notPresentAnyAccount(Exception exception) {
         return new ResponseEntity<ExceptionResponse>(new ExceptionResponse(exception.getMessage(),false), HttpStatus.BAD_REQUEST);
-
     }
+
 }

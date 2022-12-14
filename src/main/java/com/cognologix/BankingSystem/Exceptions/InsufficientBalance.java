@@ -7,16 +7,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-public class AmountLessThanZero extends RuntimeException {
-    public AmountLessThanZero(){
+public class InsufficientBalance extends RuntimeException {
+    public InsufficientBalance(){
         super();
     }
-    public AmountLessThanZero(String message){
+    public InsufficientBalance(String message){
         super(message);
     }
-    @ExceptionHandler(AmountLessThanZero.class)
+    @ExceptionHandler(InsufficientBalance.class)
     public ResponseEntity<ExceptionResponse> amountLessThanZero(Exception exception){
-        return new ResponseEntity<ExceptionResponse>(new ExceptionResponse(exception.getMessage(),false), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<ExceptionResponse>(new ExceptionResponse(exception.getMessage()+"33333",false), HttpStatus.BAD_REQUEST);
     }
 
 }

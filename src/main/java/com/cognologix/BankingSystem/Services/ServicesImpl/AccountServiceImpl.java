@@ -1,8 +1,9 @@
 package com.cognologix.BankingSystem.Services.ServicesImpl;
 
+import com.cognologix.BankingSystem.Exceptions.InsufficientBalance;
 import com.cognologix.BankingSystem.Exceptions.InvalidAccountNumber;
-import com.cognologix.BankingSystem.Exceptions.MinimumAccountBalance;
-import com.cognologix.BankingSystem.Exceptions.NotPresentAnyAccount;
+import com.cognologix.BankingSystem.Exceptions.InvalidCustomerId;
+import com.cognologix.BankingSystem.Exceptions.AccountsNotExist;
 import com.cognologix.BankingSystem.Exceptions.NotEligibleForCreditCard;
 import com.cognologix.BankingSystem.Model.Account;
 import com.cognologix.BankingSystem.Model.Customer;
@@ -36,12 +37,12 @@ public class AccountServiceImpl implements AccountService {
    * savings Accounts
     */
     @Override
-    public List savingsAccounts() throws NotPresentAnyAccount {
+    public List savingsAccounts() throws AccountsNotExist {
         //all saving account with customer details
         List<Account> allSavingsAccounts = (List<Account>) accountRepo.findByAccountType("savings");
         //but return only account
         List<AccountDTO> accountList = new ArrayList<>();
-        if (allSavingsAccounts.isEmpty()) throw new NotPresentAnyAccount("Does not have savings accounts");
+        if (allSavingsAccounts.isEmpty()) throw new AccountsNotExist("Does not have savings accounts");
         else {
             allSavingsAccounts.forEach(
                     account -> {
@@ -55,12 +56,12 @@ public class AccountServiceImpl implements AccountService {
     * current Accounts
      */
     @Override
-    public List currentAccounts() throws NotPresentAnyAccount {
+    public List currentAccounts() throws AccountsNotExist {
         //all current accounts with customer
         List<Account> allSavingsAccounts = (List<Account>) accountRepo.findByAccountType("current");
         //but return only account details
         List<AccountDTO> accountList = new ArrayList<>();
-        if (allSavingsAccounts.isEmpty()) throw new NotPresentAnyAccount("Does not have current accounts");
+        if (allSavingsAccounts.isEmpty()) throw new AccountsNotExist("Does not have current accounts");
         else {
             allSavingsAccounts.forEach(
                     account -> {
@@ -116,10 +117,10 @@ public class AccountServiceImpl implements AccountService {
     * delete single account
      */
     @Override
-    public SuccessResponse deleteAccount(Integer accountNumber) throws InvalidAccountNumber {
+    public SuccessResponse deleteAccount(Integer accountNumber) throws InvalidAccountNumber,InsufficientBalance {
         Account account = accountRepo.findById(accountNumber).get();
         if (account.getAccountInitialBalance() > 0) {
-            throw new MinimumAccountBalance("Account has some balance, Withdraw balance : " + account.getAccountInitialBalance());
+            throw new InsufficientBalance("Account has some balance, Withdraw balance : " + account.getAccountInitialBalance());
         } else if (account.getAccountInitialBalance() == 0) {
             accountRepo.deleteById(accountNumber);
             return new SuccessResponse("Delete successfully",true);
@@ -132,7 +133,7 @@ public class AccountServiceImpl implements AccountService {
     public List<Account> sameId(Integer customerId) {
         if (accountRepo.existsByCustomerId(customerId)){
             return accountRepo.findAllByCustomerId(customerId);
-        }else throw new InvalidAccountNumber("Invalid Customer Id");
+        }else throw new InvalidCustomerId("Invalid Customer Id");
     }
     /*
     * delete all accounts
