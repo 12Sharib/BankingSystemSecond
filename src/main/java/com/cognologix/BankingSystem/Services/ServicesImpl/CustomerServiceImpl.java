@@ -1,6 +1,7 @@
 package com.cognologix.BankingSystem.Services.ServicesImpl;
 
 import com.cognologix.BankingSystem.Exceptions.InvalidAccountNumber;
+import com.cognologix.BankingSystem.Exceptions.InvalidCustomerId;
 import com.cognologix.BankingSystem.Exceptions.InvalidDocument;
 import com.cognologix.BankingSystem.Model.Account;
 import com.cognologix.BankingSystem.Model.Customer;
@@ -76,14 +77,14 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public List<CustomerDTO> customer(Integer customerId) throws InvalidAccountNumber {
+    public List<CustomerDTO> customer(Integer customerId) throws InvalidCustomerId {
         if(accountRepo.existsByCustomerId(customerId)){
             List<CustomerDTO> customerDTO = new ArrayList<>();
             customerRepository.findByCustomerId(customerId).forEach(customer -> {
                 customerDTO.add(CustomerConvertor.entityToDto(customer));
             });
             return customerDTO;
-        }else throw new InvalidAccountNumber("Invalid Customer Id");
+        }else throw new InvalidCustomerId("Invalid Customer Id");
     }
 
     private Account setCustomerInAccount(Customer newCustomer){
@@ -102,12 +103,11 @@ public class CustomerServiceImpl implements CustomerService{
     public Customer updateCustomerDetails(Customer updatedDetails,Integer accountNumber) throws InvalidAccountNumber{
 
             Customer prevCustomer = customerRepository.findById(accountNumber).get();
-            prevCustomer.setCustomerName(updatedDetails.getCustomerName());
-            prevCustomer.setCustomerEmail(updatedDetails.getCustomerEmail());
-            prevCustomer.setCustomerAddress(updatedDetails.getCustomerAddress());
-            prevCustomer.setCustomerMobileNumber(updatedDetails.getCustomerMobileNumber());
-
-            customerRepository.save(prevCustomer);
+//            prevCustomer.setCustomerName(updatedDetails.getCustomerName());
+//            prevCustomer.setCustomerEmail(updatedDetails.getCustomerEmail());
+//            prevCustomer.setCustomerAddress(updatedDetails.getCustomerAddress());
+//            prevCustomer.setCustomerMobileNumber(updatedDetails.getCustomerMobileNumber());
+            customerRepository.save(updatedDetails);
 
             return prevCustomer;
     }

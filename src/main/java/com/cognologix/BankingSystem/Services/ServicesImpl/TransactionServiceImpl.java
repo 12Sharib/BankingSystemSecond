@@ -13,6 +13,8 @@ import com.cognologix.BankingSystem.Services.TransactionService;
 import com.cognologix.BankingSystem.convertor.TransactorConvertor;
 import com.cognologix.BankingSystem.dto.TransactionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -119,44 +121,49 @@ public class TransactionServiceImpl implements TransactionService {
      */
     @Override
     public TransactionDTO transferAmount(Integer firstAccountNumber, Integer secondAccountNumber, Double amount) throws InsufficientBalance,InvalidAmount,InvalidAccountNumber {
-        // first account for withdraw
-        if(amount<=0){
-            throw new InvalidAmount("Invalid Amount, provide valid amount");
-        }else {
-            Account getFirstAccount = accountRepo.findById(firstAccountNumber).get();
-            Double balanceInFirstAccount = getFirstAccount.getAccountInitialBalance();
-            if (balanceInFirstAccount < amount) {
-                throw new InsufficientBalance("Invalid balance, because of less balance in first account");
-            } else balanceInFirstAccount = balanceInFirstAccount - amount;
+        //check accounts
+        if(accountRepo.existsById(firstAccountNumber)){
+            if(accountRepo.existsById(secondAccountNumber)) {
+                if (amount <= 0) {
+                    throw new InvalidAmount("Invalid Amount, provide valid amount");
+                } else {
+                    Account getFirstAccount = accountRepo.findById(firstAccountNumber).get();
+                    Double balanceInFirstAccount = getFirstAccount.getAccountInitialBalance();
+                    if (balanceInFirstAccount < amount) {
+                        throw new InsufficientBalance("Invalid balance, because of less balance in first account");
+                    } else balanceInFirstAccount = balanceInFirstAccount - amount;
 
-            getFirstAccount.setAccountInitialBalance(balanceInFirstAccount);
-            //save first account
-            accountRepo.save(getFirstAccount);
-            //saved sender transaction
-            Transactions firstAccountTransactions = saveTransactions(amount, getFirstAccount, "Money Paid, Sent Successfully");
-            firstAccountTransactions.setTransactionToAccount(secondAccountNumber);
-            firstAccountTransactions.setTransactionFromAccount(firstAccountNumber);
-            transactionsRepository.save(firstAccountTransactions);
+                    getFirstAccount.setAccountInitialBalance(balanceInFirstAccount);
+                    //save first account
+                    accountRepo.save(getFirstAccount);
+                    //saved sender transaction
+                    Transactions firstAccountTransactions = saveTransactions(amount, getFirstAccount, "Money Paid, Sent Successfully");
+                    firstAccountTransactions.setTransactionToAccount(secondAccountNumber);
+                    firstAccountTransactions.setTransactionFromAccount(firstAccountNumber);
+                    transactionsRepository.save(firstAccountTransactions);
 
-            //find second account
-            Account getSecondAccount = accountRepo.findById(secondAccountNumber).get();
+                    //find second account
+                    Account getSecondAccount = accountRepo.findById(secondAccountNumber).get();
 
-            Double balanceInSecondAccount = getSecondAccount.getAccountInitialBalance() + amount;
-            getSecondAccount.setAccountInitialBalance(balanceInSecondAccount);
+                    Double balanceInSecondAccount = getSecondAccount.getAccountInitialBalance() + amount;
+                    getSecondAccount.setAccountInitialBalance(balanceInSecondAccount);
 
-            // save second amount
-            accountRepo.save(getSecondAccount);
-            //save receiver transaction
-            Transactions secondAccountTransactions = saveTransactions(amount, getSecondAccount, "Receive, Received Successfully");
-            //transaction credentials
-            secondAccountTransactions.setTransactionFromAccount(firstAccountNumber);
-            transactionsRepository.save(secondAccountTransactions);
+                    // save second amount
+                    accountRepo.save(getSecondAccount);
+                    //save receiver transaction
+                    Transactions secondAccountTransactions = saveTransactions(amount, getSecondAccount, "Receive, Received Successfully");
+                    //transaction credentials
+                    secondAccountTransactions.setTransactionFromAccount(firstAccountNumber);
+                    transactionsRepository.save(secondAccountTransactions);
 
-            //money transfer message
-            TransactionDTO transferDTO = TransactorConvertor.convertTransactionsEntityToDTO(secondAccountTransactions);
-            transferDTO.setTransactionMessage("Money Transfer successfully");
-            return transferDTO;
-        }
+                    //money transfer message
+                    TransactionDTO transferDTO = TransactorConvertor.convertTransactionsEntityToDTO(secondAccountTransactions);
+                    transferDTO.setTransactionMessage("Money Transfer successfully");
+                    return transferDTO;
+                }
+            }else throw new InvalidAccountNumber("provide valid second account number");
+        } else throw new InvalidAccountNumber("provide valid first account Number");
+
     }
 
 

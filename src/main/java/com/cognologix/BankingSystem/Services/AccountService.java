@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Service
 public interface AccountService {
-    List<Account> allAccount();
+    List<AccountDTO> allAccount();
     SuccessResponse deleteAccount(Integer accountNumber) throws InvalidAccountNumber;
     List savingsAccounts() throws AccountsNotExist;
     List currentAccounts() throws AccountsNotExist;

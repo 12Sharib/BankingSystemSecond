@@ -9,6 +9,8 @@ import com.cognologix.BankingSystem.Response.SuccessResponse;
 import com.cognologix.BankingSystem.Services.AccountService;
 import com.cognologix.BankingSystem.Repository.AccountRepo;
 import com.cognologix.BankingSystem.dto.AccountDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +21,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/account")
 public class AccountController {
+    private static final Logger logger = LoggerFactory.getLogger(AccountController.class);
     @Autowired
     private AccountRepo accountRepo;
     @Autowired
@@ -32,21 +34,21 @@ public class AccountController {
   * all Accounts
    */
     @GetMapping("/accounts")
-    public ResponseEntity<List<Account>> all(){
-      List<Account> all =  accountService.allAccount();
-      if (all.isEmpty()) {
-          return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-      }else return new ResponseEntity<>(all, HttpStatus.OK);
+    public ResponseEntity<List<AccountDTO>> all(){
+        logger.info("all Accounts");
+      List<AccountDTO> all =  accountService.allAccount();
+      HttpStatus httpStatus = all.isEmpty()?HttpStatus.NOT_FOUND:HttpStatus.FOUND;
+      return new ResponseEntity<>(all, httpStatus);
     }
     /*
     * Delete Account
      */
     @DeleteMapping(value = "/delete/{accountNumber}")
     public ResponseEntity<SuccessResponse> deleteAccount(@PathVariable Integer accountNumber) throws InvalidAccountNumber {
+        logger.info("delete Account");
         SuccessResponse response = accountService.deleteAccount(accountNumber);
-        if (response.getSuccess().equals(false)){
-            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
-        }else return new ResponseEntity<>(response,HttpStatus.OK);
+        HttpStatus httpStatus = response.getSuccess().equals(true)?HttpStatus.OK:HttpStatus.BAD_REQUEST;
+        return new ResponseEntity<>(response,httpStatus);
     }
     /*
     * Savings Account
@@ -54,9 +56,8 @@ public class AccountController {
     @GetMapping(value = "/savings")
     public ResponseEntity<List<Account>> savingAccounts() throws AccountsNotExist {
         List<Account> savingsAccounts = accountService.savingsAccounts();
-        if (savingsAccounts.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }else return new ResponseEntity<>(savingsAccounts,HttpStatus.FOUND);
+        HttpStatus httpStatus = savingsAccounts.isEmpty()?HttpStatus.NOT_FOUND:HttpStatus.FOUND;
+        return new ResponseEntity<>(savingsAccounts,HttpStatus.FOUND);
     }
     /*
     * Current Accounts
@@ -64,9 +65,8 @@ public class AccountController {
     @GetMapping(value = "/current")
     public ResponseEntity<List<Account>> currentAccounts() throws AccountsNotExist {
         List<Account> currentAccount = accountService.currentAccounts();
-        if (currentAccount.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }else return new ResponseEntity<>(currentAccount,HttpStatus.FOUND);
+        HttpStatus httpStatus = currentAccount.isEmpty()?HttpStatus.NOT_FOUND:HttpStatus.FOUND;
+        return new ResponseEntity<>(currentAccount,httpStatus);
     }
     /*
     * Debit Card
@@ -74,7 +74,8 @@ public class AccountController {
     @GetMapping(value = "/debitCard/{accountNumber}")
     public ResponseEntity<List<String>> debitCard(@PathVariable Integer accountNumber) throws InvalidAccountNumber{
         List<String> debitCard = accountService.debitCard(accountNumber);
-        return new ResponseEntity<>(debitCard,HttpStatus.CREATED);
+        HttpStatus httpStatus = debitCard.isEmpty()?HttpStatus.NO_CONTENT:HttpStatus.CREATED;
+        return new ResponseEntity<>(debitCard,httpStatus);
     }
     /*
     * Credit Card
@@ -82,7 +83,8 @@ public class AccountController {
     @GetMapping(value = "/creditCard/{accountNumber}")
     public ResponseEntity<List<String>> creditCard(@PathVariable Integer accountNumber) throws NotEligibleForCreditCard {
         List<String> creditCard = accountService.creditCard(accountNumber);
-        return new ResponseEntity<>(creditCard,HttpStatus.CREATED);
+        HttpStatus httpStatus = creditCard.isEmpty()?HttpStatus.NO_CONTENT:HttpStatus.CREATED;
+        return new ResponseEntity<>(creditCard,httpStatus);
     }
     /*
     * Both Current and Savings Account
@@ -90,16 +92,16 @@ public class AccountController {
     @GetMapping(value = "/accountsWithSameId/{customerId}")
     public ResponseEntity<List<AccountDTO>> sameId(@PathVariable Integer customerId) throws InvalidCustomerId {
         List<AccountDTO> accountList = accountService.sameId(customerId);
-        if (accountList.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }else return new ResponseEntity<>(accountList,HttpStatus.FOUND);
+        HttpStatus httpStatus = accountList.isEmpty()?HttpStatus.NOT_FOUND:HttpStatus.FOUND;
+        return new ResponseEntity<>(accountList,httpStatus);
     }
     /*
     * Delete All Accounts
      */
     @DeleteMapping("/deleteAll")
     public ResponseEntity<SuccessResponse> deleteAll(){
-        return new ResponseEntity<>(accountService.deleteAll(),HttpStatus.OK);
+        HttpStatus httpStatus = accountService.deleteAll().getSuccess().equals(true)?HttpStatus.OK:HttpStatus.NO_CONTENT;
+        return new ResponseEntity<>(accountService.deleteAll(),httpStatus);
     }
     /*
     * single Account

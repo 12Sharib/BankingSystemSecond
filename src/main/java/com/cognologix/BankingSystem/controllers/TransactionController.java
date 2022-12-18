@@ -28,17 +28,12 @@ public class TransactionController {
     @Autowired
     AccountRepo accountRepo;
    /*
-   * tansfer Amount
+   * transfer Amount
     */
     @PutMapping(value = "/transferAmount/{firstAccountNumber}/{secondAccountNumber}/{amount}")
     public ResponseEntity<TransactionDTO> transferAmount(@PathVariable Integer firstAccountNumber, @PathVariable Integer secondAccountNumber, @PathVariable Double amount) throws InsufficientBalance, InvalidAccountNumber {
-        if(accountRepo.existsById(firstAccountNumber)){
-            if(accountRepo.existsById(secondAccountNumber)){
-                TransactionDTO transfer = transactionService.transferAmount(firstAccountNumber, secondAccountNumber, amount);
-                return new ResponseEntity<>(transfer,HttpStatus.CREATED);
-            }else throw new InvalidAccountNumber("provide valid second account number");
-        } else throw new InvalidAccountNumber("provide valid first account Number");
-
+        TransactionDTO transfer = transactionService.transferAmount(firstAccountNumber, secondAccountNumber, amount);
+        return new ResponseEntity<>(transfer,HttpStatus.CREATED);
     }
     /*
     * Deposit

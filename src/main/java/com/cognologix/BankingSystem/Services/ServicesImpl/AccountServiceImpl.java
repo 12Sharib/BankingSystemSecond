@@ -108,8 +108,13 @@ public class AccountServiceImpl implements AccountService {
     * all accounts
      */
     @Override
-    public List<Account> allAccount() {
-        List<Account> allAccounts = accountRepo.findAll();
+    public List<AccountDTO> allAccount() {
+        List<AccountDTO> allAccounts = new ArrayList<>();
+        accountRepo.findAll().forEach(
+                account -> {
+                    allAccounts.add(AccountConvertor.convertEntityToDTO(account));
+                }
+        );
         return allAccounts;
     }
 

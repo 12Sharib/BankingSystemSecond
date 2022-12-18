@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -67,8 +68,10 @@ public class CustomerController {
     public ResponseEntity<SuccessResponse> deleteAll(){
         return new ResponseEntity<>(customerService.deleteAll(),HttpStatus.OK);
     }
-    @PostMapping("updateCustomer/{accountNumber}")
+    @PutMapping("updateCustomer/{accountNumber}")
     public ResponseEntity<Customer> updateCustomer(@RequestBody Customer updatedCustomer,@PathVariable Integer accountNumber) throws InvalidAccountNumber {
-        return new ResponseEntity<>(customerService.updateCustomerDetails(updatedCustomer,accountNumber),HttpStatus.CREATED);
+        Customer customer = customerService.updateCustomerDetails(updatedCustomer,accountNumber);
+        HttpStatus httpStatus = customer==null?HttpStatus.NOT_MODIFIED: HttpStatus.CREATED;
+        return new ResponseEntity<>(customer,httpStatus);
     }
 }
