@@ -9,6 +9,7 @@ import com.cognologix.BankingSystem.Response.SuccessResponse;
 import com.cognologix.BankingSystem.Services.CustomerService;
 import com.cognologix.BankingSystem.dto.AccountDTO;
 import com.cognologix.BankingSystem.dto.CustomerDTO;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/customer")
+@Log4j2
 public class CustomerController {
 
     @Autowired
@@ -39,8 +41,10 @@ public class CustomerController {
      */
     @PostMapping("/createCustomer")
     public ResponseEntity<AccountDTO> createCustomer(@Valid @RequestBody Customer customer) throws InvalidDocument {
+        log.trace("Accessed Create Customer With Customer Details");
         AccountDTO account = customerService.createCustomer(customer);
         HttpStatus httpStatus = account==null?HttpStatus.NO_CONTENT: HttpStatus.CREATED;
+        log.info("Completed Create Customer");
         return new ResponseEntity<>(account,httpStatus);
     }
     /*
@@ -48,32 +52,41 @@ public class CustomerController {
      */
     @GetMapping(value = "/allCustomers")
     public ResponseEntity<List<CustomerDTO>> allCustomers(){
+        log.trace("Accessed All Customer");
         List<CustomerDTO> allCustomer = customerService.allCustomer();
         if (allCustomer.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }else return new ResponseEntity<>(allCustomer, HttpStatus.FOUND);
+        }else
+            log.info("Completed All Customers");
+            return new ResponseEntity<>(allCustomer, HttpStatus.FOUND);
     }
     /*
     * get customer with customerId in the database with account
      */
     @GetMapping(value = "/customerById/{customerId}")
     public ResponseEntity<List<CustomerDTO>> customer(@PathVariable Integer customerId) throws InvalidCustomerId {
+        log.trace("Accessed Single Customer Method With Customer ID");
         List<CustomerDTO> sameIdCustomers = customerService.customer(customerId);
         if (sameIdCustomers.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }else return new ResponseEntity<>(sameIdCustomers,HttpStatus.FOUND);
+        }else
+            log.info("Completed Single Customer By Id");
+            return new ResponseEntity<>(sameIdCustomers,HttpStatus.FOUND);
     }
     /*
     * delete all customer
      */
     @DeleteMapping("/deleteAll")
     public ResponseEntity<SuccessResponse> deleteAll(){
+        log.trace("Accessed DeleteAll");
         return new ResponseEntity<>(customerService.deleteAll(),HttpStatus.OK);
     }
     @PutMapping("updateCustomer/{customerId}")
     public ResponseEntity<CustomerDTO> updateCustomer(@Valid @RequestBody Customer updatedCustomer,@PathVariable Integer customerId) throws InvalidCustomerId {
+        log.trace("Accessed Update Customer with Update Details & Customer Id");
         CustomerDTO customer = customerService.updateCustomerDetails(updatedCustomer,customerId);
         HttpStatus httpStatus = customer==null?HttpStatus.NOT_MODIFIED: HttpStatus.CREATED;
+        log.info("Completed Update Customer");
         return new ResponseEntity<>(customer,httpStatus);
     }
 }

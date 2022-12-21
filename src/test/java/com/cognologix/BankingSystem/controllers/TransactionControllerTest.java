@@ -11,6 +11,7 @@ import com.cognologix.BankingSystem.Response.SuccessResponse;
 import com.cognologix.BankingSystem.Services.TransactionService;
 import com.cognologix.BankingSystem.dto.TransactionDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -31,6 +32,7 @@ import static org.mockito.Mockito.when;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 @WebMvcTest(TransactionController.class)
+@Log4j2
 class TransactionControllerTest {
     @MockBean
     TransactionService transactionService;
@@ -46,32 +48,24 @@ class TransactionControllerTest {
     class Withdraw{
         @Test
         @DisplayName("positive, withdraw")
-        void p_withdraw() throws InvalidAccountNumber, InvalidAmount,InsufficientBalance {
-            try {
-                Account account = new Account();
-                account.setAccountInitialBalance(500.0);
-                account.setAccountNumber(1);
+        void p_withdraw() throws Exception {
+            Account account = new Account();
+            account.setAccountInitialBalance(500.0);
+            account.setAccountNumber(1);
 
-                TransactionDTO transactionDTO = new TransactionDTO();
-                transactionDTO.setTransactionId(3);
-                transactionDTO.setTransactionAmount(100.0);
+            TransactionDTO transactionDTO = new TransactionDTO();
+            transactionDTO.setTransactionId(3);
+            transactionDTO.setTransactionAmount(100.0);
 
-                when(transactionService.withdrawAmount(account.getAccountNumber(), 100.0)).thenReturn(transactionDTO);
+            when(transactionService.withdrawAmount(account.getAccountNumber(), 100.0)).thenReturn(transactionDTO);
 
-                mockMvc.perform(MockMvcRequestBuilders.put("/transactions/withdraw/1/100")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(transactionDTO)))
-                        .andExpect(MockMvcResultMatchers.jsonPath("$.transactionId", is(transactionDTO.getTransactionId())))
-                        .andExpect(MockMvcResultMatchers.jsonPath("$.transactionAmount", is(transactionDTO.getTransactionAmount())))
-                        .andExpect(status().isCreated())
-                        .andReturn();
-            }catch (InvalidAmount invalidAmount){
-                Assertions.assertTrue(invalidAmount instanceof InvalidAmount);
-            }catch (InvalidAccountNumber accountNumber){
-                Assertions.assertTrue(accountNumber instanceof  InvalidAccountNumber);
-            }catch (Exception exception){
-                throw new RuntimeException(exception.getMessage());
-            }
+            mockMvc.perform(MockMvcRequestBuilders.put("/transactions/withdraw/1/100")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(transactionDTO)))
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.transactionId", is(transactionDTO.getTransactionId())))
+                    .andExpect(MockMvcResultMatchers.jsonPath("$.transactionAmount", is(transactionDTO.getTransactionAmount())))
+                    .andExpect(status().isCreated())
+                    .andReturn();
         }
         @Test
         @DisplayName("negative, when invalid account number")
@@ -93,8 +87,7 @@ class TransactionControllerTest {
    class Deposit{
        @Test
        @DisplayName("positive, Deposit")
-       void p_deposit() throws InvalidAmount,InvalidAccountNumber,InsufficientBalance{
-           try {
+       void p_deposit() throws Exception{
                Account account = new Account();
                account.setAccountInitialBalance(500.0);
                account.setAccountNumber(1);
@@ -112,13 +105,6 @@ class TransactionControllerTest {
                        .andExpect(MockMvcResultMatchers.jsonPath("$.transactionAmount", is(transactionDTO.getTransactionAmount())))
                        .andExpect(status().isCreated())
                        .andReturn();
-           }catch (InvalidAmount invalidAmount){
-               Assertions.assertTrue(invalidAmount instanceof  InvalidAmount);
-           }catch (InvalidAccountNumber accountNumber){
-               Assertions.assertTrue(accountNumber instanceof InvalidAccountNumber);
-           }catch (Exception exception){
-               throw new RuntimeException(exception.getMessage());
-           }
        }
        @Test
        @DisplayName("negative, when invalid account number")
@@ -139,8 +125,7 @@ class TransactionControllerTest {
     class TransferAmount{
        @Test
        @DisplayName("positive, transfer amount")
-       void transferAmount() throws InvalidAmount,InvalidAccountNumber, InsufficientBalance {
-           try {
+       void transferAmount() throws Exception {
                Account firstAccount = new Account();
                firstAccount.setAccountInitialBalance(500.0);
                firstAccount.setAccountNumber(1);
@@ -166,15 +151,6 @@ class TransactionControllerTest {
                        .andExpect(MockMvcResultMatchers.jsonPath("$.transactionMessage", is(transactionDTO.getTransactionMessage())))
                        .andExpect(status().isCreated())
                        .andReturn();
-           }catch (InvalidAmount invalidAmount){
-               Assertions.assertTrue(invalidAmount instanceof InvalidAmount);
-           }catch (InvalidAccountNumber accountNumber){
-               Assertions.assertTrue(accountNumber instanceof InvalidAccountNumber);
-           }catch (InsufficientBalance insufficientBalance){
-               Assertions.assertTrue(insufficientBalance instanceof InsufficientBalance);
-           }catch (Exception exception){
-               throw new RuntimeException(exception.getMessage());
-           }
        }
         @Test
         @DisplayName("negative, when invalid account number")
@@ -195,8 +171,7 @@ class TransactionControllerTest {
    class OneAccountTransaction{
        @Test
        @DisplayName("positive, one account transactions")
-       void oneAccountTransactions() throws InvalidTransactionId {
-           try {
+       void oneAccountTransactions() throws Exception{
                Transactions firstTransactions = new Transactions();
                firstTransactions.setTransactionId(1);
                firstTransactions.setAccountNumber(5);
@@ -216,12 +191,7 @@ class TransactionControllerTest {
                                .content(objectMapper.writeValueAsString(transactionsList)))
                        .andExpect(MockMvcResultMatchers.jsonPath("$[0].accountNumber", is(firstTransactions.getAccountNumber())))
                        .andExpect(MockMvcResultMatchers.jsonPath("$.size()").value(transactionsList.size()))
-                       .andExpect(MockMvcResultMatchers.status().isOk());
-           }catch (InvalidTransactionId invalidTransactionId){
-               Assertions.assertTrue(invalidTransactionId instanceof InvalidTransactionId);
-           }catch (Exception exception){
-               throw new RuntimeException(exception.getMessage());
-           }
+                       .andExpect(MockMvcResultMatchers.status().isFound());
        }
        @Test
        @DisplayName("negative, when transaction id is invalid")
@@ -239,8 +209,7 @@ class TransactionControllerTest {
    class FindByTransactionId{
        @Test
        @DisplayName("positive, find by transaction id")
-       void p_findByTransactionId() throws InvalidTransactionId {
-           try {
+       void p_findByTransactionId() throws Exception{
                Transactions transactions = new Transactions();
                transactions.setTransactionId(101);
                transactions.setTransactionMessage("deposit");
@@ -251,13 +220,9 @@ class TransactionControllerTest {
                                .content(new ObjectMapper().writeValueAsString(transactions)))
                        .andExpect(MockMvcResultMatchers.jsonPath("$.transactionId", is(101)))
                        .andExpect(MockMvcResultMatchers.jsonPath("$.transactionMessage", is("deposit")))
-                       .andExpect(MockMvcResultMatchers.status().isOk())
+                       .andExpect(MockMvcResultMatchers.status().isFound())
                        .andReturn();
-           }catch (InvalidTransactionId invalidTransactionId){
-               Assertions.assertTrue(invalidTransactionId instanceof InvalidTransactionId);
-           }catch (Exception exception){
-               throw new RuntimeException(exception.getMessage());
-           }
+
        }
        @Test
        @DisplayName("negative, when invalid transaction id")
@@ -274,8 +239,7 @@ class TransactionControllerTest {
     class DeleteTransaction{
         @Test
         @DisplayName("positive delete transactions")
-        void deleteTransaction() throws InvalidTransactionId{
-            try {
+        void deleteTransaction() throws Exception{
                 Transactions transactions = new Transactions();
                 transactions.setTransactionId(1);
 
@@ -289,11 +253,6 @@ class TransactionControllerTest {
                         .andExpect(MockMvcResultMatchers.jsonPath("$.success", is(true)))
                         .andExpect(MockMvcResultMatchers.status().isOk())
                         .andReturn();
-            }catch (InvalidTransactionId invalidTransactionId){
-                Assertions.assertTrue(invalidTransactionId instanceof InvalidTransactionId);
-            }catch (Exception exception){
-                throw new RuntimeException(exception.getMessage());
-            }
         }
 
         @Test
@@ -310,8 +269,7 @@ class TransactionControllerTest {
     class PreviousFive{
         @Test
         @DisplayName("positive previous five")
-        void previousFive() throws InvalidAccountNumber {
-            try {
+        void previousFive() throws Exception {
                 Transactions transactions = new Transactions();
                 transactions.setTransactionId(1);
                 transactions.setAccountNumber(5);
@@ -325,13 +283,8 @@ class TransactionControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(transactionsList)))
                         .andExpect(MockMvcResultMatchers.jsonPath("$.size()").value(transactionsList.size()))
-                        .andExpect(status().isOk())
+                        .andExpect(status().isFound())
                         .andReturn();
-            }catch (InvalidTransactionId invalidTransactionId){
-                Assertions.assertTrue(invalidTransactionId instanceof InvalidTransactionId);
-            }catch (Exception exception){
-                throw new RuntimeException(exception.getMessage());
-            }
         }
         @Test
         @DisplayName("negative, when invalid account number")
@@ -360,9 +313,7 @@ class TransactionControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(transactionsList)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].transactionId",is(1)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.status().isFound())
                 .andReturn();
     }
-
-
 }

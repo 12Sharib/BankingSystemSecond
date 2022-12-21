@@ -48,8 +48,7 @@ class CustomerControllerTest {
     class CreateCustomer{
         @Test
         @DisplayName("positive create customer")
-        void createCustomer() throws InvalidDocument {
-            try {
+        void createCustomer() throws Exception {
                 Customer customer = new Customer(1, 21, "Sharib Saifi",
                         "Savings", "SharibSaifi.SS@gmail.com", "8006590554",
                         "3334 3221 5548", "OGHPS2812E", "Muradanagar");
@@ -67,11 +66,6 @@ class CustomerControllerTest {
                         .andExpect(MockMvcResultMatchers.jsonPath("$.accountName", is(accountDTO.getAccountName())))
                         .andExpect(MockMvcResultMatchers.status().isCreated())
                         .andReturn();
-            }catch (InvalidDocument invalidDocument){
-                Assertions.assertTrue(invalidDocument instanceof InvalidDocument);
-            }catch (Exception exception){
-                throw new RuntimeException(exception.getMessage());
-            }
 
         }
         @Test
@@ -125,8 +119,7 @@ class CustomerControllerTest {
     class SingleCustomer{
         @Test
         @DisplayName("positive, single cusotmer")
-        void singleCustomer() throws InvalidCustomerId {
-            try {
+        void singleCustomer() throws Exception {
                 CustomerDTO customer = new CustomerDTO();
                 customer.setCustomerId(1);
                 customer.setCustomerName("Sharib Saifi");
@@ -143,11 +136,6 @@ class CustomerControllerTest {
                         .andExpect(MockMvcResultMatchers.jsonPath("$[0].customerName", is(customer.getCustomerName())))
                         .andExpect(status().isFound())
                         .andReturn();
-            }catch (InvalidCustomerId invalidCustomerId){
-                Assertions.assertTrue(invalidCustomerId instanceof InvalidCustomerId);
-            }catch (Exception exception){
-                throw new RuntimeException(exception.getMessage());
-            }
         }
         @Test
         @DisplayName("negative, when customer id is invalid or not found")

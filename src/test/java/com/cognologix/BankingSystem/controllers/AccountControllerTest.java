@@ -88,8 +88,7 @@ class AccountControllerTest {
 
         @Test
         @DisplayName("positive Delete Account")
-        void p_deleteAccount() throws InvalidAccountNumber {
-            try {
+        void p_deleteAccount() throws Exception {
                 SuccessResponse response = init();
                 mockMvc.perform(MockMvcRequestBuilders.delete("/account/delete/1")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -98,12 +97,6 @@ class AccountControllerTest {
                         .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(response.getMessage())))
                         .andExpect(MockMvcResultMatchers.jsonPath("$.success", is(response.getSuccess())))
                         .andReturn();
-            }catch (InvalidAccountNumber accountNumber){
-                Assertions.assertTrue(accountNumber instanceof InvalidAccountNumber);
-            }catch (Exception exception){
-                throw new RuntimeException(exception.getMessage());
-            }
-
         }
         @Test
         @DisplayName("negative, invalid account number")
@@ -122,8 +115,7 @@ class AccountControllerTest {
     class SavingsAccount{
         @Test
         @DisplayName("positive, savings account")
-        void savingAccounts() throws AccountsNotExist {
-            try {
+        void savingAccounts() throws Exception {
                 Account account = new Account();
                 account.setAccountNumber(1);
                 account.setAccountType("Savings");
@@ -139,11 +131,6 @@ class AccountControllerTest {
                         .andExpect(jsonPath("$.size()").value(accountList.size()))
                         .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
                         .andReturn();
-            }catch (AccountsNotExist accountsNotExist){
-                Assertions.assertTrue(accountsNotExist instanceof AccountsNotExist);
-            } catch (Exception exception) {
-                throw new RuntimeException(exception);
-            }
         }
         @Test
         @DisplayName("negative, savings account")
@@ -161,8 +148,7 @@ class AccountControllerTest {
     class CurrentAccounts{
         @Test
         @DisplayName("positive, current account")
-        void currentAccount() throws AccountsNotExist {
-            try {
+        void currentAccount() throws Exception {
                 Account account = new Account();
                 account.setAccountNumber(1);
                 account.setAccountType("current");
@@ -178,11 +164,6 @@ class AccountControllerTest {
                         .andExpect(jsonPath("$.size()").value(accountList.size()))
                         .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
                         .andReturn();
-            }catch (AccountsNotExist accountsNotExist){
-                Assertions.assertTrue(accountsNotExist instanceof AccountsNotExist);
-            }catch (Exception exception){
-                throw new RuntimeException(exception.getMessage());
-            }
         }
         @Test
         @DisplayName("negative, when list is empty")
@@ -200,8 +181,7 @@ class AccountControllerTest {
     class DebitCard{
         @Test
         @DisplayName("positive, debit card")
-        void debitCard() throws InvalidAccountNumber {
-            try {
+        void debitCard() throws Exception {
                 Account account = new Account();
                 account.setAccountNumber(1);
                 account.setAccountName("Sharib saifi");
@@ -223,11 +203,6 @@ class AccountControllerTest {
                         .andExpect(MockMvcResultMatchers.jsonPath("$[0]", is("Name: " + account.getAccountName())))
                         .andExpect(jsonPath("$[4]", is("Debit Card")))
                         .andReturn();
-            }catch (InvalidAccountNumber accountNumber){
-                Assertions.assertTrue(accountNumber instanceof  InvalidAccountNumber);
-            }catch (Exception exception){
-                throw new RuntimeException(exception.getMessage());
-            }
         }
         @Test
         @DisplayName("negative, invalid account number")
@@ -245,8 +220,7 @@ class AccountControllerTest {
     class CreditCard{
        @Test
        @DisplayName("positive, credit card")
-       void creditCard() throws InvalidAccountNumber {
-           try {
+       void creditCard() throws Exception {
                Account account = new Account();
                account.setAccountNumber(1);
                account.setAccountName("Sharib saifi");
@@ -269,11 +243,6 @@ class AccountControllerTest {
                        .andExpect(MockMvcResultMatchers.jsonPath("$[0]", is("Name: " + account.getAccountName())))
                        .andExpect(jsonPath("$[4]", is("Credit Card")))
                        .andReturn();
-           }catch (InvalidAccountNumber accountNumber){
-               Assertions.assertTrue(accountNumber instanceof InvalidAccountNumber);
-           }catch (Exception exception){
-               throw new RuntimeException(exception.getMessage());
-           }
        }
        @Test
        @DisplayName("negative, when invalid account number")
@@ -291,8 +260,7 @@ class AccountControllerTest {
     class AccountsWithSameId{
         @Test
         @DisplayName("positve, accounts with same id")
-        void accountWithSameId() throws InvalidCustomerId {
-            try {
+        void accountWithSameId() throws Exception {
                 AccountDTO firstAccount = new AccountDTO();
                 firstAccount.setAccountNumber(1);
                 firstAccount.setCustomerId(12);
@@ -312,11 +280,6 @@ class AccountControllerTest {
                         .andExpect(MockMvcResultMatchers.jsonPath("$[1].customerId", is(secondAccount.getCustomerId())))
                         .andExpect(MockMvcResultMatchers.jsonPath("$.size()").value(accountList.size()))
                         .andReturn();
-            }catch (InvalidCustomerId invalidCustomerId){
-                Assertions.assertTrue(invalidCustomerId instanceof InvalidCustomerId);
-            }catch (Exception exception){
-                throw new RuntimeException(exception.getMessage());
-            }
 
         }
         @Test
@@ -335,8 +298,7 @@ class AccountControllerTest {
     class SingleAccount{
         @Test
         @DisplayName("positive, single account")
-        void singleAccount() throws InvalidAccountNumber {
-            try {
+        void singleAccount() throws Exception {
                 AccountDTO account = new AccountDTO();
                 account.setAccountNumber(1);
                 account.setAccountName("Sharib Saifi");
@@ -350,11 +312,6 @@ class AccountControllerTest {
                         .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
                         .andExpect(jsonPath("$.accountNumber", is(account.getAccountNumber())))
                         .andReturn();
-            }catch (InvalidAccountNumber accountNumber){
-                Assertions.assertTrue(accountNumber instanceof InvalidAccountNumber);
-            }catch (Exception exception){
-                throw new RuntimeException(exception.getMessage());
-            }
         }
         @Test
         @DisplayName("negative, when invalid account number")
