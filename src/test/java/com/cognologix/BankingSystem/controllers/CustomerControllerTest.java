@@ -6,6 +6,7 @@ import com.cognologix.BankingSystem.Model.Customer;
 import com.cognologix.BankingSystem.Repository.CustomerRepository;
 import com.cognologix.BankingSystem.Response.SuccessResponse;
 import com.cognologix.BankingSystem.Services.CustomerService;
+import com.cognologix.BankingSystem.convertor.CustomerConvertor;
 import com.cognologix.BankingSystem.dto.AccountDTO;
 import com.cognologix.BankingSystem.dto.CustomerDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -49,24 +50,22 @@ class CustomerControllerTest {
         @DisplayName("positive create customer")
         void createCustomer() throws InvalidDocument {
             try {
-                //failed
-                Customer customer = new Customer();
-                customer.setCustomerName("Sharib Saifi");
-                customer.setCustomerId(101);
+                Customer customer = new Customer(1, 21, "Sharib Saifi",
+                        "Savings", "SharibSaifi.SS@gmail.com", "8006590554",
+                        "3334 3221 5548", "OGHPS2812E", "Muradanagar");
 
                 AccountDTO accountDTO = new AccountDTO();
                 accountDTO.setAccountName("Sharib Saifi");
                 accountDTO.setAccountStatus("Active");
-                accountDTO.setAccountNumber(3);
+                accountDTO.setAccountNumber(5);
 
                 when(customerService.createCustomer(customer)).thenReturn(accountDTO);
-
-                mockMvc.perform(MockMvcRequestBuilders.post("/customer/createCustomer/")
-                                //    .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(accountDTO)))
+                mockMvc.perform(MockMvcRequestBuilders.post("/customer/createCustomer")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                               .content(objectMapper.writeValueAsString(customer)))
                         .andExpect(MockMvcResultMatchers.jsonPath("$.accountNumber", is(accountDTO.getAccountNumber())))
                         .andExpect(MockMvcResultMatchers.jsonPath("$.accountName", is(accountDTO.getAccountName())))
-                        .andExpect(MockMvcResultMatchers.status().isOk())
+                        .andExpect(MockMvcResultMatchers.status().isCreated())
                         .andReturn();
             }catch (InvalidDocument invalidDocument){
                 Assertions.assertTrue(invalidDocument instanceof InvalidDocument);
@@ -87,7 +86,7 @@ class CustomerControllerTest {
         }
     }
 
-   @Nested
+    @Nested
     class AllCustomers{
        @Test
        @DisplayName("positive, all customers")
@@ -99,9 +98,7 @@ class CustomerControllerTest {
            CustomerDTO secondCustomer = new CustomerDTO();
            secondCustomer.setCustomerId(102);
 
-           List<CustomerDTO> customers = new ArrayList<>();
-           customers.add(firstCustomer);
-           customers.add(secondCustomer);
+           List<CustomerDTO> customers = List.of(firstCustomer,secondCustomer);
 
            when(customerService.allCustomer()).thenReturn(customers);
 
@@ -171,20 +168,18 @@ class CustomerControllerTest {
        @Test
        @DisplayName("positive, update customer")
        void updateCustomer() throws Exception{
-           //failed
-           Customer customer = new Customer();
-           customer.setCustomerName("Sharib Saifi");
-           customer.setCustomerId(1);
+           Customer customer = new Customer(1, 21, "Sharib Saifi",
+                   "Savings", "SharibSaifi.SS@gmail.com", "8006590554",
+                   "3334 3221 5548", "OGHPS2812E", "Muradanagar");
 
-           Customer updateDetails = new Customer();
-           updateDetails.setCustomerName("Suhail");
+          CustomerDTO customerDTO = CustomerConvertor.entityToDto(customer);
 
-           when(customerService.updateCustomerDetails(customer,customer.getCustomerId())).thenReturn(updateDetails);
-
-           mockMvc.perform(put("/customer/updateCustomer/1")
+           when(customerService.updateCustomerDetails(customer,customer.getCustomerId())).thenReturn(customerDTO);
+           mockMvc.perform(put("/customer/updateCustomer/21")
                            .contentType(MediaType.APPLICATION_JSON)
-                           .content(objectMapper.writeValueAsString(updateDetails)))
-                   .andExpect(MockMvcResultMatchers.jsonPath("$.customerName",is(updateDetails.getCustomerName())))
+                           .content(objectMapper.writeValueAsString(customer)))
+                   .andExpect(MockMvcResultMatchers.jsonPath("$.customerName",is(customerDTO.getCustomerName())))
+                   .andExpect(MockMvcResultMatchers.jsonPath("$.customerId",is(customerDTO.getCustomerId())))
                    .andExpect(status().isCreated())
                    .andReturn();
        }
@@ -192,7 +187,7 @@ class CustomerControllerTest {
        @DisplayName("negative, customer details are invalid or unsupported")
        void negative_updateCustomer() throws Exception{
            //when customer id is correct but the customer details is invalid
-           Customer customer = new Customer();
+           CustomerDTO customer = new CustomerDTO();
            customer.setCustomerId(1);
 
            when(customerService.updateCustomerDetails(null,1)).thenReturn(customer);

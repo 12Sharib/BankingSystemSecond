@@ -12,7 +12,7 @@ import java.util.List;
 
 @Service
 public interface CustomerService {
-    Customer updateCustomerDetails(Customer updatedDetails,Integer accountNumber) throws InvalidAccountNumber;
+    CustomerDTO updateCustomerDetails(Customer updatedDetails,Integer customerId) throws InvalidCustomerId;
     List<CustomerDTO> allCustomer();
     AccountDTO createCustomer(Customer customer);
     SuccessResponse deleteAll();

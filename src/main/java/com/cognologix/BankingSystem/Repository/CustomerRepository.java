@@ -11,4 +11,6 @@ public interface CustomerRepository extends JpaRepository<Customer,Integer> {
 
     public Customer findBycustomerAadharNumber(String aadharNumber);
     public List<Customer> findByCustomerId(Integer customerId);
+
+    public Boolean existsByCustomerId(Integer customerId);
 }

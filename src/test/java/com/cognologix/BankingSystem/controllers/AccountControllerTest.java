@@ -37,7 +37,6 @@ class AccountControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private AccountService accountService;
-
     @MockBean
     private AccountRepo accountRepo;
 
@@ -287,7 +286,6 @@ class AccountControllerTest {
                    .andReturn();
        }
     }
-
 
     @Nested
     class AccountsWithSameId{

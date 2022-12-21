@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class CustomerServiceImpl implements CustomerService{
@@ -100,16 +101,38 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public Customer updateCustomerDetails(Customer updatedDetails,Integer accountNumber) throws InvalidAccountNumber{
+    public CustomerDTO updateCustomerDetails(Customer updatedDetails,Integer customerId) throws InvalidCustomerId{
+        if(customerRepository.existsByCustomerId(customerId)) {
+            List<Customer> customers = customerRepository.findByCustomerId(customerId);
+            List<Customer> updatedCustomer = new ArrayList<>();
+            if (customers.size() == 1) {
+                customers.forEach(singleCustomer -> {
+                    if (singleCustomer.getCutomerAccountType().equals(updatedDetails.getCutomerAccountType())) {
+                        singleCustomer.setCustomerName(updatedDetails.getCustomerName());
+                        singleCustomer.setCustomerEmail(updatedDetails.getCustomerEmail());
+                        singleCustomer.setCustomerAddress(updatedDetails.getCustomerAddress());
+                        singleCustomer.setCustomerMobileNumber(updatedDetails.getCustomerMobileNumber());
 
-            Customer prevCustomer = customerRepository.findById(accountNumber).get();
-//            prevCustomer.setCustomerName(updatedDetails.getCustomerName());
-//            prevCustomer.setCustomerEmail(updatedDetails.getCustomerEmail());
-//            prevCustomer.setCustomerAddress(updatedDetails.getCustomerAddress());
-//            prevCustomer.setCustomerMobileNumber(updatedDetails.getCustomerMobileNumber());
-            customerRepository.save(updatedDetails);
+                        updatedCustomer.add(updatedDetails);
+                        customerRepository.save(singleCustomer);
+                    }else throw new InvalidDocument("Does not exist this type of account, In this customer id");
+                });
+                return CustomerConvertor.entityToDto(updatedCustomer.get(0));
+            } else {
+                for (Customer singleCustomer : customers) {
+                    if (singleCustomer.getCutomerAccountType().equals(updatedDetails.getCutomerAccountType())) {
+                        singleCustomer.setCustomerName(updatedDetails.getCustomerName());
+                        singleCustomer.setCustomerEmail(updatedDetails.getCustomerEmail());
+                        singleCustomer.setCustomerAddress(updatedDetails.getCustomerAddress());
+                        singleCustomer.setCustomerMobileNumber(updatedDetails.getCustomerMobileNumber());
 
-            return prevCustomer;
+                        updatedCustomer.add(singleCustomer);
+                        customerRepository.save(singleCustomer);
+                    }
+                } return CustomerConvertor.entityToDto(updatedCustomer.get(0));
+            }
+        }else throw new InvalidCustomerId("Invalid customer id for Update");
+
     }
 
     /*

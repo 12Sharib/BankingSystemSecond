@@ -243,7 +243,7 @@ class TransactionServiceTest {
                         ()->transactionService.withdrawAmount(1,-50.0));
             }
             @Test
-            @DisplayName("when Insufficien Balance in account")
+            @DisplayName("when Insufficient Balance in account")
             void insufficientBalance(){
                 Assertions.assertThrows(InsufficientBalance.class,
                         ()->transactionService.withdrawAmount(1,5000.0));

@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -37,9 +38,10 @@ public class CustomerController {
     * create customer
      */
     @PostMapping("/createCustomer")
-    public ResponseEntity<AccountDTO> createCustomer(@RequestBody Customer customer) throws InvalidDocument {
+    public ResponseEntity<AccountDTO> createCustomer(@Valid @RequestBody Customer customer) throws InvalidDocument {
         AccountDTO account = customerService.createCustomer(customer);
-        return new ResponseEntity<>(account,HttpStatus.CREATED);
+        HttpStatus httpStatus = account==null?HttpStatus.NO_CONTENT: HttpStatus.CREATED;
+        return new ResponseEntity<>(account,httpStatus);
     }
     /*
     * get all customers
@@ -68,9 +70,9 @@ public class CustomerController {
     public ResponseEntity<SuccessResponse> deleteAll(){
         return new ResponseEntity<>(customerService.deleteAll(),HttpStatus.OK);
     }
-    @PutMapping("updateCustomer/{accountNumber}")
-    public ResponseEntity<Customer> updateCustomer(@RequestBody Customer updatedCustomer,@PathVariable Integer accountNumber) throws InvalidAccountNumber {
-        Customer customer = customerService.updateCustomerDetails(updatedCustomer,accountNumber);
+    @PutMapping("updateCustomer/{customerId}")
+    public ResponseEntity<CustomerDTO> updateCustomer(@Valid @RequestBody Customer updatedCustomer,@PathVariable Integer customerId) throws InvalidCustomerId {
+        CustomerDTO customer = customerService.updateCustomerDetails(updatedCustomer,customerId);
         HttpStatus httpStatus = customer==null?HttpStatus.NOT_MODIFIED: HttpStatus.CREATED;
         return new ResponseEntity<>(customer,httpStatus);
     }

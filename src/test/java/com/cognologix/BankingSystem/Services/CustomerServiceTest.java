@@ -11,6 +11,7 @@ import com.cognologix.BankingSystem.Repository.CustomerRepository;
 import com.cognologix.BankingSystem.Response.SuccessResponse;
 import com.cognologix.BankingSystem.Services.ServicesImpl.CustomerServiceImpl;
 import com.cognologix.BankingSystem.dto.AccountDTO;
+import com.cognologix.BankingSystem.dto.CustomerDTO;
 import org.aspectj.apache.bcel.classfile.Node;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -121,7 +122,8 @@ class CustomerServiceTest {
                     "Savings", "SharibSaifi.SS@gmail.com", "8006590554",
                     "3334 3221 5548", "OGHPS2812E", "Muradanagar");
 
-            when(customerRepository.findById(1)).thenReturn(Optional.of(customer))
+            when(customerRepository.existsByCustomerId(21)).thenReturn(true);
+            when(customerRepository.findByCustomerId(1)).thenReturn(List.of(customer))
                     .thenThrow(new InvalidCustomerId("Invalid Customer Id"));
             customer.setCustomerName("Suhail Saifi");
 
@@ -132,7 +134,7 @@ class CustomerServiceTest {
         void updateCustomerDetails() throws InvalidCustomerId{
             try {
                Customer customer = new Customer();
-                Customer newCustomer = customerService.updateCustomerDetails(customer, 1);
+                CustomerDTO newCustomer = customerService.updateCustomerDetails(customer, 1);
                 Assertions.assertEquals("Suhail Saifi", newCustomer.getCustomerName());
             }catch (InvalidDocument exception){
                 Assertions.assertTrue(exception instanceof InvalidDocument);
@@ -145,7 +147,7 @@ class CustomerServiceTest {
         void negative_updateUpdateDetails(){
             //Invalid customer id
             Customer customer = new Customer();
-            Assertions.assertThrows(NoSuchElementException.class,
+            Assertions.assertThrows(InvalidCustomerId.class,
                     ()->customerService.updateCustomerDetails(customer,56));
         }
     }

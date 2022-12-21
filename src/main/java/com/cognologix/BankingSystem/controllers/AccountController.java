@@ -35,9 +35,10 @@ public class AccountController {
    */
     @GetMapping("/accounts")
     public ResponseEntity<List<AccountDTO>> all(){
-        logger.info("all Accounts");
+        logger.trace("Accessed All Accounts Method");
       List<AccountDTO> all =  accountService.allAccount();
       HttpStatus httpStatus = all.isEmpty()?HttpStatus.NOT_FOUND:HttpStatus.FOUND;
+        logger.info("Completed Successfully");
       return new ResponseEntity<>(all, httpStatus);
     }
     /*
@@ -57,7 +58,7 @@ public class AccountController {
     public ResponseEntity<List<Account>> savingAccounts() throws AccountsNotExist {
         List<Account> savingsAccounts = accountService.savingsAccounts();
         HttpStatus httpStatus = savingsAccounts.isEmpty()?HttpStatus.NOT_FOUND:HttpStatus.FOUND;
-        return new ResponseEntity<>(savingsAccounts,HttpStatus.FOUND);
+        return new ResponseEntity<>(savingsAccounts,httpStatus);
     }
     /*
     * Current Accounts
