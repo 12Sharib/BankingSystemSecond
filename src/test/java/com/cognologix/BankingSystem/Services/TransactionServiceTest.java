@@ -12,29 +12,26 @@ import com.cognologix.BankingSystem.Response.SuccessResponse;
 import com.cognologix.BankingSystem.Services.ServicesImpl.AccountServiceImpl;
 import com.cognologix.BankingSystem.Services.ServicesImpl.TransactionServiceImpl;
 import com.cognologix.BankingSystem.dto.TransactionDTO;
+import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.NestedTestConfiguration;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BooleanSupplier;
 
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
+@Log4j2
 class TransactionServiceTest {
     @MockBean
     private TransactionsRepository transactionsRepository;
@@ -86,19 +83,11 @@ class TransactionServiceTest {
         }
         @Test
         @DisplayName("positive amount transfer")
-        void amountTransfer() throws InvalidAmount,InsufficientBalance,InvalidAccountNumber{
-            try {
+        void amountTransfer(){
+            log.info("Start positive amountTransfer");
                 TransactionDTO transactionDTO = transactionService.transferAmount(1, 2, 300.0);
                 Assertions.assertEquals("Money Transfer successfully", transactionDTO.getTransactionMessage());
-            }catch (InvalidAmount exception){
-                Assertions.assertTrue(exception instanceof InvalidAmount);
-            }
-            catch (InsufficientBalance exception){
-                Assertions.assertTrue(exception instanceof InsufficientBalance);
-            }
-            catch (Exception exception){
-                System.out.println(exception.getMessage());
-            }
+            log.info("end");
         }
         @Nested
         class negative_amountTransfer {
@@ -109,27 +98,34 @@ class TransactionServiceTest {
             @Test
             @DisplayName("when invalid first account Number")
             void invalidFirstAccount(){
+                log.info("Start negative amountTransfer, invalidFirstAccountNumber");
                 Assertions.assertThrows(InvalidAccountNumber.class,
                         () -> transactionService.transferAmount(12, 2, 100.0));
+                log.info("end");
             }
             @Test
-            @DisplayName("when invalid first account Number")
+            @DisplayName("when invalid second account Number")
             void invalidSecondAccount(){
+                log.info("Start negative amountTransfer, invalidSecondAccountNumber");
                 Assertions.assertThrows(InvalidAccountNumber.class,
                         () -> transactionService.transferAmount(1, 25, 100.0));
+                log.info("end");
             }
             @Test
             @DisplayName("when Invalid amount")
             void invalidAmount(){
+                log.info("Start negative amountTransfer, invalidAmount");
                 Assertions.assertThrows(InvalidAmount.class,
                         () -> transactionService.transferAmount(1, 2, -800.0));
+                log.info("end");
             }
             @Test
             @DisplayName("when Insufficient balance in sender's account")
             void insufficientBalance() {
+                log.info("Start negative amountTransfer, insufficientBalance");
                 Assertions.assertThrows(InsufficientBalance.class,
                         () -> transactionService.transferAmount(1, 2, 800.0));
-
+                log.info("end");
             }
 
         }
@@ -158,16 +154,12 @@ class TransactionServiceTest {
         }
         @Test
         @DisplayName("Positive deposit amount")
-        void positive_deposit() throws InvalidAmount, InvalidAccountNumber {
+        void positive_deposit() {
             Double depositedAmount = 100.0;
-            try {
+            log.info("Start positive deposit");
                 TransactionDTO transactionDTO = transactionService.depositAmount(1, depositedAmount);
                 Assertions.assertEquals(100.0, transactionDTO.getTransactionAmount());
-            } catch (InvalidAmount exception) {
-                Assertions.assertTrue(exception instanceof InvalidAmount);
-            } catch (Exception exception) {
-                System.out.println(exception.getMessage());
-            }
+            log.info("end");
         }
 
         @Nested
@@ -176,15 +168,19 @@ class TransactionServiceTest {
             @Test
             @DisplayName("when Invalid account Number")
             void invalidAccount() {
+                log.info("Start negative deposit, invalidAccountNumber");
                 Assertions.assertThrows(InvalidAccountNumber.class,
                         () -> transactionService.depositAmount(2, 500.0));
+                log.info("end");
             }
 
             @Test
             @DisplayName("when Invalid Amount")
             void invalidAmount() {
+                log.info("Start negative deposit, invalidAmount");
                 Assertions.assertThrows(InvalidAmount.class,
                         () -> transactionService.depositAmount(1, -500.0));
+                log.info("end");
             }
         }
     }
@@ -212,19 +208,13 @@ class TransactionServiceTest {
         }
         @Test
         @DisplayName("positive withdraw amount")
-        void withdraw() throws InsufficientBalance, InvalidAmount, InvalidAccountNumber {
+        void withdraw() {
             //account
-            try {
+            log.info("Start positive withdraw");
                 Double withdrawAmount = 100.0;
                 TransactionDTO transactionDTO = transactionService.withdrawAmount(1, withdrawAmount);
                 Assertions.assertEquals(100.0, transactionDTO.getTransactionAmount());
-            } catch (InvalidAmount exception) {
-                Assertions.assertTrue(exception instanceof InvalidAmount);
-            } catch (InsufficientBalance exception) {
-                Assertions.assertTrue(exception instanceof InsufficientBalance);
-            } catch (Exception exception) {
-                System.out.println(exception.getMessage());
-            }
+            log.info("end");
         }
 
         @Nested
@@ -233,20 +223,26 @@ class TransactionServiceTest {
             @Test
             @DisplayName("when invalid account number")
             void invalidAccount(){
+                log.info("Start negative withdraw, invalidAccountNumber");
                 Assertions.assertThrows(InvalidAccountNumber.class,
                         ()->transactionService.withdrawAmount(51,50.0));
+                log.info("end");
             }
             @Test
             @DisplayName("when invalid amount")
             void invalidAmount(){
+                log.info("Start negative withdraw, invalidAmount");
                 Assertions.assertThrows(InvalidAmount.class,
                         ()->transactionService.withdrawAmount(1,-50.0));
+                log.info("end");
             }
             @Test
             @DisplayName("when Insufficient Balance in account")
             void insufficientBalance(){
+                log.info("Start negative withdraw, insufficientBalance");
                 Assertions.assertThrows(InsufficientBalance.class,
                         ()->transactionService.withdrawAmount(1,5000.0));
+                log.info("end");
             }
         }
     }
@@ -270,20 +266,18 @@ class TransactionServiceTest {
         }
         @Test
         @DisplayName("positive one account transactions")
-        void p_oneAccountTransaction() throws InvalidAccountNumber {
-            try {
-                Assertions.assertEquals(2, transactionService.oneAccountTransactions(12).size());
-            }catch (InvalidAccountNumber accountNumber){
-                Assertions.assertTrue(accountNumber instanceof InvalidAccountNumber);
-            }catch (Exception exception) {
-                System.out.println(exception.getMessage());
-            }
+        void p_oneAccountTransaction() {
+            log.info("Start Positive oneAccountTransaction");
+            Assertions.assertEquals(2, transactionService.oneAccountTransactions(12).size());
+            log.info("end");
         }
         @Test
         @DisplayName("negative, when invalid account number")
         void n_oneAccountTransaction(){
+            log.info("Start negative oneAccountTransaction, invalidAccountNumber");
             Assertions.assertThrows(InvalidAccountNumber.class,
                     ()->transactionService.oneAccountTransactions(5));
+            log.info("end");
         }
     }
     @Nested
@@ -295,24 +289,23 @@ class TransactionServiceTest {
 
             Optional<Transactions> transactionsOp = Optional.of(transactions);
 
+            when(transactionsRepository.existsById(transactions.getTransactionId())).thenReturn(true);
             when(transactionsRepository.findById(11)).thenReturn(transactionsOp);
         }
         @Test
         @DisplayName("positive find by transaction Id")
-        void p_transactionId() throws InvalidTransactionId{
-            try {
-                Assertions.assertEquals(11, transactionService.transactionId(11).getTransactionId());
-            }catch (InvalidTransactionId invalidTransactionId){
-                Assertions.assertTrue(invalidTransactionId instanceof InvalidTransactionId);
-            }catch (Exception exception){
-                System.out.println(exception.getMessage());
-            }
+        void p_transactionId(){
+            log.info("Start Positive findByTransactionId");
+            Assertions.assertEquals(11, transactionService.transactionId(11).getTransactionId());
+            log.info("end");
         }
         @Test
         @DisplayName("negative,when Invalid transaction Id")
         void n_transactionId(){
+            log.info("Start negative findByTransactionId, invalidTransactionId");
             Assertions.assertThrows(InvalidTransactionId.class,
                     ()->transactionService.transactionId(5));
+            log.info("end");
         }
     }
 
@@ -332,18 +325,23 @@ class TransactionServiceTest {
         @Test
         @DisplayName("positive delete transaction")
         void p_deleteTransaction() throws InvalidTransactionId{
+            log.info("Start positive deleteTransaction");
             SuccessResponse result = transactionService.deleteTransaction(10);
             Assertions.assertEquals("Delete Successfully", result.getMessage());
+            log.info("end");
         }
         @Test
         @DisplayName("negative, when invalid transaction id")
         void n_deleteTransaction(){
+            log.info("Start negative deleteTransaction, invalidTransactionId");
             Assertions.assertThrows(InvalidTransactionId.class,
                     ()->transactionService.deleteTransaction(82));
+            log.info("end");
         }
     }
     @Test
     void byDate(){
+        log.info("Start byDate");
         String date = "02/02/20";
         Transactions firstTransactions = new Transactions();
         firstTransactions.setTransactionDate("02/02/20");
@@ -356,6 +354,7 @@ class TransactionServiceTest {
         when(transactionsRepository.findByTransactionDate(date)).thenReturn(transactionsList);
         List<Transactions> result = transactionService.byDate(date);
         Assertions.assertEquals(2,result.size());
+        log.info("end");
     }
     @Nested
     class PreviousFive{
@@ -374,14 +373,18 @@ class TransactionServiceTest {
         @Test
         @DisplayName("positive previous five")
         void p_previousFive() throws InvalidAccountNumber{
+            log.info("Start positive previousFive");
             List<Transactions> fiveTransactions = transactionService.previousFive(2);
             Assertions.assertEquals(1,fiveTransactions.size());
+            log.info("end");
         }
         @Test
         @DisplayName("negative, Invalid account number")
         void n_previousFive(){
+            log.info("Start negative previousFive, invalidAccountNumber");
             Assertions.assertThrows(InvalidAccountNumber.class,
                     ()->transactionService.previousFive(8));
+            log.info("end");
         }
     }
 }

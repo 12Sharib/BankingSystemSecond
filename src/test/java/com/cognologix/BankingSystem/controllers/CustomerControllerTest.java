@@ -1,7 +1,5 @@
 package com.cognologix.BankingSystem.controllers;
 
-import com.cognologix.BankingSystem.Exceptions.InvalidCustomerId;
-import com.cognologix.BankingSystem.Exceptions.InvalidDocument;
 import com.cognologix.BankingSystem.Model.Customer;
 import com.cognologix.BankingSystem.Repository.CustomerRepository;
 import com.cognologix.BankingSystem.Response.SuccessResponse;
@@ -10,7 +8,7 @@ import com.cognologix.BankingSystem.convertor.CustomerConvertor;
 import com.cognologix.BankingSystem.dto.AccountDTO;
 import com.cognologix.BankingSystem.dto.CustomerDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Assertions;
+import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -26,14 +24,13 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.in;
 import static org.mockito.Mockito.when;
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CustomerController.class)
+@Log4j2
 class CustomerControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
@@ -49,6 +46,7 @@ class CustomerControllerTest {
         @Test
         @DisplayName("positive create customer")
         void createCustomer() throws Exception {
+            log.info("Access Positive createCustomer");
                 Customer customer = new Customer(1, 21, "Sharib Saifi",
                         "Savings", "SharibSaifi.SS@gmail.com", "8006590554",
                         "3334 3221 5548", "OGHPS2812E", "Muradanagar");
@@ -66,17 +64,19 @@ class CustomerControllerTest {
                         .andExpect(MockMvcResultMatchers.jsonPath("$.accountName", is(accountDTO.getAccountName())))
                         .andExpect(MockMvcResultMatchers.status().isCreated())
                         .andReturn();
-
+            log.info("Completed");
         }
         @Test
         @DisplayName("negative, when details are invalid or unsupported")
         void negative_createCustomer() throws Exception {
+            log.info("Access negative createCustomer");
             //when data is incorrect or empty request
             when(customerService.createCustomer(null)).thenReturn(null);
             mockMvc.perform(MockMvcRequestBuilders.post("/customer/createCustomer")
                             .content(objectMapper.writeValueAsString(null)))
                     .andExpect(MockMvcResultMatchers.status().isUnsupportedMediaType())
                     .andReturn();
+            log.info("Completed");
         }
     }
 
@@ -85,6 +85,7 @@ class CustomerControllerTest {
        @Test
        @DisplayName("positive, all customers")
        void allCustomers() throws Exception {
+           log.info("Access Positive allCustomer");
            CustomerDTO firstCustomer = new CustomerDTO();
            firstCustomer.setCustomerName("Sharib Saifi");
            firstCustomer.setCustomerId(101);
@@ -103,16 +104,19 @@ class CustomerControllerTest {
                    .andExpect(MockMvcResultMatchers.jsonPath("$.size()").value(customers.size()))
                    .andExpect(status().isFound())
                    .andReturn();
+           log.info("Completed");
        }
        @Test
        @DisplayName("negative, when list is empty")
        void negative_allCustomers() throws Exception{
+           log.info("Access negative allCustomer");
            //when all customers list is empty
            when(customerService.allCustomer()).thenReturn(null);
            mockMvc.perform(MockMvcRequestBuilders.get("/customers/allCustomer")
                            .content(objectMapper.writeValueAsString(null)))
                    .andExpect(MockMvcResultMatchers.status().isNotFound())
                    .andReturn();
+           log.info("Completed");
        }
     }
     @Nested
@@ -120,6 +124,7 @@ class CustomerControllerTest {
         @Test
         @DisplayName("positive, single cusotmer")
         void singleCustomer() throws Exception {
+            log.info("Access Positive singleCustomer");
                 CustomerDTO customer = new CustomerDTO();
                 customer.setCustomerId(1);
                 customer.setCustomerName("Sharib Saifi");
@@ -136,10 +141,12 @@ class CustomerControllerTest {
                         .andExpect(MockMvcResultMatchers.jsonPath("$[0].customerName", is(customer.getCustomerName())))
                         .andExpect(status().isFound())
                         .andReturn();
+            log.info("Completed");
         }
         @Test
         @DisplayName("negative, when customer id is invalid or not found")
         void negative_singleCustomer() throws Exception{
+            log.info("Access negative singleCustomer");
             //when customer id is invalid or not present
             Customer customer = new Customer();
             customer.setCustomerId(45);
@@ -149,6 +156,7 @@ class CustomerControllerTest {
                             .content(objectMapper.writeValueAsString(customer)))
                     .andExpect(MockMvcResultMatchers.status().isNotFound())
                     .andReturn();
+            log.info("Completed");
         }
     }
    @Nested
@@ -156,6 +164,7 @@ class CustomerControllerTest {
        @Test
        @DisplayName("positive, update customer")
        void updateCustomer() throws Exception{
+           log.info("Access Positive updateCustomer");
            Customer customer = new Customer(1, 21, "Sharib Saifi",
                    "Savings", "SharibSaifi.SS@gmail.com", "8006590554",
                    "3334 3221 5548", "OGHPS2812E", "Muradanagar");
@@ -170,10 +179,12 @@ class CustomerControllerTest {
                    .andExpect(MockMvcResultMatchers.jsonPath("$.customerId",is(customerDTO.getCustomerId())))
                    .andExpect(status().isCreated())
                    .andReturn();
+           log.info("Completed");
        }
        @Test
        @DisplayName("negative, customer details are invalid or unsupported")
        void negative_updateCustomer() throws Exception{
+           log.info("Access negative updateCustomer");
            //when customer id is correct but the customer details is invalid
            CustomerDTO customer = new CustomerDTO();
            customer.setCustomerId(1);
@@ -183,10 +194,12 @@ class CustomerControllerTest {
                            .content(objectMapper.writeValueAsString(customer)))
                    .andExpect(MockMvcResultMatchers.status().isUnsupportedMediaType())
                    .andReturn();
+           log.info("Completed");
        }
    }
     @Test
     void deleteAll() throws Exception {
+        log.info("Access deleteAll");
         SuccessResponse response = new SuccessResponse("Delete Successfully",true);
         when(customerService.deleteAll()).thenReturn(response);
 
@@ -197,6 +210,7 @@ class CustomerControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success",is(true)))
                 .andExpect(status().isOk())
                 .andReturn();
+        log.info("Completed");
     }
 
 }

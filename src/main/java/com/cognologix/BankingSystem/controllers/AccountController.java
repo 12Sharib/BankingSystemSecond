@@ -34,10 +34,10 @@ public class AccountController {
    */
     @GetMapping("/accounts")
     public ResponseEntity<List<AccountDTO>> all(){
-        log.trace("Accessed All Accounts Method");
+        log.info("Accessed All Accounts");
       List<AccountDTO> all =  accountService.allAccount();
       HttpStatus httpStatus = all.isEmpty()?HttpStatus.NOT_FOUND:HttpStatus.FOUND;
-        log.info("Completed All Accounts");
+        log.info("Completed: " + httpStatus);
       return new ResponseEntity<>(all, httpStatus);
     }
     /*
@@ -45,10 +45,10 @@ public class AccountController {
      */
     @DeleteMapping(value = "/delete/{accountNumber}")
     public ResponseEntity<SuccessResponse> deleteAccount(@PathVariable Integer accountNumber) throws InvalidAccountNumber {
-        log.trace("In Delete Account Method With Account Number");
+        log.info("In Delete Account With Account Number");
         SuccessResponse response = accountService.deleteAccount(accountNumber);
         HttpStatus httpStatus = response.getSuccess().equals(true)?HttpStatus.OK:HttpStatus.BAD_REQUEST;
-        log.info("Completed Delete Accounts");
+        log.info("Completed: " + httpStatus);
         return new ResponseEntity<>(response,httpStatus);
     }
     /*
@@ -56,10 +56,10 @@ public class AccountController {
      */
     @GetMapping(value = "/savings")
     public ResponseEntity<List<Account>> savingAccounts() throws AccountsNotExist {
-        log.trace("Accessed Savings Account Method");
+        log.info("Accessed Savings Account");
         List<Account> savingsAccounts = accountService.savingsAccounts();
         HttpStatus httpStatus = savingsAccounts.isEmpty()?HttpStatus.NOT_FOUND:HttpStatus.FOUND;
-        log.info("Completed Savings Accounts");
+        log.info("Completed: " + httpStatus);
         return new ResponseEntity<>(savingsAccounts,httpStatus);
     }
     /*
@@ -67,10 +67,10 @@ public class AccountController {
      */
     @GetMapping(value = "/current")
     public ResponseEntity<List<Account>> currentAccounts() throws AccountsNotExist {
-        log.trace("Accessed Current Account Method");
+        log.info("Accessed Current Account");
         List<Account> currentAccount = accountService.currentAccounts();
         HttpStatus httpStatus = currentAccount.isEmpty()?HttpStatus.NOT_FOUND:HttpStatus.FOUND;
-        log.info("Completed Current Accounts");
+        log.info("Completed: " + httpStatus);
         return new ResponseEntity<>(currentAccount,httpStatus);
     }
     /*
@@ -78,10 +78,10 @@ public class AccountController {
      */
     @GetMapping(value = "/debitCard/{accountNumber}")
     public ResponseEntity<List<String>> debitCard(@PathVariable Integer accountNumber) throws InvalidAccountNumber{
-        log.trace("Accessed Debit Card Method With Account Number");
+        log.info("Accessed Debit Card With Account Number");
         List<String> debitCard = accountService.debitCard(accountNumber);
         HttpStatus httpStatus = debitCard.isEmpty()?HttpStatus.NO_CONTENT:HttpStatus.CREATED;
-        log.info("Completed Debit Card");
+        log.info("Completed: " + httpStatus);
         return new ResponseEntity<>(debitCard,httpStatus);
     }
     /*
@@ -89,10 +89,10 @@ public class AccountController {
      */
     @GetMapping(value = "/creditCard/{accountNumber}")
     public ResponseEntity<List<String>> creditCard(@PathVariable Integer accountNumber) throws NotEligibleForCreditCard {
-        log.trace("Accessed Credit Card Method With Account Number");
+        log.info("Accessed Credit Card With Account Number");
         List<String> creditCard = accountService.creditCard(accountNumber);
         HttpStatus httpStatus = creditCard.isEmpty()?HttpStatus.NO_CONTENT:HttpStatus.CREATED;
-        log.info("Completed Credit Card");
+        log.info("Completed: "+httpStatus);
         return new ResponseEntity<>(creditCard,httpStatus);
     }
     /*
@@ -100,10 +100,10 @@ public class AccountController {
      */
     @GetMapping(value = "/accountsWithSameId/{customerId}")
     public ResponseEntity<List<AccountDTO>> sameId(@PathVariable Integer customerId) throws InvalidCustomerId {
-        log.trace("Accessed AccountsWithSameId With Customer Id");
+        log.info("Accessed AccountsWithSameId With Customer Id");
         List<AccountDTO> accountList = accountService.sameId(customerId);
         HttpStatus httpStatus = accountList.isEmpty()?HttpStatus.NOT_FOUND:HttpStatus.FOUND;
-        log.info("Completed Accounts with same id");
+        log.info("Completed: " + httpStatus);
         return new ResponseEntity<>(accountList,httpStatus);
     }
     /*
@@ -111,9 +111,9 @@ public class AccountController {
      */
     @DeleteMapping("/deleteAll")
     public ResponseEntity<SuccessResponse> deleteAll(){
-        log.trace("Accessed Delete All");
+        log.info("Accessed Delete All");
         HttpStatus httpStatus = accountService.deleteAll().getSuccess().equals(true)?HttpStatus.OK:HttpStatus.NO_CONTENT;
-        log.info("Completed Delete All");
+        log.info("Completed: " +httpStatus);
         return new ResponseEntity<>(accountService.deleteAll(),httpStatus);
     }
     /*
@@ -121,10 +121,10 @@ public class AccountController {
      */
     @GetMapping("/singleAccount/{accountNumber}")
     public ResponseEntity<AccountDTO> singleAccount(@PathVariable Integer accountNumber) throws InvalidAccountNumber{
-        log.trace("Accessed Single Account With Account Number");
+        log.info("Accessed Single Account With Account Number");
         AccountDTO accountDTO = accountService.singleAccount(accountNumber);
         HttpStatus httpStatus = accountDTO==null?HttpStatus.NOT_FOUND:HttpStatus.FOUND;
-        log.info("Completed Single Account");
+        log.info("Completed: " + httpStatus);
         return new ResponseEntity<>(accountDTO,httpStatus);
     }
 

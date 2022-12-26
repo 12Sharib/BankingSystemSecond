@@ -12,9 +12,8 @@ import com.cognologix.BankingSystem.Response.SuccessResponse;
 import com.cognologix.BankingSystem.Services.TransactionService;
 import com.cognologix.BankingSystem.convertor.TransactorConvertor;
 import com.cognologix.BankingSystem.dto.TransactionDTO;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -24,6 +23,7 @@ import java.util.List;
 import java.util.Random;
 
 @Service
+@Log4j2
 public class TransactionServiceImpl implements TransactionService {
 
     @Autowired
@@ -41,15 +41,19 @@ public class TransactionServiceImpl implements TransactionService {
      */
     @Override
     public TransactionDTO withdrawAmount(Integer accountNumber, Double withdrawAmount) throws InvalidAccountNumber, InsufficientBalance,InvalidAmount {
+        log.info("Access withdrawAmount Method");
         Double withdraw = null;
-        if (withdrawAmount <= 0)
+        if (withdrawAmount <= 0) {
+            log.error("Invalid Amount: " + withdraw);
             throw new InvalidAmount("Amount is less than zero or Equal to Zero, Invalid amount for withdraw");
+        }
         else {
             if (accountRepo.existsById(accountNumber)) {
                 Account prevAccount = accountRepo.findById(accountNumber).get();
                 Double prevBalance = prevAccount.getAccountInitialBalance();
 
                 if (prevBalance < withdrawAmount) {
+                    log.error("Insufficien balance in first account: " + prevBalance);
                     throw new InsufficientBalance("WithdrawAmount is greater than Current Account Balance");
                 } else withdraw = prevBalance - withdrawAmount;
 
@@ -59,9 +63,12 @@ public class TransactionServiceImpl implements TransactionService {
                 //save transactions for this account
                 transactionsRepository.save(saveTransactions(withdrawAmount,prevAccount,"withdraw Amount"));
                 //conversion entity to Dto
+                log.info("return transaction");
                 return TransactorConvertor.convertTransactionsEntityToDTO(transactions);
 
-            } else throw new InvalidAccountNumber("Invalid account number for withdraw amount");
+            } else
+                log.error("Invalid account Number: " + accountNumber);
+                throw new InvalidAccountNumber("Invalid account number for withdraw amount");
         }
     }
     /*
@@ -69,6 +76,7 @@ public class TransactionServiceImpl implements TransactionService {
      * return transaction for save in dao;
      */
     public Transactions saveTransactions(Double withdrawAmount,Account prevAccount,String message){
+        log.info("saved Transactions");
         Random random = new Random();
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss a");
@@ -95,8 +103,9 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public TransactionDTO depositAmount(Integer accountNumber, Double depositedAmount) throws InvalidAccountNumber, InvalidAmount {
+        log.info("Access DepositAmount Method");
         if (depositedAmount <= 0) {
-            //"Amount is less than zero or Equal to Zero, Provide valid amount for Deposit"
+            log.error("Invalid amount: " +depositedAmount);
             throw new InvalidAmount("Amount is less than zero or Equal to Zero, Invalid amount for Deposit");
         } else {
             if (accountRepo.existsById(accountNumber)) {
@@ -110,8 +119,11 @@ public class TransactionServiceImpl implements TransactionService {
                 //save transactions for this account
                 transactionsRepository.save(saveTransactions(depositedAmount,prevAccount,"Deposit amount"));
                 //conversion of entity to dto for view;
+                log.info("return transaction");
                 return TransactorConvertor.convertTransactionsEntityToDTO(transactions);
-            } else throw new InvalidAccountNumber("Invalid account number for deposit amount");
+            } else
+                log.error("Invalid account number: " + accountNumber);
+                throw new InvalidAccountNumber("Invalid account number for deposit amount");
         }
     }
     /*
@@ -122,14 +134,17 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public TransactionDTO transferAmount(Integer firstAccountNumber, Integer secondAccountNumber, Double amount) throws InsufficientBalance,InvalidAmount,InvalidAccountNumber {
         //check accounts
+        log.info("Access transferAmount Method");
         if(accountRepo.existsById(firstAccountNumber)){
             if(accountRepo.existsById(secondAccountNumber)) {
                 if (amount <= 0) {
+                    log.error("Invalid Amount:" + amount);
                     throw new InvalidAmount("Invalid Amount, provide valid amount");
                 } else {
                     Account getFirstAccount = accountRepo.findById(firstAccountNumber).get();
                     Double balanceInFirstAccount = getFirstAccount.getAccountInitialBalance();
                     if (balanceInFirstAccount < amount) {
+                        log.error("InSufficient Balance for Transfer: " + balanceInFirstAccount);
                         throw new InsufficientBalance("Invalid balance, because of less balance in first account");
                     } else balanceInFirstAccount = balanceInFirstAccount - amount;
 
@@ -142,6 +157,7 @@ public class TransactionServiceImpl implements TransactionService {
                     firstAccountTransactions.setTransactionFromAccount(firstAccountNumber);
                     transactionsRepository.save(firstAccountTransactions);
 
+                    log.info("Saved First Transaction");
                     //find second account
                     Account getSecondAccount = accountRepo.findById(secondAccountNumber).get();
 
@@ -156,56 +172,74 @@ public class TransactionServiceImpl implements TransactionService {
                     secondAccountTransactions.setTransactionFromAccount(firstAccountNumber);
                     transactionsRepository.save(secondAccountTransactions);
 
+                    log.info("Saved Second Transaction");
                     //money transfer message
                     TransactionDTO transferDTO = TransactorConvertor.convertTransactionsEntityToDTO(secondAccountTransactions);
                     transferDTO.setTransactionMessage("Money Transfer successfully");
+                    log.info("return TransactionDTO");
                     return transferDTO;
                 }
-            }else throw new InvalidAccountNumber("provide valid second account number");
-        } else throw new InvalidAccountNumber("provide valid first account Number");
+            }else
+                log.error("Invalid First Account Number : " + firstAccountNumber);
+                throw new InvalidAccountNumber("provide valid second account number");
+        } else
+            log.error("Invalid Second Account Number : " + secondAccountNumber);
+            throw new InvalidAccountNumber("provide valid first account Number");
 
     }
 
 
     @Override
     public List<Transactions> oneAccountTransactions(Integer accountNumber) throws InvalidAccountNumber {
+        log.info("Access OneAccountTransaction Method");
         if (transactionsRepository.existsByAccountNumber(accountNumber)) {
             List<Transactions> transactionsList = transactionsRepository.findByAccountNumber(accountNumber);
             return transactionsList;
-        }else throw new InvalidAccountNumber("Invalid Account Number for Single Account Transactions");
+        }else
+            log.error("Invalid Account Number: " + accountNumber);
+            throw new InvalidAccountNumber("Invalid Account Number for Single Account Transactions");
 
     }
 
     @Override
     public Transactions transactionId(Integer transactionId) throws InvalidTransactionId{
+        log.info("Access singleTransaction");
         if (transactionsRepository.existsById(transactionId)) {
             return transactionsRepository.findById(transactionId).get();
-        }else throw new InvalidTransactionId("Invalid TransactionId");
+        }else
+            log.error("Invalid Transaction Id: " + transactionId);
+            throw new InvalidTransactionId("Invalid TransactionId");
     }
 
     @Override
     public SuccessResponse deleteTransaction(Integer transactionId) throws InvalidTransactionId{
+        log.info("Access deleteTransaction");
         String message = null;
         if(transactionsRepository.existsById(transactionId)){
             transactionsRepository.deleteById(transactionId);
             return new SuccessResponse("Delete Successfully",true);
-        }else throw new InvalidTransactionId("Invalid transactionId");
+        }else
+            log.error("Invalid transactionId: " + transactionId);
+            throw new InvalidTransactionId("Invalid transactionId");
     }
 
     @Override
     public List byDate(String date) {
+        log.info("Access byDate Method");
         List<Transactions> transactionsList = transactionsRepository.findByTransactionDate(date);
         return transactionsList;
     }
 
     @Override
     public List previousFive(Integer accountNumber) throws InvalidAccountNumber{
+        log.info("Access PreviousFive Method");
         List<Transactions> previousFive = null;
         if(transactionsRepository.existsByAccountNumber(accountNumber)){
            previousFive = transactionsRepository.previousFiveTransactions(accountNumber);
-        }else throw new InvalidAccountNumber("Invalid Account Number for previous Transactions");
-
+        }else {
+            log.error("Invalid Account Number: " + accountNumber);
+            throw new InvalidAccountNumber("Invalid Account Number for previous Transactions");
+        }
         return previousFive;
     }
-
 }

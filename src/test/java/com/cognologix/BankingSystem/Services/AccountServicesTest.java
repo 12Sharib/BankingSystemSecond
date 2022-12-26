@@ -1,7 +1,6 @@
 package com.cognologix.BankingSystem.Services;
 
 import com.cognologix.BankingSystem.Exceptions.AccountsNotExist;
-import com.cognologix.BankingSystem.Exceptions.InsufficientBalance;
 import com.cognologix.BankingSystem.Exceptions.InvalidAccountNumber;
 import com.cognologix.BankingSystem.Exceptions.InvalidCustomerId;
 import com.cognologix.BankingSystem.Exceptions.NotEligibleForCreditCard;
@@ -11,6 +10,7 @@ import com.cognologix.BankingSystem.Repository.TransactionsRepository;
 import com.cognologix.BankingSystem.Response.SuccessResponse;
 import com.cognologix.BankingSystem.Services.ServicesImpl.AccountServiceImpl;
 import com.cognologix.BankingSystem.dto.AccountDTO;
+import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,14 +24,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
+@Log4j2
 class AccountServicesTest {
     @MockBean
     private AccountRepo accountRepo;
@@ -54,14 +52,18 @@ class AccountServicesTest {
         @Test
         @DisplayName("positive single account")
         void singleAccount() throws InvalidAccountNumber {
+            log.info("Start positive single account");
             AccountDTO accountDTO = accountService.singleAccount(101);
             Assertions.assertEquals(101, accountDTO.getAccountNumber());
+            log.info("end");
         }
         @Test
         @DisplayName("negative, Invalid account number")
         void negative_singleAccount(){
+            log.info("Start negative single account");
            Assertions.assertThrows(InvalidAccountNumber.class,
                    ()->accountService.singleAccount(-1));
+           log.info("end");
         }
     }
     @Nested
@@ -79,19 +81,19 @@ class AccountServicesTest {
         }
         @Test
         @DisplayName("positive all accounts")
-        void allAccounts() throws Exception{
-            try {
-                Assertions.assertEquals(2, accountService.allAccount().size());
-            }catch (Exception exception){
-                System.out.println(exception.getMessage());
-            }
+        void allAccounts(){
+            log.info("Start positive allAccounts");
+            Assertions.assertEquals(2, accountService.allAccount().size());
+            log.info("end");
+
         }
         @Test
-        @DisplayName("negative all accounts")
+        @DisplayName("negative allAccounts, when list is empty")
         void negative_allAccounts(){
-            //when account list is empty
+          log.info("Start negative allAccounts");
             when(accountRepo.findAll()).thenReturn(List.of());
             Assertions.assertEquals(true, accountService.allAccount().isEmpty());
+            log.info("end");
         }
     }
     @Nested
@@ -114,14 +116,17 @@ class AccountServicesTest {
         @Test
         @DisplayName("positive accounts with same id")
         void accountsWithSameId() throws InvalidCustomerId{
+            log.info("Start positive accountsWithSameId");
             Assertions.assertEquals(2,accountService.sameId(21).size());
+            log.info("end");
         }
         @Test
         @DisplayName("negative, invalid customer id")
         void negative_accountsWithSameId(){
-            //Invalid customer id
+            log.info("Start negative accountsWithSameId");
             Assertions.assertThrows(InvalidCustomerId.class,
                     ()-> accountService.sameId(5));
+            log.info("end");
         }
     }
 
@@ -143,22 +148,28 @@ class AccountServicesTest {
         @Test
         @DisplayName("positive delete account")
         void deleteAccount() throws InvalidAccountNumber{
+            log.info("Start positive deleteAccount");
             SuccessResponse result =  accountService.deleteAccount(101);
             Assertions.assertEquals(true,result.getSuccess());
+            log.info("end");
 
         }
         @Test
         @DisplayName("negative, invalid account number")
         void negative_deleteAccount(){
-           Assertions.assertThrows(NoSuchElementException.class,
+            log.info("Start negative deleteAccount");
+           Assertions.assertThrows(InvalidAccountNumber.class,
                    ()->accountService.deleteAccount(-9));
+           log.info("end");
         }
     }
 
     @Test
     void deleteAll(){
+        log.info("Start deleteAll");
         SuccessResponse response = accountService.deleteAll();
         Assertions.assertEquals(true,response.getSuccess());
+        log.info("end");
     }
     @Nested
     class SavingsAccount{
@@ -175,22 +186,18 @@ class AccountServicesTest {
         }
         @Test
         @DisplayName("positive savings account")
-        void p_savingsAccounts() throws AccountsNotExist{
-            try {
+        void p_savingsAccounts(){
+            log.info("Start positive savingsAccount");
                 Assertions.assertEquals(1, accountService.savingsAccounts().size());
-            }
-            catch (AccountsNotExist exception){
-                System.out.println(exception.getMessage());
-                Assertions.assertTrue(exception instanceof AccountsNotExist);
-            }catch (Exception exception){
-                System.out.println(exception.getMessage());
-            }
+            log.info("end");
         }
         @Test
         @DisplayName("negative, when invalid account type")
         void n_savingsAccount(){
+            log.info("start negative savingsAccount");
             Assertions.assertThrows(AccountsNotExist.class,
                     ()->accountService.currentAccounts().size());
+            log.info("end");
         }
     }
 
@@ -210,22 +217,18 @@ class AccountServicesTest {
         }
         @Test
         @DisplayName("positive current account")
-        void p_savingsAccounts() throws AccountsNotExist{
-            try {
+        void p_savingsAccounts(){
+            log.info("Start positive currentAccount");
                 Assertions.assertEquals(1, accountService.currentAccounts().size());
-            }
-            catch (AccountsNotExist exception){
-                System.out.println(exception.getMessage());
-                Assertions.assertTrue(exception instanceof AccountsNotExist);
-            }catch (Exception exception){
-                System.out.println(exception.getMessage());
-            }
+            log.info("end");
         }
         @Test
         @DisplayName("negative, when invalid account type")
         void n_savingsAccount(){
+            log.info("Start negative currentAccount");
             Assertions.assertThrows(AccountsNotExist.class,
                     ()->accountService.savingsAccounts().size());
+            log.info("end");
         }
     }
 
@@ -265,28 +268,27 @@ class AccountServicesTest {
         }
         @Test
         @DisplayName("positive, credit card")
-        void creditCard() throws InvalidAccountNumber,NotEligibleForCreditCard{
-            try {
-
+        void creditCard(){
+            log.info("Start positive creditCard");
                 List<String> creditCard = accountService.creditCard(20);
                 Assertions.assertEquals("Credit Card", creditCard.get(4));
-            }catch (Exception exception){
-                System.out.println(exception.getMessage());
-                Assertions.assertTrue(exception instanceof NotEligibleForCreditCard);
-                Assertions.assertEquals("Balance Less than 2000, Not Eligible for Credit Card",exception.getMessage());
-            }
+            log.info("end");
         }
         @Test
         @DisplayName("negative, Not eligible for credit card")
         void notEligible(){
+            log.info("start negative creditCard, NotEligibleForCreditCard");
            Assertions.assertThrows(NotEligibleForCreditCard.class,
                    ()-> accountService.creditCard(20));
+           log.info("end");
         }
         @Test
         @DisplayName("negative, Invalid account Number")
         void invalidAccountNumber(){
+            log.info("start second negative, InvalidAccountNumber");
             Assertions.assertThrows(InvalidAccountNumber.class,
                     ()-> accountService.creditCard(25));
+           log.info("end");
         }
     }
 
@@ -308,22 +310,20 @@ class AccountServicesTest {
         }
         @Test
         @DisplayName("positive, debit card")
-        void debitCard() throws InvalidAccountNumber{
-            try {
-
+        void debitCard() {
+         log.info("Start positive debit card");
                 List<String> debitCard = accountService.debitCard(20);
                 Assertions.assertEquals("Debit Card", debitCard.get(4));
-            }catch (Exception exception){
-                System.out.println(exception.getMessage());
-                Assertions.assertTrue(exception instanceof NotEligibleForCreditCard);
-                Assertions.assertEquals("Balance Less than 2000, Not Eligible for Credit Card",exception.getMessage());
-            }
+        log.info("end");
+
         }
         @Test
         @DisplayName("negative, Invalid account Number")
         void invalidAccountNumber(){
+            log.info("Start negative debitcard, InvalidAccountNumber");
             Assertions.assertThrows(InvalidAccountNumber.class,
                     ()-> accountService.debitCard(25));
+            log.info("end");
         }
     }
 

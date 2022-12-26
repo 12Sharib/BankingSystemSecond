@@ -1,9 +1,7 @@
 package com.cognologix.BankingSystem.Services;
 
 import com.cognologix.BankingSystem.Exceptions.AccountsNotExist;
-import com.cognologix.BankingSystem.Exceptions.InvalidAccountNumber;
 import com.cognologix.BankingSystem.Exceptions.InvalidCustomerId;
-import com.cognologix.BankingSystem.Exceptions.InvalidDocument;
 import com.cognologix.BankingSystem.Model.Account;
 import com.cognologix.BankingSystem.Model.Customer;
 import com.cognologix.BankingSystem.Repository.AccountRepo;
@@ -12,7 +10,7 @@ import com.cognologix.BankingSystem.Response.SuccessResponse;
 import com.cognologix.BankingSystem.Services.ServicesImpl.CustomerServiceImpl;
 import com.cognologix.BankingSystem.dto.AccountDTO;
 import com.cognologix.BankingSystem.dto.CustomerDTO;
-import org.aspectj.apache.bcel.classfile.Node;
+import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,19 +21,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.mockito.Mockito.when;
 
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
+@Log4j2
 class CustomerServiceTest {
     @MockBean
     private CustomerRepository customerRepository;
@@ -61,13 +56,17 @@ class CustomerServiceTest {
         @Test
         @DisplayName("positive all customers")
         void allCustomers() {
+            log.info("Start Positive allCustomers");
             Assertions.assertEquals(2, customerService.allCustomer().size());
+            log.info("end");
         }
         @Test
         @DisplayName("negative, when list is empty")
         void negative_allCustomers(){
+            log.info("Start negative allCustomers");
             when(customerRepository.findAll()).thenReturn(List.of());
             Assertions.assertTrue(customerService.allCustomer().isEmpty());
+            log.info("end");
         }
     }
 
@@ -88,29 +87,27 @@ class CustomerServiceTest {
         }
         @Test
         @DisplayName("positive create customer")
-        void createCustomer() throws InvalidDocument {
-            try {
+        void createCustomer() {
+            log.info("Start positive createCustomer");
                 Customer customer = new Customer();
-                AccountDTO accountDTO = customerService.createCustomer(customer);
 
+                AccountDTO accountDTO = customerService.createCustomer(customer);
                 Assertions.assertEquals("Active", accountDTO.getAccountStatus());
-            }catch (Exception exception) {
-                System.out.println(exception.getMessage());
-                Assertions.assertTrue(exception instanceof InvalidDocument);
-            }
+            log.info("end");
+
         }
 
         @Test
-        @DisplayName("negative create customer")
+        @DisplayName("negative create customer, when details are Invalid")
         void negative_createCustomer(){
-            //when all details are empty or wrong information
-
+            log.info("Start negative createCustomer");
             Customer customer = new Customer();
             customer.setCustomerAadharNumber("1100 0254 5265");
 
             when(customerRepository.findBycustomerAadharNumber("1100 0254 5265")).thenReturn(customer);
             Assertions.assertThrows(NullPointerException.class,
                     ()->customerService.createCustomer(customer));
+            log.info("end");
         }
     }
 
@@ -122,8 +119,9 @@ class CustomerServiceTest {
                     "Savings", "SharibSaifi.SS@gmail.com", "8006590554",
                     "3334 3221 5548", "OGHPS2812E", "Muradanagar");
 
+
             when(customerRepository.existsByCustomerId(21)).thenReturn(true);
-            when(customerRepository.findByCustomerId(1)).thenReturn(List.of(customer))
+            when(customerRepository.findByCustomerId(21)).thenReturn(List.of(customer))
                     .thenThrow(new InvalidCustomerId("Invalid Customer Id"));
             customer.setCustomerName("Suhail Saifi");
 
@@ -131,24 +129,23 @@ class CustomerServiceTest {
         }
         @Test
         @DisplayName("positive update customer details")
-        void updateCustomerDetails() throws InvalidCustomerId{
-            try {
+        void updateCustomerDetails() {
+            log.info("Start positive updateCustomer");
                Customer customer = new Customer();
-                CustomerDTO newCustomer = customerService.updateCustomerDetails(customer, 1);
+
+                CustomerDTO newCustomer = customerService.updateCustomerDetails(customer, 21);
                 Assertions.assertEquals("Suhail Saifi", newCustomer.getCustomerName());
-            }catch (InvalidDocument exception){
-                Assertions.assertTrue(exception instanceof InvalidDocument);
-            }catch (Exception exception){
-                System.out.println(exception.getMessage());
-            }
+            log.info("end");
+
         }
         @Test
         @DisplayName("negative, No such element")
         void negative_updateUpdateDetails(){
-            //Invalid customer id
+            log.info("Start negative updateCustomer");
             Customer customer = new Customer();
             Assertions.assertThrows(InvalidCustomerId.class,
                     ()->customerService.updateCustomerDetails(customer,56));
+            log.info("end");
         }
     }
 
@@ -174,16 +171,18 @@ class CustomerServiceTest {
         }
         @Test
         @DisplayName("positive single customer")
-        void singleCustomer() throws InvalidCustomerId{
+        void singleCustomer() {
+            log.info("Start positive singleCustomer");
             Assertions.assertEquals(1,customerService.customer(101).size());
+            log.info("error");
         }
         @Test
         @DisplayName("negative, invalid customer id")
         void negative_singleCustomer(){
-            //when customer id is invalid
+            log.info("start negative singleCustomer");
            Assertions.assertThrows(InvalidCustomerId.class,
                    ()->customerService.customer(52));
-
+            log.info("end");
         }
     }
 
