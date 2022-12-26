@@ -156,8 +156,7 @@ public class TransactionServiceImpl implements TransactionService {
                     firstAccountTransactions.setTransactionToAccount(secondAccountNumber);
                     firstAccountTransactions.setTransactionFromAccount(firstAccountNumber);
                     transactionsRepository.save(firstAccountTransactions);
-
-                    log.info("Saved First Transaction");
+                    
                     //find second account
                     Account getSecondAccount = accountRepo.findById(secondAccountNumber).get();
 
@@ -172,7 +171,6 @@ public class TransactionServiceImpl implements TransactionService {
                     secondAccountTransactions.setTransactionFromAccount(firstAccountNumber);
                     transactionsRepository.save(secondAccountTransactions);
 
-                    log.info("Saved Second Transaction");
                     //money transfer message
                     TransactionDTO transferDTO = TransactorConvertor.convertTransactionsEntityToDTO(secondAccountTransactions);
                     transferDTO.setTransactionMessage("Money Transfer successfully");
@@ -203,7 +201,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public Transactions transactionId(Integer transactionId) throws InvalidTransactionId{
-        log.info("Access singleTransaction");
+        log.info("Access singleTransaction Method");
         if (transactionsRepository.existsById(transactionId)) {
             return transactionsRepository.findById(transactionId).get();
         }else
@@ -213,7 +211,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public SuccessResponse deleteTransaction(Integer transactionId) throws InvalidTransactionId{
-        log.info("Access deleteTransaction");
+        log.info("Access deleteTransaction Method");
         String message = null;
         if(transactionsRepository.existsById(transactionId)){
             transactionsRepository.deleteById(transactionId);

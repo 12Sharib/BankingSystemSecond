@@ -37,7 +37,7 @@ public class TransactionController {
         log.info("Accessed TransferAmount With firstAccountNumber, secondAccountNumber & Amount");
         TransactionDTO transfer = transactionService.transferAmount(firstAccountNumber, secondAccountNumber, amount);
         HttpStatus httpStatus = transfer ==null?HttpStatus.NOT_MODIFIED:HttpStatus.CREATED;
-        log.info("Completed Transfer Amount: " + httpStatus);
+        log.info("Completed: " + httpStatus);
         return new ResponseEntity<>(transfer,httpStatus);
     }
     /*
@@ -48,7 +48,7 @@ public class TransactionController {
         log.info("Accessed depositAmount With accountNumber & depositedAmount");
         TransactionDTO Deposit =  transactionService.depositAmount(accountNumber,depositedAmount);
         HttpStatus httpStatus = Deposit==null?HttpStatus.NOT_MODIFIED:HttpStatus.CREATED;
-        log.info("Completed Deposit Amount: " + httpStatus);
+        log.info("Completed: " + httpStatus);
         return new ResponseEntity<>(Deposit , httpStatus);
     }
     /*
@@ -59,7 +59,7 @@ public class TransactionController {
         log.info("Accessed withdrawAmount With accountNumber & amount");
         TransactionDTO withdraw =  transactionService.withdrawAmount(accountNumber,withdrawAmount);
         HttpStatus httpStatus = withdraw==null?HttpStatus.NOT_MODIFIED:HttpStatus.CREATED;
-        log.info("Completed withdraw Amount: " + httpStatus);
+        log.info("Completed: " + httpStatus);
         return new ResponseEntity<>(withdraw , httpStatus);
     }
 
@@ -71,7 +71,7 @@ public class TransactionController {
         log.info("Accessed OneAccountTransactions With TransactionID");
         List<Transactions> transactions = transactionService.oneAccountTransactions(accountNumber);
         HttpStatus httpStatus = transactions.isEmpty()?HttpStatus.NOT_FOUND:HttpStatus.FOUND;
-        log.info("Completed One Account Transaction: " + httpStatus);
+        log.info("Completed: " + httpStatus);
         return new ResponseEntity<>(transactions,httpStatus);
     }
     /*
@@ -82,7 +82,7 @@ public class TransactionController {
         log.info("Accessed findByTransactionID With transactionId");
         Transactions transactions = transactionService.transactionId(transactionId);
         HttpStatus httpStatus = transactions==null?HttpStatus.NOT_FOUND:HttpStatus.FOUND;
-        log.info("Completed findByTransactionId: " + httpStatus);
+        log.info("Completed: " + httpStatus);
         return new ResponseEntity<>(transactions,httpStatus);
     }
     /*
@@ -93,7 +93,7 @@ public class TransactionController {
         log.info("Accessed Delete Transaction With TrasactionID");
         SuccessResponse response = transactionService.deleteTransaction(transactionId);
         HttpStatus httpStatus = response.getSuccess().equals(true)?HttpStatus.OK:HttpStatus.NOT_FOUND;
-        log.info("Completed DeleteTransaction :" + httpStatus);
+        log.info("Completed: " + httpStatus);
         return new ResponseEntity<>(response,httpStatus);
     }
     /*
@@ -104,7 +104,7 @@ public class TransactionController {
         log.info("Accessed ByDate with Date");
         List<Transactions> transactionsList = transactionService.byDate(date);
         HttpStatus httpStatus = transactionsList.isEmpty()?HttpStatus.NOT_FOUND:HttpStatus.FOUND;
-        log.info("Completed By date:" + httpStatus);
+        log.info("Completed: " + httpStatus);
         return new ResponseEntity<>(transactionService.byDate(date),httpStatus);
     }
     /*
@@ -115,7 +115,7 @@ public class TransactionController {
         log.info("Accessed PrevioudFive with AccountNumber");
         List<Transactions> transactionsList = transactionService.previousFive(accountNumber);
         HttpStatus httpStatus = transactionsList.isEmpty()?HttpStatus.NOT_FOUND:HttpStatus.FOUND;
-        log.info("Completed PreviousFive : " +httpStatus);
+        log.info("Completed: " +httpStatus);
         return new ResponseEntity<>(transactionsList,httpStatus);
     }
 }

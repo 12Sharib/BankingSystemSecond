@@ -45,7 +45,7 @@ public class CustomerController {
         log.info("Accessed Create Customer With Customer Details");
         AccountDTO account = customerService.createCustomer(customer);
         HttpStatus httpStatus = account==null?HttpStatus.NO_CONTENT: HttpStatus.CREATED;
-        log.info("Completed Create Customer: " + httpStatus);
+        log.info("Completed: " + httpStatus);
         return new ResponseEntity<>(account,httpStatus);
     }
     /*
@@ -57,7 +57,7 @@ public class CustomerController {
         List<CustomerDTO> allCustomer = customerService.allCustomer();
         HttpStatus httpStatus = allCustomer.isEmpty()?HttpStatus.NOT_FOUND: HttpStatus.FOUND;
         log.info("Completed All Customers: " + httpStatus);
-        return new ResponseEntity<>(allCustomer, HttpStatus.FOUND);
+        return new ResponseEntity<>(allCustomer, httpStatus);
     }
     /*
     * get customer with customerId in the database with account
@@ -69,7 +69,7 @@ public class CustomerController {
         if (sameIdCustomers.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }else
-            log.info("Completed Single Customer By Id :" );
+            log.info("Completed");
             return new ResponseEntity<>(sameIdCustomers,HttpStatus.FOUND);
     }
     /*
@@ -85,7 +85,7 @@ public class CustomerController {
         log.info("Accessed Update Customer with Update Details & Customer Id");
         CustomerDTO customer = customerService.updateCustomerDetails(updatedCustomer,customerId);
         HttpStatus httpStatus = customer==null?HttpStatus.NOT_MODIFIED: HttpStatus.CREATED;
-        log.info("Completed Update Customer: " + httpStatus);
+        log.info("Completed: " + httpStatus);
         return new ResponseEntity<>(customer,httpStatus);
     }
 }

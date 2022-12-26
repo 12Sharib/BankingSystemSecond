@@ -67,11 +67,12 @@ public class CustomerServiceImpl implements CustomerService{
                     account.setCustomerId(prevCustomer.getCustomerId());
                     account.setCustomer(newCustomer);
 
-                    log.info("Saved Account With Previous Details");
+
                     accountRepo.save(account);
                 }
             }
         }
+        log.info("Completed Method");
         return AccountConvertor.convertEntityToDTO(account);
     }
 
@@ -167,6 +168,7 @@ public class CustomerServiceImpl implements CustomerService{
         customerRepository.findAll().forEach(
                 customer -> customerDTOS.add(CustomerConvertor.entityToDto(customer))
         );
+        log.info("Completed Method");
         return customerDTOS;
     }
 

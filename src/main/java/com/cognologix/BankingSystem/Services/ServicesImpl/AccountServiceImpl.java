@@ -57,7 +57,7 @@ public class AccountServiceImpl implements AccountService {
                     }
             );
         }
-        log.info("Get accounts successfully");
+        log.info("Completed Method");
         return accountList;
     }
     /*
@@ -81,7 +81,7 @@ public class AccountServiceImpl implements AccountService {
                     }
             );
         }
-        log.info("Get list successfully");
+        log.info("Completed Method");
         return accountList;
     }
     /*
@@ -130,14 +130,14 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     public List<AccountDTO> allAccount() {
-        log.info("Access All Account");
+        log.info("Access allAccount Method");
         List<AccountDTO> allAccounts = new ArrayList<>();
         accountRepo.findAll().forEach(
                 account -> {
                     allAccounts.add(AccountConvertor.convertEntityToDTO(account));
                 }
         );
-        log.info("Completed All Accounts");
+        log.info("Completed Method");
         return allAccounts;
     }
 
@@ -157,7 +157,7 @@ public class AccountServiceImpl implements AccountService {
                 return new SuccessResponse("Delete successfully", true);
             }
         } else {
-            log.error("Invalid Account number" +accountNumber);
+            log.error("Invalid Account number: " +accountNumber);
             return new SuccessResponse("Invalid Account Number", false);
         }
     }
@@ -176,7 +176,7 @@ public class AccountServiceImpl implements AccountService {
             );
             return accountDTO;
         }else
-            log.error("Invalid customer id" + customerId);
+            log.error("Invalid customer id: " + customerId);
             throw new InvalidCustomerId("Invalid Customer Id");
     }
     /*
@@ -196,10 +196,11 @@ public class AccountServiceImpl implements AccountService {
         log.info("Access Single Account Method");
         AccountDTO accountDTO = new AccountDTO();
         if (accountRepo.existsById(accountNumber)){
+            log.info("Completed Method");
             return AccountConvertor.convertEntityToDTO(accountRepo.findById(accountNumber).get());
 
         }else {
-            log.error("Invalid account number" + accountNumber);
+            log.error("Invalid account number: " + accountNumber);
             throw new InvalidAccountNumber("Invalid Account Number");
         }
     }
