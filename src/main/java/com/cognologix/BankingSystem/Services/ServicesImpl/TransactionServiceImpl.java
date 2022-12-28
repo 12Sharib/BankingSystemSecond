@@ -156,7 +156,7 @@ public class TransactionServiceImpl implements TransactionService {
                     firstAccountTransactions.setTransactionToAccount(secondAccountNumber);
                     firstAccountTransactions.setTransactionFromAccount(firstAccountNumber);
                     transactionsRepository.save(firstAccountTransactions);
-                    
+
                     //find second account
                     Account getSecondAccount = accountRepo.findById(secondAccountNumber).get();
 

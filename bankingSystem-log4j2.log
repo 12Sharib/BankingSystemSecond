@@ -1,0 +1,43 @@
+28-12-2022 13:59:17.898 INFO  util.Version:21 --> HV000001: Hibernate Validator 6.2.5.Final
+28-12-2022 13:59:17.939 INFO  BankingSystem.BankingSystemApplication:55 --> Starting BankingSystemApplication using Java 11.0.17 on cglx-lpt-234u with PID 199734 (/home/mohds/IntellijWorkspace/BankingSystemSecond/target/classes started by mohds in /home/mohds/IntellijWorkspace/BankingSystemSecond)
+28-12-2022 13:59:17.944 INFO  BankingSystem.BankingSystemApplication:634 --> No active profile set, falling back to 1 default profile: "default"
+28-12-2022 13:59:17.986 INFO  env.DevToolsPropertyDefaultsPostProcessor:255 --> Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+28-12-2022 13:59:17.987 INFO  env.DevToolsPropertyDefaultsPostProcessor:255 --> For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+28-12-2022 13:59:18.698 INFO  config.RepositoryConfigurationDelegate:132 --> Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+28-12-2022 13:59:18.747 INFO  config.RepositoryConfigurationDelegate:201 --> Finished Spring Data repository scanning in 41 ms. Found 3 JPA repository interfaces.
+28-12-2022 13:59:19.244 INFO  tomcat.TomcatWebServer:108 --> Tomcat initialized with port(s): 8080 (http)
+28-12-2022 13:59:19.252 INFO  core.AprLifecycleListener:173 --> An older version [1.2.23] of the Apache Tomcat Native library is installed, while Tomcat recommends a minimum version of [1.2.30]
+28-12-2022 13:59:19.252 INFO  core.AprLifecycleListener:173 --> Loaded Apache Tomcat Native library [1.2.23] using APR version [1.6.5].
+28-12-2022 13:59:19.253 INFO  core.AprLifecycleListener:173 --> APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true], UDS [false].
+28-12-2022 13:59:19.253 INFO  core.AprLifecycleListener:173 --> APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
+28-12-2022 13:59:19.256 INFO  core.AprLifecycleListener:173 --> OpenSSL successfully initialized [OpenSSL 1.1.1f  31 Mar 2020]
+28-12-2022 13:59:19.264 INFO  http11.Http11NioProtocol:173 --> Initializing ProtocolHandler ["http-nio-8080"]
+28-12-2022 13:59:19.265 INFO  core.StandardService:173 --> Starting service [Tomcat]
+28-12-2022 13:59:19.265 INFO  core.StandardEngine:173 --> Starting Servlet engine: [Apache Tomcat/9.0.68]
+28-12-2022 13:59:19.315 INFO  [localhost].[/]:173 --> Initializing Spring embedded WebApplicationContext
+28-12-2022 13:59:19.316 INFO  context.ServletWebServerApplicationContext:292 --> Root WebApplicationContext: initialization completed in 1328 ms
+28-12-2022 13:59:19.439 INFO  util.LogHelper:31 --> HHH000204: Processing PersistenceUnitInfo [name: default]
+28-12-2022 13:59:19.482 INFO  hibernate.Version:44 --> HHH000412: Hibernate ORM core version 5.6.12.Final
+28-12-2022 13:59:19.613 INFO  common.Version:56 --> HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+28-12-2022 13:59:19.679 INFO  hikari.HikariDataSource:110 --> HikariPool-1 - Starting...
+28-12-2022 13:59:19.906 INFO  hikari.HikariDataSource:123 --> HikariPool-1 - Start completed.
+28-12-2022 13:59:19.926 INFO  dialect.Dialect:175 --> HHH000400: Using dialect: org.hibernate.dialect.MySQL8Dialect
+28-12-2022 13:59:20.486 INFO  internal.JtaPlatformInitiator:52 --> HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+28-12-2022 13:59:20.493 INFO  jpa.LocalContainerEntityManagerFactoryBean:437 --> Initialized JPA EntityManagerFactory for persistence unit 'default'
+28-12-2022 13:59:21.045 WARN  jpa.JpaBaseConfiguration$JpaWebConfiguration:219 --> spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+28-12-2022 13:59:21.166 INFO  web.PropertySourcedRequestMappingHandlerMapping:69 --> Mapped URL path [/v2/api-docs] onto method [springfox.documentation.swagger2.web.Swagger2Controller#getDocumentation(String, HttpServletRequest)]
+28-12-2022 13:59:21.269 INFO  autoconfigure.OptionalLiveReloadServer:59 --> LiveReload server is running on port 35729
+28-12-2022 13:59:21.389 INFO  http11.Http11NioProtocol:173 --> Starting ProtocolHandler ["http-nio-8080"]
+28-12-2022 13:59:21.400 INFO  tomcat.TomcatWebServer:220 --> Tomcat started on port(s): 8080 (http) with context path ''
+28-12-2022 13:59:21.401 INFO  plugins.DocumentationPluginsBootstrapper:160 --> Context refreshed
+28-12-2022 13:59:21.415 INFO  plugins.DocumentationPluginsBootstrapper:163 --> Found 1 custom documentation plugin(s)
+28-12-2022 13:59:21.431 INFO  scanners.ApiListingReferenceScanner:41 --> Scanning for api listing references
+28-12-2022 13:59:21.601 INFO  operation.CachingOperationNameGenerator:40 --> Generating unique operation named: deleteAllUsingDELETE_1
+28-12-2022 13:59:21.648 INFO  BankingSystem.BankingSystemApplication:61 --> Started BankingSystemApplication in 4.027 seconds (JVM running for 4.861)
+28-12-2022 13:59:36.473 INFO  [localhost].[/]:173 --> Initializing Spring DispatcherServlet 'dispatcherServlet'
+28-12-2022 13:59:36.474 INFO  servlet.DispatcherServlet:525 --> Initializing Servlet 'dispatcherServlet'
+28-12-2022 13:59:36.476 INFO  servlet.DispatcherServlet:547 --> Completed initialization in 2 ms
+28-12-2022 13:59:36.498 INFO  controllers.AccountController:70 --> Accessed Current Account
+28-12-2022 13:59:36.498 INFO  ServicesImpl.AccountServiceImpl:68 --> Access Current Accounts Method
+28-12-2022 13:59:36.612 INFO  ServicesImpl.AccountServiceImpl:84 --> Completed Method
+28-12-2022 13:59:36.613 INFO  controllers.AccountController:73 --> Completed: 302 FOUND
