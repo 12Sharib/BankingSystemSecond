@@ -3,7 +3,6 @@ package com.cognologix.BankingSystem.controllers;
 import com.cognologix.BankingSystem.Model.Account;
 import com.cognologix.BankingSystem.Model.Transactions;
 import com.cognologix.BankingSystem.Repository.AccountRepo;
-import com.cognologix.BankingSystem.Repository.TransactionsRepository;
 import com.cognologix.BankingSystem.Response.SuccessResponse;
 import com.cognologix.BankingSystem.Services.TransactionService;
 import com.cognologix.BankingSystem.dto.TransactionDTO;
@@ -43,7 +42,7 @@ class TransactionControllerTest {
         @Test
         @DisplayName("positive, withdraw")
         void p_withdraw() throws Exception {
-            log.info("Access Positive withdraw");
+            log.info("Starting positive withdraw....");
             Account account = new Account();
             account.setAccountInitialBalance(500.0);
             account.setAccountNumber(1);
@@ -61,13 +60,12 @@ class TransactionControllerTest {
                     .andExpect(MockMvcResultMatchers.jsonPath("$.transactionAmount", is(transactionDTO.getTransactionAmount())))
                     .andExpect(status().isCreated())
                     .andReturn();
-            log.info("Completed");
+            log.info("Completed....");
         }
         @Test
         @DisplayName("negative, when invalid account number")
         void negative_withdraw() throws Exception{
-            log.info("Access Negative withdraw");
-            //when account number is invalid
+            log.info("Starting negative withdraw....");
             TransactionDTO transactionDTO = new TransactionDTO();
             transactionDTO.setTransactionId(101);
 
@@ -76,7 +74,7 @@ class TransactionControllerTest {
                         //    .content(objectMapper.writeValueAsString(transactionDTO)))
                     .andExpect(MockMvcResultMatchers.status().isNotFound())
                     .andReturn();
-            log.info("Completed");
+            log.info("Completed....");
         }
     }
 
@@ -85,7 +83,7 @@ class TransactionControllerTest {
        @Test
        @DisplayName("positive, Deposit")
        void p_deposit() throws Exception{
-           log.info("Access Positive Deposit");
+           log.info("Starting positive Deposit....");
                Account account = new Account();
                account.setAccountInitialBalance(500.0);
                account.setAccountNumber(1);
@@ -103,12 +101,12 @@ class TransactionControllerTest {
                        .andExpect(MockMvcResultMatchers.jsonPath("$.transactionAmount", is(transactionDTO.getTransactionAmount())))
                        .andExpect(status().isCreated())
                        .andReturn();
-           log.info("Completed");
+           log.info("Completed....");
        }
        @Test
        @DisplayName("negative, when invalid account number")
        void negative_deposit() throws Exception{
-           log.info("Access Negative Deposit");
+           log.info("Starting negative deposit....");
 
            TransactionDTO transactionDTO = new TransactionDTO();
            transactionDTO.setTransactionId(101);
@@ -118,7 +116,7 @@ class TransactionControllerTest {
                            .content(objectMapper.writeValueAsString(transactionDTO)))
                    .andExpect(MockMvcResultMatchers.status().isNotFound())
                    .andReturn();
-            log.info("Completed");
+            log.info("Completed....");
        }
    }
     @Nested
@@ -126,7 +124,7 @@ class TransactionControllerTest {
        @Test
        @DisplayName("positive, transfer amount")
        void transferAmount() throws Exception {
-           log.info("Access Positive transferAmount");
+           log.info("Starting positive transferAmount....");
                Account firstAccount = new Account();
                firstAccount.setAccountInitialBalance(500.0);
                firstAccount.setAccountNumber(1);
@@ -152,12 +150,12 @@ class TransactionControllerTest {
                        .andExpect(MockMvcResultMatchers.jsonPath("$.transactionMessage", is(transactionDTO.getTransactionMessage())))
                        .andExpect(status().isCreated())
                        .andReturn();
-           log.info("Completed");
+           log.info("Completed....");
        }
         @Test
         @DisplayName("negative, when invalid account number")
         void negative_transfer() throws Exception{
-            log.info("Access Negative transferAmount");
+            log.info("Starting negative transferAmount....");
             TransactionDTO transactionDTO = new TransactionDTO();
             transactionDTO.setTransactionId(101);
 
@@ -166,7 +164,7 @@ class TransactionControllerTest {
                             .content(objectMapper.writeValueAsString(transactionDTO)))
                     .andExpect(MockMvcResultMatchers.status().isNotFound())
                     .andReturn();
-            log.info("Completed");
+            log.info("Completed....");
         }
    }
    @Nested
@@ -174,7 +172,7 @@ class TransactionControllerTest {
        @Test
        @DisplayName("positive, one account transactions")
        void oneAccountTransactions() throws Exception{
-           log.info("Access Positive oneAccountTransactions");
+           log.info("Starting positive oneAccountTransactions....");
                Transactions firstTransactions = new Transactions();
                firstTransactions.setTransactionId(1);
                firstTransactions.setAccountNumber(5);
@@ -193,18 +191,18 @@ class TransactionControllerTest {
                        .andExpect(MockMvcResultMatchers.jsonPath("$[0].accountNumber", is(firstTransactions.getAccountNumber())))
                        .andExpect(MockMvcResultMatchers.jsonPath("$.size()").value(transactionsList.size()))
                        .andExpect(MockMvcResultMatchers.status().isFound());
-           log.info("Completed");
+           log.info("Completed....");
        }
        @Test
        @DisplayName("negative, when transaction id is invalid")
        void negative_oneAccountTransactions() throws Exception{
-           log.info("Access Negative oneAccountTransactions");
+           log.info("Starting negative oneAccountTransactions....");
            when(transactionService.oneAccountTransactions(2)).thenReturn(null);
            mockMvc.perform(MockMvcRequestBuilders.get("/transaction/oneAccountTransaction/1")
                            .content(objectMapper.writeValueAsString(null)))
                    .andExpect(MockMvcResultMatchers.status().isNotFound())
                    .andReturn();
-           log.info("Completed");
+           log.info("Completed....");
        }
 
    }
@@ -214,7 +212,7 @@ class TransactionControllerTest {
        @Test
        @DisplayName("positive, find by transaction id")
        void p_findByTransactionId() throws Exception{
-           log.info("Access Positive findByTransactionId");
+           log.info("Starting positive findByTransactionId....");
                Transactions transactions = new Transactions();
                transactions.setTransactionId(101);
                transactions.setTransactionMessage("deposit");
@@ -227,18 +225,18 @@ class TransactionControllerTest {
                        .andExpect(MockMvcResultMatchers.jsonPath("$.transactionMessage", is(transactions.getTransactionMessage())))
                        .andExpect(MockMvcResultMatchers.status().isFound())
                        .andReturn();
-            log.info("Completed");
+            log.info("Completed....");
        }
        @Test
        @DisplayName("negative, when invalid transaction id")
        void n_findByTransactionId() throws Exception{
-           log.info("Access Negative findByTransactionId");
+           log.info("Starting negative findByTransactionId....");
            when(transactionService.transactionId(5)).thenReturn(null);
            mockMvc.perform(MockMvcRequestBuilders.get("/transaction/findByTransactionId/1")
                            .content(objectMapper.writeValueAsString(null)))
                    .andExpect(MockMvcResultMatchers.status().isNotFound())
                    .andReturn();
-           log.info("Completed");
+           log.info("Completed....");
        }
    }
 
@@ -247,7 +245,7 @@ class TransactionControllerTest {
         @Test
         @DisplayName("positive delete transactions")
         void deleteTransaction() throws Exception{
-            log.info("Access Positive deleteTransaction");
+            log.info("Starting positive deleteTransaction....");
                 Transactions transactions = new Transactions();
                 transactions.setTransactionId(1);
 
@@ -261,19 +259,19 @@ class TransactionControllerTest {
                         .andExpect(MockMvcResultMatchers.jsonPath("$.success", is(true)))
                         .andExpect(MockMvcResultMatchers.status().isOk())
                         .andReturn();
-            log.info("Completed");
+            log.info("Completed....");
         }
 
         @Test
         @DisplayName("negative, when invalid transaction id")
         void negative_deleteTransaction() throws Exception{
-            log.info("Access Negative deleteTransaction");
+            log.info("Starting negative deleteTransaction....");
             when(transactionService.previousFive(1)).thenReturn(null);
             mockMvc.perform(MockMvcRequestBuilders.get("/transactions/previousFive")
                             .content(objectMapper.writeValueAsString(null)))
                     .andExpect(status().isNotFound())
                     .andReturn();
-            log.info("Completed");
+            log.info("Completed....");
         }
     }
     @Nested
@@ -281,7 +279,7 @@ class TransactionControllerTest {
         @Test
         @DisplayName("positive previous five")
         void previousFive() throws Exception {
-            log.info("Access Positive previousFive");
+            log.info("Starting positive previousFive....");
                 Transactions transactions = new Transactions();
                 transactions.setTransactionId(1);
                 transactions.setAccountNumber(5);
@@ -296,24 +294,24 @@ class TransactionControllerTest {
                         .andExpect(MockMvcResultMatchers.jsonPath("$.size()").value(transactionsList.size()))
                         .andExpect(status().isFound())
                         .andReturn();
-            log.info("Completed");
+            log.info("Completed....");
         }
         @Test
         @DisplayName("negative, when invalid account number")
         void negative_previousFive() throws Exception{
-         log.info("Access negative previousFive");
+         log.info("Starting negative previousFive....");
             when(transactionService.previousFive(1)).thenReturn(null);
             mockMvc.perform(MockMvcRequestBuilders.get("/transactions/previousFive")
                             .content(objectMapper.writeValueAsString(null)))
                     .andExpect(status().isNotFound())
                     .andReturn();
-        log.info("Completed");
+        log.info("Completed....");
         }
 
     }
     @Test
     void byDate() throws Exception{
-        log.info("Access Positive byDate");
+        log.info("Starting positive byDate....");
         Transactions transactions = new Transactions();
         transactions.setTransactionId(1);
         transactions.setTransactionDate("02-02-2022");
@@ -327,6 +325,6 @@ class TransactionControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].transactionId",is(1)))
                 .andExpect(MockMvcResultMatchers.status().isFound())
                 .andReturn();
-        log.info("Completed");
+        log.info("Completed....");
     }
 }

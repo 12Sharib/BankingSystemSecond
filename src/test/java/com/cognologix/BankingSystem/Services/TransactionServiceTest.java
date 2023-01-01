@@ -82,50 +82,46 @@ class TransactionServiceTest {
             when(transactionsRepository.save(secondTransaction)).thenReturn(secondTransaction);
         }
         @Test
-        @DisplayName("positive amount transfer")
+        @DisplayName("positive amountTransfer")
         void amountTransfer(){
-            log.info("Start positive amountTransfer");
+            log.info("Start positive amountTransfer...");
                 TransactionDTO transactionDTO = transactionService.transferAmount(1, 2, 300.0);
                 Assertions.assertEquals("Money Transfer successfully", transactionDTO.getTransactionMessage());
-            log.info("end");
+            log.info("end...");
         }
         @Nested
         class negative_amountTransfer {
-            //when invalid first account Number
-            //when invalid second account Number
-            //when inSufficient balance in sender's account
-            //when invalid transfer amount
             @Test
             @DisplayName("when invalid first account Number")
             void invalidFirstAccount(){
-                log.info("Start negative amountTransfer, invalidFirstAccountNumber");
+                log.info("Start negative amountTransfer, invalidFirstAccountNumber...");
                 Assertions.assertThrows(InvalidAccountNumber.class,
                         () -> transactionService.transferAmount(12, 2, 100.0));
-                log.info("end");
+                log.info("end...");
             }
             @Test
             @DisplayName("when invalid second account Number")
             void invalidSecondAccount(){
-                log.info("Start negative amountTransfer, invalidSecondAccountNumber");
+                log.info("Start negative amountTransfer, invalidSecondAccountNumber...");
                 Assertions.assertThrows(InvalidAccountNumber.class,
                         () -> transactionService.transferAmount(1, 25, 100.0));
-                log.info("end");
+                log.info("end...");
             }
             @Test
-            @DisplayName("when Invalid amount")
+            @DisplayName("when InvalidAmount")
             void invalidAmount(){
-                log.info("Start negative amountTransfer, invalidAmount");
+                log.info("Start negative amountTransfer, invalidAmount...");
                 Assertions.assertThrows(InvalidAmount.class,
                         () -> transactionService.transferAmount(1, 2, -800.0));
-                log.info("end");
+                log.info("end...");
             }
             @Test
             @DisplayName("when Insufficient balance in sender's account")
             void insufficientBalance() {
-                log.info("Start negative amountTransfer, insufficientBalance");
+                log.info("Start negative amountTransfer, insufficientBalance...");
                 Assertions.assertThrows(InsufficientBalance.class,
                         () -> transactionService.transferAmount(1, 2, 800.0));
-                log.info("end");
+                log.info("end...");
             }
 
         }
@@ -153,34 +149,34 @@ class TransactionServiceTest {
 
         }
         @Test
-        @DisplayName("Positive deposit amount")
+        @DisplayName("positive depositAmount")
         void positive_deposit() {
             Double depositedAmount = 100.0;
-            log.info("Start positive deposit");
+            log.info("Start positive deposit...");
                 TransactionDTO transactionDTO = transactionService.depositAmount(1, depositedAmount);
                 Assertions.assertEquals(100.0, transactionDTO.getTransactionAmount());
-            log.info("end");
+            log.info("end...");
         }
 
         @Nested
         @DisplayName("negative Deposit")
         class negative_deposit {
             @Test
-            @DisplayName("when Invalid account Number")
+            @DisplayName("when InvalidAccountNumber")
             void invalidAccount() {
-                log.info("Start negative deposit, invalidAccountNumber");
+                log.info("Start negative deposit, invalidAccountNumber...");
                 Assertions.assertThrows(InvalidAccountNumber.class,
                         () -> transactionService.depositAmount(2, 500.0));
-                log.info("end");
+                log.info("end...");
             }
 
             @Test
             @DisplayName("when Invalid Amount")
             void invalidAmount() {
-                log.info("Start negative deposit, invalidAmount");
+                log.info("Start negative deposit, invalidAmount...");
                 Assertions.assertThrows(InvalidAmount.class,
                         () -> transactionService.depositAmount(1, -500.0));
-                log.info("end");
+                log.info("end...");
             }
         }
     }
@@ -210,39 +206,39 @@ class TransactionServiceTest {
         @DisplayName("positive withdraw amount")
         void withdraw() {
             //account
-            log.info("Start positive withdraw");
+            log.info("Start positive withdraw...");
                 Double withdrawAmount = 100.0;
                 TransactionDTO transactionDTO = transactionService.withdrawAmount(1, withdrawAmount);
                 Assertions.assertEquals(100.0, transactionDTO.getTransactionAmount());
-            log.info("end");
+            log.info("end...");
         }
 
         @Nested
         @DisplayName("negatives withdraw amount")
         class negative_withraw{
             @Test
-            @DisplayName("when invalid account number")
+            @DisplayName("when invalidAccountNumber")
             void invalidAccount(){
-                log.info("Start negative withdraw, invalidAccountNumber");
+                log.info("Start negative withdraw, invalidAccountNumber...");
                 Assertions.assertThrows(InvalidAccountNumber.class,
                         ()->transactionService.withdrawAmount(51,50.0));
-                log.info("end");
+                log.info("end...");
             }
             @Test
-            @DisplayName("when invalid amount")
+            @DisplayName("when invalidAmount")
             void invalidAmount(){
-                log.info("Start negative withdraw, invalidAmount");
+                log.info("Start negative withdraw, invalidAmount...");
                 Assertions.assertThrows(InvalidAmount.class,
                         ()->transactionService.withdrawAmount(1,-50.0));
-                log.info("end");
+                log.info("end...");
             }
             @Test
             @DisplayName("when Insufficient Balance in account")
             void insufficientBalance(){
-                log.info("Start negative withdraw, insufficientBalance");
+                log.info("Start negative withdraw, insufficientBalance...");
                 Assertions.assertThrows(InsufficientBalance.class,
                         ()->transactionService.withdrawAmount(1,5000.0));
-                log.info("end");
+                log.info("end...");
             }
         }
     }
@@ -265,19 +261,19 @@ class TransactionServiceTest {
             when(transactionsRepository.findByAccountNumber(12)).thenReturn(transactionsList);
         }
         @Test
-        @DisplayName("positive one account transactions")
+        @DisplayName("positive oneAccountTransactions")
         void p_oneAccountTransaction() {
-            log.info("Start Positive oneAccountTransaction");
+            log.info("Start positive oneAccountTransaction...");
             Assertions.assertEquals(2, transactionService.oneAccountTransactions(12).size());
-            log.info("end");
+            log.info("end...");
         }
         @Test
         @DisplayName("negative, when invalid account number")
         void n_oneAccountTransaction(){
-            log.info("Start negative oneAccountTransaction, invalidAccountNumber");
+            log.info("Start negative oneAccountTransaction, invalidAccountNumber...");
             Assertions.assertThrows(InvalidAccountNumber.class,
                     ()->transactionService.oneAccountTransactions(5));
-            log.info("end");
+            log.info("end...");
         }
     }
     @Nested
@@ -293,19 +289,19 @@ class TransactionServiceTest {
             when(transactionsRepository.findById(11)).thenReturn(transactionsOp);
         }
         @Test
-        @DisplayName("positive find by transaction Id")
+        @DisplayName("positive findByTransactionId")
         void p_transactionId(){
-            log.info("Start Positive findByTransactionId");
+            log.info("Start positive findByTransactionId...");
             Assertions.assertEquals(11, transactionService.transactionId(11).getTransactionId());
-            log.info("end");
+            log.info("end...");
         }
         @Test
-        @DisplayName("negative,when Invalid transaction Id")
+        @DisplayName("negative, InvalidTransactionId")
         void n_transactionId(){
-            log.info("Start negative findByTransactionId, invalidTransactionId");
+            log.info("Start negative findByTransactionId, invalidTransactionId...");
             Assertions.assertThrows(InvalidTransactionId.class,
                     ()->transactionService.transactionId(5));
-            log.info("end");
+            log.info("end...");
         }
     }
 
@@ -323,38 +319,38 @@ class TransactionServiceTest {
 
         }
         @Test
-        @DisplayName("positive delete transaction")
+        @DisplayName("positive deleteTransaction")
         void p_deleteTransaction() throws InvalidTransactionId{
-            log.info("Start positive deleteTransaction");
+            log.info("Start positive deleteTransaction...");
             SuccessResponse result = transactionService.deleteTransaction(10);
             Assertions.assertEquals("Delete Successfully", result.getMessage());
-            log.info("end");
+            log.info("end...");
         }
         @Test
-        @DisplayName("negative, when invalid transaction id")
+        @DisplayName("negative, invalidTransactionId")
         void n_deleteTransaction(){
-            log.info("Start negative deleteTransaction, invalidTransactionId");
+            log.info("Start negative deleteTransaction, invalidTransactionId...");
             Assertions.assertThrows(InvalidTransactionId.class,
                     ()->transactionService.deleteTransaction(82));
-            log.info("end");
+            log.info("end...");
         }
     }
     @Test
     void byDate(){
-        log.info("Start byDate");
+        log.info("Start byDate...");
         String date = "02/02/20";
         Transactions firstTransactions = new Transactions();
-        firstTransactions.setTransactionDate("02/02/20");
+        firstTransactions.setTransactionDate("02/02/20...");
 
         Transactions secondTransactions = new Transactions();
-        secondTransactions.setTransactionDate("02/02/20");
+        secondTransactions.setTransactionDate("02/02/20...");
 
         List<Transactions> transactionsList = List.of(firstTransactions,secondTransactions);
 
         when(transactionsRepository.findByTransactionDate(date)).thenReturn(transactionsList);
         List<Transactions> result = transactionService.byDate(date);
         Assertions.assertEquals(2,result.size());
-        log.info("end");
+        log.info("end...");
     }
     @Nested
     class PreviousFive{
@@ -371,20 +367,20 @@ class TransactionServiceTest {
             when(transactionsRepository.previousFiveTransactions(2)).thenReturn(transactionsList);
         }
         @Test
-        @DisplayName("positive previous five")
+        @DisplayName("positive previousFive")
         void p_previousFive() throws InvalidAccountNumber{
-            log.info("Start positive previousFive");
+            log.info("Start positive previousFive...");
             List<Transactions> fiveTransactions = transactionService.previousFive(2);
             Assertions.assertEquals(1,fiveTransactions.size());
-            log.info("end");
+            log.info("end...");
         }
         @Test
-        @DisplayName("negative, Invalid account number")
+        @DisplayName("negative, InvalidAccountNumber")
         void n_previousFive(){
-            log.info("Start negative previousFive, invalidAccountNumber");
+            log.info("Start negative previousFive, invalidAccountNumber...");
             Assertions.assertThrows(InvalidAccountNumber.class,
                     ()->transactionService.previousFive(8));
-            log.info("end");
+            log.info("end...");
         }
     }
 }

@@ -46,7 +46,7 @@ class CustomerControllerTest {
         @Test
         @DisplayName("positive create customer")
         void createCustomer() throws Exception {
-            log.info("Access Positive createCustomer");
+            log.info("Starting positive createCustomer....");
                 Customer customer = new Customer(1, 21, "Sharib Saifi",
                         "Savings", "SharibSaifi.SS@gmail.com", "8006590554",
                         "3334 3221 5548", "OGHPS2812E", "Muradanagar");
@@ -64,19 +64,19 @@ class CustomerControllerTest {
                         .andExpect(MockMvcResultMatchers.jsonPath("$.accountName", is(accountDTO.getAccountName())))
                         .andExpect(MockMvcResultMatchers.status().isCreated())
                         .andReturn();
-            log.info("Completed");
+            log.info("Completed....");
         }
         @Test
         @DisplayName("negative, when details are invalid or unsupported")
         void negative_createCustomer() throws Exception {
-            log.info("Access negative createCustomer");
+            log.info("Starting negative createCustomer....");
             //when data is incorrect or empty request
             when(customerService.createCustomer(null)).thenReturn(null);
             mockMvc.perform(MockMvcRequestBuilders.post("/customer/createCustomer")
                             .content(objectMapper.writeValueAsString(null)))
                     .andExpect(MockMvcResultMatchers.status().isUnsupportedMediaType())
                     .andReturn();
-            log.info("Completed");
+            log.info("Completed....");
         }
     }
 
@@ -85,7 +85,7 @@ class CustomerControllerTest {
        @Test
        @DisplayName("positive, all customers")
        void allCustomers() throws Exception {
-           log.info("Access Positive allCustomer");
+           log.info("Starting positive allCustomer....");
            CustomerDTO firstCustomer = new CustomerDTO();
            firstCustomer.setCustomerName("Sharib Saifi");
            firstCustomer.setCustomerId(101);
@@ -104,19 +104,19 @@ class CustomerControllerTest {
                    .andExpect(MockMvcResultMatchers.jsonPath("$.size()").value(customers.size()))
                    .andExpect(status().isFound())
                    .andReturn();
-           log.info("Completed");
+           log.info("Completed....");
        }
        @Test
        @DisplayName("negative, when list is empty")
        void negative_allCustomers() throws Exception{
-           log.info("Access negative allCustomer");
+           log.info("Starting negative allCustomer....");
            //when all customers list is empty
            when(customerService.allCustomer()).thenReturn(null);
            mockMvc.perform(MockMvcRequestBuilders.get("/customers/allCustomer")
                            .content(objectMapper.writeValueAsString(null)))
                    .andExpect(MockMvcResultMatchers.status().isNotFound())
                    .andReturn();
-           log.info("Completed");
+           log.info("Completed....");
        }
     }
     @Nested
@@ -124,7 +124,7 @@ class CustomerControllerTest {
         @Test
         @DisplayName("positive, single cusotmer")
         void singleCustomer() throws Exception {
-            log.info("Access Positive singleCustomer");
+            log.info("Starting positive singleCustomer....");
                 CustomerDTO customer = new CustomerDTO();
                 customer.setCustomerId(1);
                 customer.setCustomerName("Sharib Saifi");
@@ -141,12 +141,12 @@ class CustomerControllerTest {
                         .andExpect(MockMvcResultMatchers.jsonPath("$[0].customerName", is(customer.getCustomerName())))
                         .andExpect(status().isFound())
                         .andReturn();
-            log.info("Completed");
+            log.info("Completed....");
         }
         @Test
         @DisplayName("negative, when customer id is invalid or not found")
         void negative_singleCustomer() throws Exception{
-            log.info("Access negative singleCustomer");
+            log.info("Starting negative singleCustomer....");
             //when customer id is invalid or not present
             Customer customer = new Customer();
             customer.setCustomerId(45);
@@ -156,7 +156,7 @@ class CustomerControllerTest {
                             .content(objectMapper.writeValueAsString(customer)))
                     .andExpect(MockMvcResultMatchers.status().isNotFound())
                     .andReturn();
-            log.info("Completed");
+            log.info("Completed....");
         }
     }
    @Nested
@@ -164,7 +164,7 @@ class CustomerControllerTest {
        @Test
        @DisplayName("positive, update customer")
        void updateCustomer() throws Exception{
-           log.info("Access Positive updateCustomer");
+           log.info("Starting positive updateCustomer....");
            Customer customer = new Customer(1, 21, "Sharib Saifi",
                    "Savings", "SharibSaifi.SS@gmail.com", "8006590554",
                    "3334 3221 5548", "OGHPS2812E", "Muradanagar");
@@ -179,12 +179,12 @@ class CustomerControllerTest {
                    .andExpect(MockMvcResultMatchers.jsonPath("$.customerId",is(customerDTO.getCustomerId())))
                    .andExpect(status().isCreated())
                    .andReturn();
-           log.info("Completed");
+           log.info("Completed....");
        }
        @Test
        @DisplayName("negative, customer details are invalid or unsupported")
        void negative_updateCustomer() throws Exception{
-           log.info("Access negative updateCustomer");
+           log.info("Starting negative updateCustomer....");
            //when customer id is correct but the customer details is invalid
            CustomerDTO customer = new CustomerDTO();
            customer.setCustomerId(1);
@@ -194,12 +194,12 @@ class CustomerControllerTest {
                            .content(objectMapper.writeValueAsString(customer)))
                    .andExpect(MockMvcResultMatchers.status().isUnsupportedMediaType())
                    .andReturn();
-           log.info("Completed");
+           log.info("Completed....");
        }
    }
     @Test
     void deleteAll() throws Exception {
-        log.info("Access deleteAll");
+        log.info("Starting deleteAll....");
         SuccessResponse response = new SuccessResponse("Delete Successfully",true);
         when(customerService.deleteAll()).thenReturn(response);
 
@@ -210,7 +210,6 @@ class CustomerControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success",is(true)))
                 .andExpect(status().isOk())
                 .andReturn();
-        log.info("Completed");
+        log.info("Completed....");
     }
-
 }

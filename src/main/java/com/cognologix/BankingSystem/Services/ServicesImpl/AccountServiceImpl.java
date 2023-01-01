@@ -25,7 +25,6 @@ import java.util.List;
 @Service
 @Log4j2
 public class AccountServiceImpl implements AccountService {
- 
     @Autowired
     private AccountRepo accountRepo;
     @Autowired
@@ -41,13 +40,13 @@ public class AccountServiceImpl implements AccountService {
     */
     @Override
     public List savingsAccounts() throws AccountsNotExist {
-        log.info("Access Savings accounts Method");
+        log.info("Started method..");
         //all saving account with customer details
         List<Account> allSavingsAccounts = (List<Account>) accountRepo.findByAccountType("savings");
         //but return only account
         List<AccountDTO> accountList = new ArrayList<>();
         if (allSavingsAccounts.isEmpty()) {
-            log.error("Savings List is empty");
+            log.error("savingsAccounts list is empty");
             throw new AccountsNotExist("Does not have savings accounts");
         }
         else {
@@ -57,7 +56,7 @@ public class AccountServiceImpl implements AccountService {
                     }
             );
         }
-        log.info("Completed Method");
+        log.info("Completed method..");
         return accountList;
     }
     /*
@@ -65,13 +64,13 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     public List currentAccounts() throws AccountsNotExist {
-        log.info("Access Current Accounts Method");
+        log.info("Started method..");
         //all current accounts with customer
         List<Account> allSavingsAccounts = (List<Account>) accountRepo.findByAccountType("current");
         //but return only account details
         List<AccountDTO> accountList = new ArrayList<>();
         if (allSavingsAccounts.isEmpty()) {
-            log.error("Current Account list is empty");
+            log.error("currentAccount list is empty");
             throw new AccountsNotExist("Does not have current accounts");
         }
         else {
@@ -81,7 +80,7 @@ public class AccountServiceImpl implements AccountService {
                     }
             );
         }
-        log.info("Completed Method");
+        log.info("Completed method..");
         return accountList;
     }
     /*
@@ -89,7 +88,7 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     public List<String> debitCard(Integer accountNumber) throws InvalidAccountNumber {
-        log.info("Access Debit Card Method");
+        log.info("Started method..");
         List<String> debitCard = new ArrayList<>();
         if (accountRepo.existsById(accountNumber)) {
             debitCard.add("Name: " + accountRepo.findById(accountNumber).get().getAccountName());
@@ -97,47 +96,59 @@ public class AccountServiceImpl implements AccountService {
             debitCard.add("Date: 03/22 To 04/26");
             debitCard.add("CVV: 233");
             debitCard.add("Debit Card");
+
+            log.info("Completed method..");
             return debitCard;
         } else
-            log.error("Invalid account number for Debit Card" + accountNumber);
+            log.error("Invalid account number for Debit Card: " + accountNumber);
             throw new InvalidAccountNumber("Invalid account number for Debit card");
-
     }
     /*
     * credit card
      */
     @Override
     public List<String> creditCard(Integer accountNumber) throws NotEligibleForCreditCard {
-        log.info("Access Credit Card Method");
+        log.info("Started method..");
         List<String> creditCard = new ArrayList<>();
         if (accountRepo.existsById(accountNumber)) {
             if (accountRepo.findById(accountNumber).get().getAccountInitialBalance() > 2000) {
-                creditCard.add("Name: " + accountRepo.findById(accountNumber).get().getAccountName());
-                creditCard.add("Card Number: 1934 5244 8597");
-                creditCard.add("Date: 03/22 To 04/27");
-                creditCard.add("CVV: 202");
-                creditCard.add("Credit Card");
+                try {
+                    creditCard.add("Name: " + accountRepo.findById(accountNumber).get().getAccountName());
+                    creditCard.add("Card Number: 1934 5244 8597");
+                    creditCard.add("Date: 03/22 To 04/27");
+                    creditCard.add("CVV: 202");
+                    creditCard.add("Credit Card");
+                    log.info("Completed method..");
+                }catch (Exception exception){
+                    log.fatal("Unwanted exception: " + exception.getMessage());
+                }
                 return creditCard;
             } else
                 log.error("Not eligible for credit card, Insufficient balance");
-                throw new NotEligibleForCreditCard("Balance Less than 2000, Not Eligible for Credit Card");
-        } else
-            log.error("Invalid account number for credit card");
-            throw new InvalidAccountNumber("Invalid account number for credit card" +accountNumber);
+            throw new NotEligibleForCreditCard("Balance Less than 2000, Not Eligible for Credit Card");
+        } else {
+            log.error("Invalid account number for credit card: " + accountNumber);
+            throw new InvalidAccountNumber("Invalid account number for credit card: " + accountNumber);
+        }
+
     }
     /*
     * * all accounts
      */
     @Override
     public List<AccountDTO> allAccount() {
-        log.info("Access allAccount Method");
+        log.info("Started method..");
         List<AccountDTO> allAccounts = new ArrayList<>();
-        accountRepo.findAll().forEach(
-                account -> {
-                    allAccounts.add(AccountConvertor.convertEntityToDTO(account));
-                }
-        );
-        log.info("Completed Method");
+        try {
+            accountRepo.findAll().forEach(
+                    account -> {
+                        allAccounts.add(AccountConvertor.convertEntityToDTO(account));
+                    }
+            );
+        }catch (Exception exception){
+            log.fatal("Unwanted exception: " + exception.getMessage());
+        }
+        log.info("Completed method..");
         return allAccounts;
     }
 
@@ -146,14 +157,19 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     public SuccessResponse deleteAccount(Integer accountNumber) throws InvalidAccountNumber,InsufficientBalance {
-        log.info("Access Delete Account Method");
+        log.info("Started method..");
         if (accountRepo.existsById(accountNumber)) {
             Account account = accountRepo.findById(accountNumber).get();
             if (account.getAccountInitialBalance() > 0) {
                 log.error("Sufficient balance in account: " + account.getAccountInitialBalance());
                 throw new InsufficientBalance("Account has some balance, Withdraw balance : " + account.getAccountInitialBalance());
             } else {
-                accountRepo.deleteById(accountNumber);
+                try {
+                    accountRepo.deleteById(accountNumber);
+                    log.info("Completed method..");
+                }catch (Exception exception) {
+                    log.fatal("Unwanted exception: " + exception.getMessage());
+                }
                 return new SuccessResponse("Delete successfully", true);
             }
         } else {
@@ -166,7 +182,7 @@ public class AccountServiceImpl implements AccountService {
     */
     @Override
     public List<AccountDTO> sameId(Integer customerId) {
-        log.info("Access sameId Method");
+        log.info("Started method..");
         List<AccountDTO> accountDTO = new ArrayList<>();
         if (accountRepo.existsByCustomerId(customerId)){
             accountRepo.findAllByCustomerId(customerId).forEach(
@@ -174,6 +190,7 @@ public class AccountServiceImpl implements AccountService {
                         accountDTO.add(AccountConvertor.convertEntityToDTO(account));
                     }
             );
+            log.info("Completed method..");
             return accountDTO;
         }else
             log.error("Invalid customer id: " + customerId);
@@ -184,8 +201,9 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     public SuccessResponse deleteAll() {
-        log.info("Access deleteAll Method");
+        log.info("Started method..");
         accountRepo.deleteAll();
+        log.info("Completed method..");
         return new SuccessResponse("Delete Successfully",true);
     }
     /*
@@ -193,10 +211,10 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     public AccountDTO singleAccount(Integer accountNumber) {
-        log.info("Access Single Account Method");
+        log.info("Started method..");
         AccountDTO accountDTO = new AccountDTO();
         if (accountRepo.existsById(accountNumber)){
-            log.info("Completed Method");
+            log.info("Completed method..");
             return AccountConvertor.convertEntityToDTO(accountRepo.findById(accountNumber).get());
 
         }else {

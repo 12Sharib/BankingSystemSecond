@@ -54,19 +54,19 @@ class CustomerServiceTest {
             when(customerRepository.findAll()).thenReturn(customers);
         }
         @Test
-        @DisplayName("positive all customers")
+        @DisplayName("positive allCustomers")
         void allCustomers() {
-            log.info("Start Positive allCustomers");
+            log.info("Start positive allCustomers...");
             Assertions.assertEquals(2, customerService.allCustomer().size());
-            log.info("end");
+            log.info("end...");
         }
         @Test
-        @DisplayName("negative, when list is empty")
+        @DisplayName("negative allCustomers, when listIsEmpty")
         void negative_allCustomers(){
-            log.info("Start negative allCustomers");
+            log.info("Start negative allCustomers...");
             when(customerRepository.findAll()).thenReturn(List.of());
             Assertions.assertTrue(customerService.allCustomer().isEmpty());
-            log.info("end");
+            log.info("end...");
         }
     }
 
@@ -86,28 +86,28 @@ class CustomerServiceTest {
             when(accountRepo.save(account)).thenReturn(account);
         }
         @Test
-        @DisplayName("positive create customer")
+        @DisplayName("positive createCustomer")
         void createCustomer() {
-            log.info("Start positive createCustomer");
+            log.info("Start positive createCustomer...");
                 Customer customer = new Customer();
 
                 AccountDTO accountDTO = customerService.createCustomer(customer);
                 Assertions.assertEquals("Active", accountDTO.getAccountStatus());
-            log.info("end");
+            log.info("end...");
 
         }
 
         @Test
-        @DisplayName("negative create customer, when details are Invalid")
+        @DisplayName("negative createCustomer, when details are Invalid")
         void negative_createCustomer(){
-            log.info("Start negative createCustomer");
+            log.info("Start negative createCustomer...");
             Customer customer = new Customer();
             customer.setCustomerAadharNumber("1100 0254 5265");
 
             when(customerRepository.findBycustomerAadharNumber("1100 0254 5265")).thenReturn(customer);
             Assertions.assertThrows(NullPointerException.class,
                     ()->customerService.createCustomer(customer));
-            log.info("end");
+            log.info("end...");
         }
     }
 
@@ -117,35 +117,35 @@ class CustomerServiceTest {
         void init(){
             Customer customer = new Customer(1, 21, "Sharib Saifi",
                     "Savings", "SharibSaifi.SS@gmail.com", "8006590554",
-                    "3334 3221 5548", "OGHPS2812E", "Muradanagar");
+                    "3334 3221 5548", "OGHPS2812E", "Muradanagar...");
 
 
             when(customerRepository.existsByCustomerId(21)).thenReturn(true);
             when(customerRepository.findByCustomerId(21)).thenReturn(List.of(customer))
                     .thenThrow(new InvalidCustomerId("Invalid Customer Id"));
-            customer.setCustomerName("Suhail Saifi");
+            customer.setCustomerName("Suhail Saifi...");
 
             when(customerRepository.save(customer)).thenReturn(customer);
         }
         @Test
-        @DisplayName("positive update customer details")
+        @DisplayName("positive updateCustomerDetails")
         void updateCustomerDetails() {
-            log.info("Start positive updateCustomer");
+            log.info("Start positive updateCustomer...");
                Customer customer = new Customer();
 
                 CustomerDTO newCustomer = customerService.updateCustomerDetails(customer, 21);
                 Assertions.assertEquals("Suhail Saifi", newCustomer.getCustomerName());
-            log.info("end");
+            log.info("end...");
 
         }
         @Test
-        @DisplayName("negative, No such element")
+        @DisplayName("negative updateCustomerDetails, InvalidCustomerId")
         void negative_updateUpdateDetails(){
-            log.info("Start negative updateCustomer");
+            log.info("Start negative updateCustomer...");
             Customer customer = new Customer();
             Assertions.assertThrows(InvalidCustomerId.class,
                     ()->customerService.updateCustomerDetails(customer,56));
-            log.info("end");
+            log.info("end...");
         }
     }
 
@@ -170,19 +170,19 @@ class CustomerServiceTest {
                     .thenThrow(new AccountsNotExist("Empty Database"));
         }
         @Test
-        @DisplayName("positive single customer")
+        @DisplayName("positive singleCustomer")
         void singleCustomer() {
-            log.info("Start positive singleCustomer");
+            log.info("Start positive singleCustomer...");
             Assertions.assertEquals(1,customerService.customer(101).size());
-            log.info("error");
+            log.info("end...");
         }
         @Test
         @DisplayName("negative, invalid customer id")
         void negative_singleCustomer(){
-            log.info("start negative singleCustomer");
+            log.info("start negative singleCustomer...");
            Assertions.assertThrows(InvalidCustomerId.class,
                    ()->customerService.customer(52));
-            log.info("end");
+            log.info("end...");
         }
     }
 

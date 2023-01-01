@@ -41,7 +41,7 @@ public class TransactionServiceImpl implements TransactionService {
      */
     @Override
     public TransactionDTO withdrawAmount(Integer accountNumber, Double withdrawAmount) throws InvalidAccountNumber, InsufficientBalance,InvalidAmount {
-        log.info("Access withdrawAmount Method");
+        log.info("Started method..");
         Double withdraw = null;
         if (withdrawAmount <= 0) {
             log.error("Invalid Amount: " + withdraw);
@@ -53,7 +53,7 @@ public class TransactionServiceImpl implements TransactionService {
                 Double prevBalance = prevAccount.getAccountInitialBalance();
 
                 if (prevBalance < withdrawAmount) {
-                    log.error("Insufficien balance in first account: " + prevBalance);
+                    log.error("Insufficient balance in first account: " + prevBalance);
                     throw new InsufficientBalance("WithdrawAmount is greater than Current Account Balance");
                 } else withdraw = prevBalance - withdrawAmount;
 
@@ -63,7 +63,7 @@ public class TransactionServiceImpl implements TransactionService {
                 //save transactions for this account
                 transactionsRepository.save(saveTransactions(withdrawAmount,prevAccount,"withdraw Amount"));
                 //conversion entity to Dto
-                log.info("return transaction");
+                log.info("Completed method..");
                 return TransactorConvertor.convertTransactionsEntityToDTO(transactions);
 
             } else
@@ -76,7 +76,7 @@ public class TransactionServiceImpl implements TransactionService {
      * return transaction for save in dao;
      */
     public Transactions saveTransactions(Double withdrawAmount,Account prevAccount,String message){
-        log.info("saved Transactions");
+        log.info("Creating transaction..");
         Random random = new Random();
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss a");
@@ -90,7 +90,7 @@ public class TransactionServiceImpl implements TransactionService {
         transactions.setTransactionFromAccount(0);
         transactions.setTransactionDate(String.valueOf(java.time.LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))));
         transactions.setTransactionTime(sdf.format(date));
-
+        log.info("Completing transaction..");
         return transactions;
 
     }
@@ -103,7 +103,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public TransactionDTO depositAmount(Integer accountNumber, Double depositedAmount) throws InvalidAccountNumber, InvalidAmount {
-        log.info("Access DepositAmount Method");
+        log.info("Started method..");
         if (depositedAmount <= 0) {
             log.error("Invalid amount: " +depositedAmount);
             throw new InvalidAmount("Amount is less than zero or Equal to Zero, Invalid amount for Deposit");
@@ -119,7 +119,7 @@ public class TransactionServiceImpl implements TransactionService {
                 //save transactions for this account
                 transactionsRepository.save(saveTransactions(depositedAmount,prevAccount,"Deposit amount"));
                 //conversion of entity to dto for view;
-                log.info("return transaction");
+                log.info("Completed method..");
                 return TransactorConvertor.convertTransactionsEntityToDTO(transactions);
             } else
                 log.error("Invalid account number: " + accountNumber);
@@ -134,11 +134,11 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public TransactionDTO transferAmount(Integer firstAccountNumber, Integer secondAccountNumber, Double amount) throws InsufficientBalance,InvalidAmount,InvalidAccountNumber {
         //check accounts
-        log.info("Access transferAmount Method");
+        log.info("Started method..");
         if(accountRepo.existsById(firstAccountNumber)){
             if(accountRepo.existsById(secondAccountNumber)) {
                 if (amount <= 0) {
-                    log.error("Invalid Amount:" + amount);
+                    log.error("Invalid Amount: " + amount);
                     throw new InvalidAmount("Invalid Amount, provide valid amount");
                 } else {
                     Account getFirstAccount = accountRepo.findById(firstAccountNumber).get();
@@ -155,6 +155,8 @@ public class TransactionServiceImpl implements TransactionService {
                     Transactions firstAccountTransactions = saveTransactions(amount, getFirstAccount, "Money Paid, Sent Successfully");
                     firstAccountTransactions.setTransactionToAccount(secondAccountNumber);
                     firstAccountTransactions.setTransactionFromAccount(firstAccountNumber);
+
+                    log.info("Saved first transaction..");
                     transactionsRepository.save(firstAccountTransactions);
 
                     //find second account
@@ -169,19 +171,20 @@ public class TransactionServiceImpl implements TransactionService {
                     Transactions secondAccountTransactions = saveTransactions(amount, getSecondAccount, "Receive, Received Successfully");
                     //transaction credentials
                     secondAccountTransactions.setTransactionFromAccount(firstAccountNumber);
+                    log.info("Saved second transaction..");
                     transactionsRepository.save(secondAccountTransactions);
 
                     //money transfer message
                     TransactionDTO transferDTO = TransactorConvertor.convertTransactionsEntityToDTO(secondAccountTransactions);
                     transferDTO.setTransactionMessage("Money Transfer successfully");
-                    log.info("return TransactionDTO");
+                    log.info("Completed method..");
                     return transferDTO;
                 }
             }else
-                log.error("Invalid First Account Number : " + firstAccountNumber);
+                log.error("Invalid First Account Number: " + firstAccountNumber);
                 throw new InvalidAccountNumber("provide valid second account number");
         } else
-            log.error("Invalid Second Account Number : " + secondAccountNumber);
+            log.error("Invalid Second Account Number: " + secondAccountNumber);
             throw new InvalidAccountNumber("provide valid first account Number");
 
     }
@@ -189,9 +192,10 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<Transactions> oneAccountTransactions(Integer accountNumber) throws InvalidAccountNumber {
-        log.info("Access OneAccountTransaction Method");
+        log.info("Started method..");
         if (transactionsRepository.existsByAccountNumber(accountNumber)) {
             List<Transactions> transactionsList = transactionsRepository.findByAccountNumber(accountNumber);
+            log.info("Completed method..");
             return transactionsList;
         }else
             log.error("Invalid Account Number: " + accountNumber);
@@ -201,8 +205,9 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public Transactions transactionId(Integer transactionId) throws InvalidTransactionId{
-        log.info("Access singleTransaction Method");
+        log.info("Started method");
         if (transactionsRepository.existsById(transactionId)) {
+            log.info("Completed method..");
             return transactionsRepository.findById(transactionId).get();
         }else
             log.error("Invalid Transaction Id: " + transactionId);
@@ -211,10 +216,11 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public SuccessResponse deleteTransaction(Integer transactionId) throws InvalidTransactionId{
-        log.info("Access deleteTransaction Method");
+        log.info("Started method..");
         String message = null;
         if(transactionsRepository.existsById(transactionId)){
             transactionsRepository.deleteById(transactionId);
+            log.info("Completed method..");
             return new SuccessResponse("Delete Successfully",true);
         }else
             log.error("Invalid transactionId: " + transactionId);
@@ -223,14 +229,15 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List byDate(String date) {
-        log.info("Access byDate Method");
+        log.info("Started method..");
         List<Transactions> transactionsList = transactionsRepository.findByTransactionDate(date);
+        log.info("Completed method..");
         return transactionsList;
     }
 
     @Override
     public List previousFive(Integer accountNumber) throws InvalidAccountNumber{
-        log.info("Access PreviousFive Method");
+        log.info("Started method..");
         List<Transactions> previousFive = null;
         if(transactionsRepository.existsByAccountNumber(accountNumber)){
            previousFive = transactionsRepository.previousFiveTransactions(accountNumber);
@@ -238,6 +245,7 @@ public class TransactionServiceImpl implements TransactionService {
             log.error("Invalid Account Number: " + accountNumber);
             throw new InvalidAccountNumber("Invalid Account Number for previous Transactions");
         }
+        log.info("Completed method..");
         return previousFive;
     }
 }

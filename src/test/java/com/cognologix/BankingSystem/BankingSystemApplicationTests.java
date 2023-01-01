@@ -10,5 +10,4 @@ class BankingSystemApplicationTests {
 	void contextLoads() {
 	}
 
-
 }

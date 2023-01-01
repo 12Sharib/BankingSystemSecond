@@ -42,7 +42,7 @@ public class CustomerController {
      */
     @PostMapping("/createCustomer")
     public ResponseEntity<AccountDTO> createCustomer(@Valid @RequestBody Customer customer) throws InvalidDocument {
-        log.info("Accessed Create Customer With Customer Details");
+        log.info("Starting createCustomer with customerDetails...");
         AccountDTO account = customerService.createCustomer(customer);
         HttpStatus httpStatus = account==null?HttpStatus.NO_CONTENT: HttpStatus.CREATED;
         log.info("Completed: " + httpStatus);
@@ -53,10 +53,10 @@ public class CustomerController {
      */
     @GetMapping(value = "/allCustomers")
     public ResponseEntity<List<CustomerDTO>> allCustomers(){
-        log.info("Accessed All Customer");
+        log.info("Starting allCustomer...");
         List<CustomerDTO> allCustomer = customerService.allCustomer();
         HttpStatus httpStatus = allCustomer.isEmpty()?HttpStatus.NOT_FOUND: HttpStatus.FOUND;
-        log.info("Completed All Customers: " + httpStatus);
+        log.info("Completed: " + httpStatus);
         return new ResponseEntity<>(allCustomer, httpStatus);
     }
     /*
@@ -64,25 +64,26 @@ public class CustomerController {
      */
     @GetMapping(value = "/customerById/{customerId}")
     public ResponseEntity<List<CustomerDTO>> customer(@PathVariable Integer customerId) throws InvalidCustomerId {
-        log.info("Accessed Single Customer With Customer ID");
+        log.info("Starting singleCustomer with customerId...");
         List<CustomerDTO> sameIdCustomers = customerService.customer(customerId);
-        if (sameIdCustomers.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }else
-            log.info("Completed");
-            return new ResponseEntity<>(sameIdCustomers,HttpStatus.FOUND);
+        HttpStatus httpStatus = sameIdCustomers.isEmpty()?HttpStatus.NOT_FOUND: HttpStatus.FOUND;
+        log.info("Completed: "+ httpStatus);
+        return new ResponseEntity<>(sameIdCustomers,httpStatus);
     }
     /*
     * delete all customer
      */
     @DeleteMapping("/deleteAll")
     public ResponseEntity<SuccessResponse> deleteAll(){
-        log.info("Accessed DeleteAll");
-        return new ResponseEntity<>(customerService.deleteAll(),HttpStatus.OK);
+        log.info("Starting deleteAll...");
+        SuccessResponse response = customerService.deleteAll();
+        HttpStatus httpStatus = response.getSuccess().equals(true)?HttpStatus.OK:HttpStatus.NOT_MODIFIED;
+        log.info("Completed: " + httpStatus);
+        return new ResponseEntity<>(response,httpStatus);
     }
     @PutMapping("updateCustomer/{customerId}")
     public ResponseEntity<CustomerDTO> updateCustomer(@Valid @RequestBody Customer updatedCustomer,@PathVariable Integer customerId) throws InvalidCustomerId {
-        log.info("Accessed Update Customer with Update Details & Customer Id");
+        log.info("Starting updateCustomer with details & customerId...");
         CustomerDTO customer = customerService.updateCustomerDetails(updatedCustomer,customerId);
         HttpStatus httpStatus = customer==null?HttpStatus.NOT_MODIFIED: HttpStatus.CREATED;
         log.info("Completed: " + httpStatus);

@@ -52,7 +52,7 @@ class AccountControllerTest {
         @Test
         @DisplayName("positive accountList")
         void allAccounts() throws Exception {
-            log.info("Access Positive AllAccounts");
+            log.info("Starting positive allAccounts....");
            List<AccountDTO> accountList=init();
             mockMvc.perform(MockMvcRequestBuilders.get("/account/accounts")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -61,17 +61,17 @@ class AccountControllerTest {
                     .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.size()").value(accountList.size()))
                     .andReturn();
-            log.info("Completed");
+            log.info("Completed....");
         }
         @Test
         @DisplayName("negative, when list is empty")
         void negative_allAccounts() throws Exception{
-            log.info("Access Negative AllAccounts");
+            log.info("Starting negative allAccounts....");
             mockMvc.perform(MockMvcRequestBuilders.get("/account/allAccounts")
                             .content(objectMapper.writeValueAsString(null)))
                     .andExpect(MockMvcResultMatchers.status().isNotFound())
                     .andReturn();
-            log.info("Completed");
+            log.info("Completed....");
         }
     }
 
@@ -89,7 +89,7 @@ class AccountControllerTest {
         @Test
         @DisplayName("positive Delete Account")
         void p_deleteAccount() throws Exception {
-            log.info("Access Positive Delete Account");
+            log.info("Starting positive deleteAccount....");
                 SuccessResponse response = init();
                 mockMvc.perform(MockMvcRequestBuilders.delete("/account/delete/1")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -98,12 +98,12 @@ class AccountControllerTest {
                         .andExpect(MockMvcResultMatchers.jsonPath("$.message", is(response.getMessage())))
                         .andExpect(MockMvcResultMatchers.jsonPath("$.success", is(response.getSuccess())))
                         .andReturn();
-            log.info("Completed");
+            log.info("Completed....");
         }
         @Test
         @DisplayName("negative, invalid account number")
         void negative_deleteAccount() throws Exception{
-            log.info("Access Negative deleteAccount");
+            log.info("Starting negative deleteAccount....");
             SuccessResponse response = new SuccessResponse("Invalid Account Number",false);
 
             when(accountService.deleteAccount(-1)).thenReturn(response);
@@ -112,7 +112,7 @@ class AccountControllerTest {
                     .andExpect(MockMvcResultMatchers.status().isBadRequest())
                     .andExpect(MockMvcResultMatchers.jsonPath("$.success",is(false)))
                     .andReturn();
-            log.info("Completed");
+            log.info("Completed....");
         }
     }
     @Nested
@@ -120,7 +120,7 @@ class AccountControllerTest {
         @Test
         @DisplayName("positive, savings account")
         void savingAccounts() throws Exception {
-            log.info("Access Positive savingsAccount");
+            log.info("Starting positive savingsAccount....");
                 Account account = new Account();
                 account.setAccountNumber(1);
                 account.setAccountType("Savings");
@@ -136,18 +136,18 @@ class AccountControllerTest {
                         .andExpect(jsonPath("$.size()").value(accountList.size()))
                         .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
                         .andReturn();
-            log.info("Completed");
+            log.info("Completed....");
         }
         @Test
         @DisplayName("negative, savings account")
         void negative_savingAccounts() throws Exception{
-            log.info("Access negative savingsAccount");
+            log.info("Starting negative savingsAccount....");
             when(accountService.savingsAccounts()).thenReturn(List.of());
             mockMvc.perform(MockMvcRequestBuilders.get("/account/savings")
                             .content(objectMapper.writeValueAsString(List.of())))
                     .andExpect(MockMvcResultMatchers.status().isNotFound())
                     .andReturn();
-            log.info("Completed");
+            log.info("Completed....");
         }
     }
 
@@ -156,10 +156,10 @@ class AccountControllerTest {
         @Test
         @DisplayName("positive, current account")
         void currentAccount() throws Exception {
-            log.info("Access Positive currentAccounts");
+            log.info("Starting positive currentAccounts....");
                 Account account = new Account();
                 account.setAccountNumber(1);
-                account.setAccountType("current");
+                account.setAccountType("current....");
 
                 List<Account> accountList = List.of(account);
 
@@ -172,19 +172,19 @@ class AccountControllerTest {
                         .andExpect(jsonPath("$.size()").value(accountList.size()))
                         .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
                         .andReturn();
-            log.info("Completed");
+            log.info("Completed....");
         }
         @Test
         @DisplayName("negative, when list is empty")
         void negative_currentAccounts() throws Exception{
-            log.info("Access Negative currentAccounts");
+            log.info("Starting negative currentAccounts....");
             //when list of current accounts is empty
             when(accountService.currentAccounts()).thenReturn(List.of());
             mockMvc.perform(MockMvcRequestBuilders.get("/account/current")
                             .content(objectMapper.writeValueAsString(null)))
                     .andExpect(MockMvcResultMatchers.status().isNotFound())
                     .andReturn();
-            log.info("Completed");
+            log.info("Completed....");
         }
     }
 
@@ -193,7 +193,7 @@ class AccountControllerTest {
         @Test
         @DisplayName("positive, debit card")
         void debitCard() throws Exception {
-            log.info("Access Positive debitCard");
+            log.info("Starting positive debitCard....");
                 Account account = new Account();
                 account.setAccountNumber(1);
                 account.setAccountName("Sharib saifi");
@@ -215,12 +215,12 @@ class AccountControllerTest {
                         .andExpect(MockMvcResultMatchers.jsonPath("$[0]", is("Name: " + account.getAccountName())))
                         .andExpect(jsonPath("$[4]", is("Debit Card")))
                         .andReturn();
-            log.info("Completed");
+            log.info("Completed....");
         }
         @Test
         @DisplayName("negative, invalid account number")
         void negative_debitCard() throws Exception{
-            log.info("Access Negative debitCard");
+            log.info("Starting negative debitCard....");
             //when debit card not created or invalid account number
             when(accountService.debitCard(-1)).thenReturn(List.of());
 
@@ -228,7 +228,7 @@ class AccountControllerTest {
                             .content(objectMapper.writeValueAsString(null)))
                     .andExpect(MockMvcResultMatchers.status().isNoContent())
                     .andReturn();
-            log.info("Completed");
+            log.info("Completed....");
         }
     }
    @Nested
@@ -236,7 +236,7 @@ class AccountControllerTest {
        @Test
        @DisplayName("positive, credit card")
        void creditCard() throws Exception {
-           log.info("Access Positive creditCard");
+           log.info("Starting positive creditCard....");
                Account account = new Account();
                account.setAccountNumber(1);
                account.setAccountName("Sharib saifi");
@@ -259,19 +259,19 @@ class AccountControllerTest {
                        .andExpect(MockMvcResultMatchers.jsonPath("$[0]", is("Name: " + account.getAccountName())))
                        .andExpect(jsonPath("$[4]", is("Credit Card")))
                        .andReturn();
-           log.info("Completed");
+           log.info("Completed....");
        }
        @Test
        @DisplayName("negative, when invalid account number")
        void negative_creditCard() throws Exception{
-           log.info("Acess Negative creditCard");
+           log.info("Starting negative creditCard....");
            //when debit card not created or invalid account number
            when(accountService.creditCard(-1)).thenReturn(List.of());
            mockMvc.perform(MockMvcRequestBuilders.get("/account/creditCard/-1")
                            .content(objectMapper.writeValueAsString(null)))
                    .andExpect(MockMvcResultMatchers.status().isNoContent())
                    .andReturn();
-           log.info("Completed");
+           log.info("Completed....");
        }
     }
 
@@ -280,7 +280,7 @@ class AccountControllerTest {
         @Test
         @DisplayName("positve, accounts with same id")
         void accountWithSameId() throws Exception {
-            log.info("Access Positive accountWithSameId");
+            log.info("Starting positive accountWithSameId....");
                 AccountDTO firstAccount = new AccountDTO();
                 firstAccount.setAccountNumber(1);
                 firstAccount.setCustomerId(12);
@@ -300,20 +300,20 @@ class AccountControllerTest {
                         .andExpect(MockMvcResultMatchers.jsonPath("$[1].customerId", is(secondAccount.getCustomerId())))
                         .andExpect(MockMvcResultMatchers.jsonPath("$.size()").value(accountList.size()))
                         .andReturn();
-            log.info("Completed");
+            log.info("Completed....");
 
         }
         @Test
         @DisplayName("negative, invalid customer id")
         void negative_accountWithSameId() throws Exception{
-            log.info("Access Negative accountWithSameId");
+            log.info("Starting negative accountWithSameId....");
             //when customer id is invalid aur list is empty
             when(accountService.sameId(-1)).thenReturn(List.of());
             mockMvc.perform(MockMvcRequestBuilders.get("/account/accountWithSameId/-1")
                             .content(objectMapper.writeValueAsString(null)))
                     .andExpect(MockMvcResultMatchers.status().isNotFound())
                     .andReturn();
-            log.info("Completed");
+            log.info("Completed....");
         }
     }
 
@@ -322,7 +322,7 @@ class AccountControllerTest {
         @Test
         @DisplayName("positive, single account")
         void singleAccount() throws Exception {
-            log.info("Access Positive singleAccount");
+            log.info("Starting positive singleAccount....");
                 AccountDTO account = new AccountDTO();
                 account.setAccountNumber(1);
                 account.setAccountName("Sharib Saifi");
@@ -336,23 +336,24 @@ class AccountControllerTest {
                         .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
                         .andExpect(jsonPath("$.accountNumber", is(account.getAccountNumber())))
                         .andReturn();
-            log.info("Completed");
+            log.info("Completed....");
         }
         @Test
         @DisplayName("negative, when invalid account number")
         void negative_singleAccount() throws Exception{
-            log.info("Access negative singleAccount");
+            log.info("Starting negative singleAccount....");
             //when invalid accountNumber
             when(accountService.singleAccount(-1)).thenReturn(null);
             mockMvc.perform(MockMvcRequestBuilders.get("/account/singleAccount/")
                             .content(objectMapper.writeValueAsString(null)))
                     .andExpect(MockMvcResultMatchers.status().isNotFound())
                     .andReturn();
+            log.info("Completed.....");
         }
     }
     @Test
     void deleteAll() throws Exception {
-        log.info("Acess deleteAll");
+        log.info("Acess deleteAll....");
         SuccessResponse response = new SuccessResponse("Delete Successfully",true);
         when(accountService.deleteAll()).thenReturn(response);
 
@@ -362,7 +363,7 @@ class AccountControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message",is("Delete Successfully")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success",is(true)))
                 .andReturn();
-        log.info("Completed");
+        log.info("Completed....");
     }
 
 }

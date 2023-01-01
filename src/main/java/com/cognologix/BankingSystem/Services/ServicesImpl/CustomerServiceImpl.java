@@ -38,7 +38,7 @@ public class CustomerServiceImpl implements CustomerService{
      */
     @Override
     public AccountDTO createCustomer(Customer newCustomer) throws InvalidDocument{
-        log.info("Access Create Customer Method");
+        log.info("Started method..");
         //check is there any customer in this aadhar number;
         Customer prevCustomer = customerRepository.findBycustomerAadharNumber(newCustomer.getCustomerAadharNumber());
         if (prevCustomer == null) {
@@ -49,7 +49,7 @@ public class CustomerServiceImpl implements CustomerService{
             //set customer in account
             account.setCustomer(newCustomer);
             //save account in database;
-            log.info("Saved New Account In Database");
+            log.info("New Details, Customer created & account..");
             accountRepo.save(account);
             //return new account it is savings aur current
 
@@ -66,13 +66,12 @@ public class CustomerServiceImpl implements CustomerService{
                     newCustomer.setCustomerId(prevCustomer.getCustomerId());
                     account.setCustomerId(prevCustomer.getCustomerId());
                     account.setCustomer(newCustomer);
-
-
+                    log.info("Previous Details, Created customer & Account..");
                     accountRepo.save(account);
                 }
             }
         }
-        log.info("Completed Method");
+        log.info("Completed method..");
         return AccountConvertor.convertEntityToDTO(account);
     }
 
@@ -81,20 +80,25 @@ public class CustomerServiceImpl implements CustomerService{
      */
     @Override
     public SuccessResponse deleteAll() {
-        log.info("Access DeleteAll");
+        log.info("Started method..");
         customerRepository.deleteAll();
+        log.info("Completed method..");
         return new SuccessResponse("Delete Successfully",true);
     }
 
     @Override
     public List<CustomerDTO> customer(Integer customerId) throws InvalidCustomerId {
-        log.info("Access Single Customer Method");
+        log.info("Started method..");
         if(accountRepo.existsByCustomerId(customerId)){
             List<CustomerDTO> customerDTO = new ArrayList<>();
-            customerRepository.findByCustomerId(customerId).forEach(customer -> {
-                customerDTO.add(CustomerConvertor.entityToDto(customer));
-            });
-            log.info("return Successfully");
+            try {
+                customerRepository.findByCustomerId(customerId).forEach(customer -> {
+                    customerDTO.add(CustomerConvertor.entityToDto(customer));
+                });
+            }catch (Exception exception){
+                log.fatal("Unwanted exception: " + exception.getMessage());
+            }
+            log.info("Completed method..");
             return customerDTO;
         }else
             log.error("Invalid Customer Id: " + customerId);
@@ -102,7 +106,7 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     private Account setCustomerInAccount(Customer newCustomer){
-        log.info("Making Customer In Bank");
+        log.info("Creating account...");
         Random random = new Random();
         Integer customerId = random.nextInt(50);
         account.setAccountNumber(random.nextInt(50));
@@ -111,12 +115,13 @@ public class CustomerServiceImpl implements CustomerService{
         account.setAccountName(newCustomer.getCustomerName());
         account.setAccountType(newCustomer.getCutomerAccountType());
         account.setAccountInitialBalance(1000.0);
+        log.info("Account created successfully..");
         return account;
     }
 
     @Override
     public CustomerDTO updateCustomerDetails(Customer updatedDetails,Integer customerId) throws InvalidCustomerId{
-        log.info("Access Update Customer Details Method");
+        log.info("Started method..");
         if(customerRepository.existsByCustomerId(customerId)) {
             List<Customer> customers = customerRepository.findByCustomerId(customerId);
             List<Customer> updatedCustomer = new ArrayList<>();
@@ -134,7 +139,7 @@ public class CustomerServiceImpl implements CustomerService{
                         log.error("For Updation Account, Provide Valid Account Type");
                         throw new InvalidDocument("Does not exist this type of account, In this customer id");
                 });
-                log.info("return updated Customer");
+                log.info("Completed method..");
                 return CustomerConvertor.entityToDto(updatedCustomer.get(0));
             } else {
                 log.info("If Two Or More Accounts");
@@ -149,7 +154,7 @@ public class CustomerServiceImpl implements CustomerService{
                         customerRepository.save(singleCustomer);
                     }
                 }
-                log.info("return updated Customer");
+                log.info("Completed method..");
                 return CustomerConvertor.entityToDto(updatedCustomer.get(0));
             }
         }else
@@ -163,16 +168,14 @@ public class CustomerServiceImpl implements CustomerService{
      */
     @Override
     public List<CustomerDTO> allCustomer() {
-        log.info("Access AllCustomer Method");
+        log.info("Started method..");
         List<CustomerDTO> customerDTOS = new ArrayList<>();
         customerRepository.findAll().forEach(
                 customer -> customerDTOS.add(CustomerConvertor.entityToDto(customer))
         );
-        log.info("Completed Method");
+        log.info("Completed method..");
         return customerDTOS;
     }
-
-
 }
 
 

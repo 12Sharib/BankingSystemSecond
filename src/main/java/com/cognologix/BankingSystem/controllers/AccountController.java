@@ -29,12 +29,13 @@ public class AccountController {
     private AccountRepo accountRepo;
     @Autowired
     AccountService accountService;
+
   /*
   * all Accounts
    */
     @GetMapping("/accounts")
     public ResponseEntity<List<AccountDTO>> all(){
-        log.info("Accessed All Accounts");
+        log.info("Started all...");
       List<AccountDTO> all =  accountService.allAccount();
       HttpStatus httpStatus = all.isEmpty()?HttpStatus.NOT_FOUND:HttpStatus.FOUND;
         log.info("Completed: " + httpStatus);
@@ -45,7 +46,7 @@ public class AccountController {
      */
     @DeleteMapping(value = "/delete/{accountNumber}")
     public ResponseEntity<SuccessResponse> deleteAccount(@PathVariable Integer accountNumber) throws InvalidAccountNumber {
-        log.info("In Delete Account With Account Number");
+        log.info("Started with accountNumber...");
         SuccessResponse response = accountService.deleteAccount(accountNumber);
         HttpStatus httpStatus = response.getSuccess().equals(true)?HttpStatus.OK:HttpStatus.BAD_REQUEST;
         log.info("Completed: " + httpStatus);
@@ -56,7 +57,7 @@ public class AccountController {
      */
     @GetMapping(value = "/savings")
     public ResponseEntity<List<Account>> savingAccounts() throws AccountsNotExist {
-        log.info("Accessed Savings Account");
+        log.info("Started savingsAccount...");
         List<Account> savingsAccounts = accountService.savingsAccounts();
         HttpStatus httpStatus = savingsAccounts.isEmpty()?HttpStatus.NOT_FOUND:HttpStatus.FOUND;
         log.info("Completed: " + httpStatus);
@@ -67,7 +68,7 @@ public class AccountController {
      */
     @GetMapping(value = "/current")
     public ResponseEntity<List<Account>> currentAccounts() throws AccountsNotExist {
-        log.info("Accessed Current Account");
+        log.info("Started currentAccount...");
         List<Account> currentAccount = accountService.currentAccounts();
         HttpStatus httpStatus = currentAccount.isEmpty()?HttpStatus.NOT_FOUND:HttpStatus.FOUND;
         log.info("Completed: " + httpStatus);
@@ -78,7 +79,7 @@ public class AccountController {
      */
     @GetMapping(value = "/debitCard/{accountNumber}")
     public ResponseEntity<List<String>> debitCard(@PathVariable Integer accountNumber) throws InvalidAccountNumber{
-        log.info("Accessed Debit Card With Account Number");
+        log.info("Started debitCard with accountNumber");
         List<String> debitCard = accountService.debitCard(accountNumber);
         HttpStatus httpStatus = debitCard.isEmpty()?HttpStatus.NO_CONTENT:HttpStatus.CREATED;
         log.info("Completed: " + httpStatus);
@@ -89,7 +90,7 @@ public class AccountController {
      */
     @GetMapping(value = "/creditCard/{accountNumber}")
     public ResponseEntity<List<String>> creditCard(@PathVariable Integer accountNumber) throws NotEligibleForCreditCard {
-        log.info("Accessed Credit Card With Account Number");
+        log.info("Starting creditCard with accountNumber...");
         List<String> creditCard = accountService.creditCard(accountNumber);
         HttpStatus httpStatus = creditCard.isEmpty()?HttpStatus.NO_CONTENT:HttpStatus.CREATED;
         log.info("Completed: "+httpStatus);
@@ -100,7 +101,7 @@ public class AccountController {
      */
     @GetMapping(value = "/accountsWithSameId/{customerId}")
     public ResponseEntity<List<AccountDTO>> sameId(@PathVariable Integer customerId) throws InvalidCustomerId {
-        log.info("Accessed AccountsWithSameId With Customer Id");
+        log.info("Starting accountsWithSameId with customerId");
         List<AccountDTO> accountList = accountService.sameId(customerId);
         HttpStatus httpStatus = accountList.isEmpty()?HttpStatus.NOT_FOUND:HttpStatus.FOUND;
         log.info("Completed: " + httpStatus);
@@ -111,7 +112,7 @@ public class AccountController {
      */
     @DeleteMapping("/deleteAll")
     public ResponseEntity<SuccessResponse> deleteAll(){
-        log.info("Accessed Delete All");
+        log.info("Starting deleteAll...");
         HttpStatus httpStatus = accountService.deleteAll().getSuccess().equals(true)?HttpStatus.OK:HttpStatus.NO_CONTENT;
         log.info("Completed: " +httpStatus);
         return new ResponseEntity<>(accountService.deleteAll(),httpStatus);
@@ -121,7 +122,7 @@ public class AccountController {
      */
     @GetMapping("/singleAccount/{accountNumber}")
     public ResponseEntity<AccountDTO> singleAccount(@PathVariable Integer accountNumber) throws InvalidAccountNumber{
-        log.info("Accessed Single Account With Account Number");
+        log.info("Starting singleAccount with accountNumber...");
         AccountDTO accountDTO = accountService.singleAccount(accountNumber);
         HttpStatus httpStatus = accountDTO==null?HttpStatus.NOT_FOUND:HttpStatus.FOUND;
         log.info("Completed: " + httpStatus);

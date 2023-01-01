@@ -1,34 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
     <Properties>
-        <property name="Log_File_Name" value="logs/bankingSystem-log4j2.log"/>
+        <property name="File_Name" value="bankingSystem-log4j2"/>
+        <property name="Log_File_Name" value="logs/${File_Name}"/>
     </Properties>
 <!--    %c:%L class and location-->
     <Appenders>
 <!-- for Console -->
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{dd-MM-yyyy HH:mm:ss.SSS} %-5level %c{2}:%L --> %msg%n"/>
+        <PatternLayout>
+            <Pattern>%style{%d{dd-MM-yyyy HH:mm:ss.SSS}}{Magenta} %highlight{[ %-5level] %c{2}: %L --> %msg%n}</Pattern>
+        </PatternLayout>
         </Console>
-<!-- internal file-->
-        <File name="File" fileName="bankingSystem-log4j2.log" append="false">
-            <PatternLayout>
-                <Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %-5level %c{2}:%L --> %msg%n</Pattern>
-            </PatternLayout>
-        </File>
 <!--external folder -->
-        <RollingFile name="LogFile" fileName="${Log_File_Name}" filePattern="logs/bankingSystem-log4j2-%d{MM-dd-yyyy}.log.gz"
-                     ignoreExceptions="false">
+        <RollingFile name="debugFile" filePattern="${Log_File_Name}:Debug-%d{MM-dd-yyyy}.log" ignoreExceptions="false">
             <PatternLayout>
-                <Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %-5level %c{2}:%L --> %msg%n</Pattern>
+                <Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %-5level %c{2}: %L --> %msg%n</Pattern>
             </PatternLayout>
-            <TimeBasedTriggeringPolicy />
+            <SizeBasedTriggeringPolicy size="30kb"/>
         </RollingFile>
+
+        <RollingFile name="errorFile" filePattern="${Log_File_Name}:Error-%d{MM-dd-yyyy}.log" ignoreExceptions="false">
+            <PatternLayout>
+                <Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %-5level %c{2}: %L --> %msg%n</Pattern>
+            </PatternLayout>
+            <SizeBasedTriggeringPolicy size="30kb"/>
+        </RollingFile>
+
+        <RollingFile name="infoFile" filePattern="${Log_File_Name}:Info-%d{MM-dd-yyyy}.log" ignoreExceptions="false">
+            <PatternLayout>
+                <Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %-5level %c{2}: %L --> %msg%n</Pattern>
+            </PatternLayout>
+            <SizeBasedTriggeringPolicy size="30kb"/>
+        </RollingFile>
+
     </Appenders>
+
     <Loggers>
+        <Logger name="com.cognologix.BankingSystem" level="debug" additivity="false">
+            <AppenderRef ref="debugFile" level="debug"/>
+            <AppenderRef ref="errorFile" level="error"/>
+            <AppenderRef ref="infoFile" level="info"/>
+        </Logger>
+
         <Root level="info">
             <AppenderRef ref="Console"/>
-            <AppenderRef ref="File"/>
-            <AppenderRef ref="LogFile"/>
         </Root>
     </Loggers>
 </Configuration>

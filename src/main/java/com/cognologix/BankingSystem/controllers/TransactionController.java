@@ -34,7 +34,7 @@ public class TransactionController {
     */
     @PutMapping(value = "/transferAmount/{firstAccountNumber}/{secondAccountNumber}/{amount}")
     public ResponseEntity<TransactionDTO> transferAmount(@PathVariable Integer firstAccountNumber, @PathVariable Integer secondAccountNumber, @PathVariable Double amount) throws InsufficientBalance, InvalidAccountNumber {
-        log.info("Accessed TransferAmount With firstAccountNumber, secondAccountNumber & Amount");
+        log.info("Starting transferAmount with firstAccountNumber, secondAccountNumber & amount...");
         TransactionDTO transfer = transactionService.transferAmount(firstAccountNumber, secondAccountNumber, amount);
         HttpStatus httpStatus = transfer ==null?HttpStatus.NOT_MODIFIED:HttpStatus.CREATED;
         log.info("Completed: " + httpStatus);
@@ -45,7 +45,7 @@ public class TransactionController {
      */
     @PutMapping(value = "/deposit/{accountNumber}/{depositedAmount}")
     public ResponseEntity<TransactionDTO> depositAmount(@PathVariable Integer accountNumber, @PathVariable Double depositedAmount) throws InvalidAccountNumber, InsufficientBalance {
-        log.info("Accessed depositAmount With accountNumber & depositedAmount");
+        log.info("Starting depositAmount with accountNumber & depositedAmount...");
         TransactionDTO Deposit =  transactionService.depositAmount(accountNumber,depositedAmount);
         HttpStatus httpStatus = Deposit==null?HttpStatus.NOT_MODIFIED:HttpStatus.CREATED;
         log.info("Completed: " + httpStatus);
@@ -56,7 +56,7 @@ public class TransactionController {
      */
     @PutMapping("/withdraw/{accountNumber}/{withdrawAmount}")
     public ResponseEntity<TransactionDTO> withdrawAmount(@PathVariable Integer accountNumber, @PathVariable Double withdrawAmount) throws InsufficientBalance,InvalidAccountNumber {
-        log.info("Accessed withdrawAmount With accountNumber & amount");
+        log.info("Starting withdrawAmount with accountNumber & amount...");
         TransactionDTO withdraw =  transactionService.withdrawAmount(accountNumber,withdrawAmount);
         HttpStatus httpStatus = withdraw==null?HttpStatus.NOT_MODIFIED:HttpStatus.CREATED;
         log.info("Completed: " + httpStatus);
@@ -68,7 +68,7 @@ public class TransactionController {
      */
     @GetMapping("/oneAccountTransactions/{accountNumber}")
     public ResponseEntity<List<Transactions>> oneAccountTransactions(@PathVariable Integer accountNumber) throws InvalidAccountNumber{
-        log.info("Accessed OneAccountTransactions With TransactionID");
+        log.info("Starting oneAccountTransactions with transactionId...");
         List<Transactions> transactions = transactionService.oneAccountTransactions(accountNumber);
         HttpStatus httpStatus = transactions.isEmpty()?HttpStatus.NOT_FOUND:HttpStatus.FOUND;
         log.info("Completed: " + httpStatus);
@@ -79,7 +79,7 @@ public class TransactionController {
      */
     @GetMapping("/findByTransactionId/{transactionId}")
     public ResponseEntity<Transactions> transactionId(@PathVariable Integer transactionId) throws InvalidTransactionId {
-        log.info("Accessed findByTransactionID With transactionId");
+        log.info("Starting findByTransactionId with transactionId...");
         Transactions transactions = transactionService.transactionId(transactionId);
         HttpStatus httpStatus = transactions==null?HttpStatus.NOT_FOUND:HttpStatus.FOUND;
         log.info("Completed: " + httpStatus);
@@ -90,7 +90,7 @@ public class TransactionController {
      */
     @DeleteMapping("/deleteTransaction/{transactionId}")
     public ResponseEntity<SuccessResponse> deleteTransaction(@PathVariable Integer transactionId) throws InvalidTransactionId{
-        log.info("Accessed Delete Transaction With TrasactionID");
+        log.info("Starting deleteTransaction with trasactionId...");
         SuccessResponse response = transactionService.deleteTransaction(transactionId);
         HttpStatus httpStatus = response.getSuccess().equals(true)?HttpStatus.OK:HttpStatus.NOT_FOUND;
         log.info("Completed: " + httpStatus);
@@ -101,7 +101,7 @@ public class TransactionController {
      */
     @GetMapping("/byDate/{date}")
     public ResponseEntity<List<Transactions>> byDate(@PathVariable String date){
-        log.info("Accessed ByDate with Date");
+        log.info("Starting byDate with date(as @PathVariable)...");
         List<Transactions> transactionsList = transactionService.byDate(date);
         HttpStatus httpStatus = transactionsList.isEmpty()?HttpStatus.NOT_FOUND:HttpStatus.FOUND;
         log.info("Completed: " + httpStatus);
@@ -112,7 +112,7 @@ public class TransactionController {
      */
     @GetMapping("/previousFiveTransactions/{accountNumber}")
     public ResponseEntity<List<Transactions>> previousFive(@PathVariable Integer accountNumber) throws InvalidAccountNumber{
-        log.info("Accessed PrevioudFive with AccountNumber");
+        log.info("Starting previoudFive with accountNumber...");
         List<Transactions> transactionsList = transactionService.previousFive(accountNumber);
         HttpStatus httpStatus = transactionsList.isEmpty()?HttpStatus.NOT_FOUND:HttpStatus.FOUND;
         log.info("Completed: " +httpStatus);
