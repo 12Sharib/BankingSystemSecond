@@ -216,10 +216,8 @@ public class AccountServiceImpl implements AccountService {
         if (accountRepo.existsById(accountNumber)){
             log.info("Completed method..");
             return AccountConvertor.convertEntityToDTO(accountRepo.findById(accountNumber).get());
-
         }else {
-            log.error("Invalid account number: " + accountNumber);
-            throw new InvalidAccountNumber("Invalid Account Number");
+            throw new InvalidAccountNumber("Invalid Account Number: "+ accountNumber);
         }
     }
 }

@@ -1,0 +1,9 @@
+03-01-2023 15:04:55.858 INFO  ServicesImpl.AccountServiceImpl: 91 --> Started method..
+03-01-2023 15:04:56.022 ERROR ServicesImpl.AccountServiceImpl: 103 --> Invalid account number for Debit Card: 20
+03-01-2023 15:05:28.861 INFO  ServicesImpl.AccountServiceImpl: 140 --> Started method..
+03-01-2023 15:05:29.107 INFO  ServicesImpl.AccountServiceImpl: 151 --> Completed method..
+03-01-2023 15:05:49.836 INFO  controllers.TransactionController: 59 --> Starting withdrawAmount with accountNumber & amount...
+03-01-2023 15:05:49.837 INFO  ServicesImpl.TransactionServiceImpl: 44 --> Started method..
+03-01-2023 15:05:49.854 ERROR ServicesImpl.TransactionServiceImpl: 70 --> Invalid account Number: 23
+03-01-2023 15:06:13.690 INFO  ServicesImpl.CustomerServiceImpl: 171 --> Started method..
+03-01-2023 15:06:13.699 INFO  ServicesImpl.CustomerServiceImpl: 176 --> Completed method..
