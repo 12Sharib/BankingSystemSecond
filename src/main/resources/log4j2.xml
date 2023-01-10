@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+<!--        <property name="File_Name" value="bankingSystem-log4j2"/>-->
+        <property name="Transactions" value="Transaction-log4j2"/>
+        <property name="Customers" value="Customer-log4j2"/>
+        <property name="Accounts" value="Account-log4j2"/>
+        <property name="Test" value="Test-log4j2"/>
+        <property name="Exception" value="Exception-log4j2"/>
+
+        <property name="T_File_Name" value="logs/Transactions/${Transactions}"/>
+        <property name="C_File_Name" value="logs/Customers/${Customers}"/>
+        <property name="A_File_Name" value="logs/Accounts/${Accounts}"/>
+        <property name="Test_File_Name" value="logs/TestCases/${Test}"/>
+        <property name="Exc_File_Name" value="logs/Exceptions/${Exception}"/>
+    </Properties>
+<!--    %c:%L class and location-->
+    <Appenders>
+<!-- for Console -->
+        <Console name="Console" target="SYSTEM_OUT">
+        <PatternLayout>
+            <Pattern>%style{%d{dd-MM-yyyy HH:mm:ss.SSS}}{Magenta} %highlight{[ %-5level] %-40.40C{2}: %L --> %-40msg%n}</Pattern>
+        </PatternLayout>
+        </Console>
+<!--external folder -->
+        <RollingFile name="testFile" filePattern="${Test_File_Name}:Test-%d{MM-dd-yyyy}.log" ignoreExceptions="false">
+            <PatternLayout>
+                <Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %-5level %c{2}: %L --> %msg%n</Pattern>
+            </PatternLayout>
+            <SizeBasedTriggeringPolicy size="5mb"/>
+        </RollingFile>
+
+        <RollingFile name="Customers" filePattern="${C_File_Name}:Customer-%d{MM-dd-yyyy}.log" ignoreExceptions="false">
+            <PatternLayout>
+                <Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %-5level %c{2}: %L --> %msg%n</Pattern>
+            </PatternLayout>
+            <SizeBasedTriggeringPolicy size="5mb"/>
+        </RollingFile>
+
+        <RollingFile name="Transactions" filePattern="${T_File_Name}:Transaction-%d{MM-dd-yyyy}.log" ignoreExceptions="false">
+            <PatternLayout>
+                <Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %-5level %c{2}: %L --> %msg%n</Pattern>
+            </PatternLayout>
+            <SizeBasedTriggeringPolicy size="5mb"/>
+        </RollingFile>
+
+        <RollingFile name="Accounts" filePattern="${A_File_Name}:Account-%d{MM-dd-yyyy}.log" ignoreExceptions="false">
+            <PatternLayout>
+                <Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS}{Magenta} %-5level %c{2}: %L --> %msg%n</Pattern>
+            </PatternLayout>
+            <SizeBasedTriggeringPolicy size="5mb"/>
+        </RollingFile>
+
+        <RollingFile name="Exceptions" filePattern="${Exc_File_Name}:Exception-%d{MM-dd-yyyy}.log" ignoreExceptions="false">
+            <PatternLayout>
+                <Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS}{Magenta} %-5level %c{2}: %L --> %msg%n</Pattern>
+            </PatternLayout>
+            <SizeBasedTriggeringPolicy size="5mb"/>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+<!--        Accounts -->
+        <Logger name="com.cognologix.BankingSystem.Services.ServicesImpl.AccountServiceImpl" level="debug" additivity="false">
+            <AppenderRef ref="Accounts"/>
+        </Logger>
+        <Logger name="com.cognologix.BankingSystem.controllers.AccountController" level="debug" additivity="false">
+            <AppenderRef ref="Accounts"/>
+        </Logger>
+<!--    Customers -->
+        <Logger name="com.cognologix.BankingSystem.Services.ServicesImpl.CustomerServiceImpl" level="debug" additivity="false">
+            <AppenderRef ref="Customers"/>
+        </Logger>
+        <Logger name="com.cognologix.BankingSystem.controllers.CustomerController" level="debug" additivity="false">
+            <AppenderRef ref="Customers"/>
+        </Logger>
+<!--     Transactions -->
+        <Logger name="com.cognologix.BankingSystem.Services.ServicesImpl.TransactionServiceImpl" level="debug" additivity="false">
+            <AppenderRef ref="Transactions"/>
+        </Logger>
+        <Logger name="com.cognologix.BankingSystem.controllers.TransactionController" level="debug" additivity="false">
+            <AppenderRef ref="Transactions"/>
+        </Logger>
+<!--        Testing All-->
+        <Logger name="testFile" level="debug" additivity="false">
+            <AppenderRef ref="testFile"/>
+        </Logger>
+<!--        Exceptions All-->
+        <Logger name="com.cognologix.BankingSystem.Exceptions" level="Error" additivity="false">
+            <AppenderRef ref="Exceptions"/>
+        </Logger>
+
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>
