@@ -4,11 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class ExceptionResponse {
-    private String message;
-    private Boolean success;
+    private Integer errorCode;
+    private String errorMessage;
+    private Boolean Success;
+    private LocalDateTime errorDateTime;
 }
 

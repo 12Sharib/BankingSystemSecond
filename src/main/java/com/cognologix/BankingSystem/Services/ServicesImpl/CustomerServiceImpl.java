@@ -1,6 +1,6 @@
 package com.cognologix.BankingSystem.Services.ServicesImpl;
 
-import com.cognologix.BankingSystem.Exceptions.InvalidAccountNumber;
+import com.cognologix.BankingSystem.Enums.Error.ErrorMessages;
 import com.cognologix.BankingSystem.Exceptions.InvalidCustomerId;
 import com.cognologix.BankingSystem.Exceptions.InvalidDocument;
 import com.cognologix.BankingSystem.Model.Account;
@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @Log4j2
@@ -57,7 +56,7 @@ public class CustomerServiceImpl implements CustomerService{
             if (prevCustomer.getCustomerAadharNumber().equals(newCustomer.getCustomerAadharNumber())) {
                 if (prevCustomer.getCutomerAccountType().equals(newCustomer.getCutomerAccountType())) {
                     log.error("Invalid Document Provide New Document");
-                    throw new InvalidDocument("Account already exist");
+                    throw new InvalidDocument(ErrorMessages.INVALID_DOCUMENT.getErrorMessage());
                 } else {
                     //make newCustomer with his previous aadhar card
                     //if previous account is savings then new account will be current or reverse;
@@ -102,7 +101,7 @@ public class CustomerServiceImpl implements CustomerService{
             return customerDTO;
         }else
             log.error("Invalid Customer Id: " + customerId);
-            throw new InvalidCustomerId("Invalid Customer Id");
+            throw new InvalidCustomerId(ErrorMessages.INVALID_CUSTOMER_ID.getErrorMessage() + customerId);
     }
 
     private Account setCustomerInAccount(Customer newCustomer){
@@ -137,7 +136,7 @@ public class CustomerServiceImpl implements CustomerService{
                         customerRepository.save(singleCustomer);
                     }else
                         log.error("For Updation Account, Provide Valid Account Type");
-                        throw new InvalidDocument("Does not exist this type of account, In this customer id");
+                        throw new InvalidDocument(ErrorMessages.INVALID_DOCUMENT.getErrorMessage());
                 });
                 log.info("Completed method..");
                 return CustomerConvertor.entityToDto(updatedCustomer.get(0));
@@ -158,8 +157,8 @@ public class CustomerServiceImpl implements CustomerService{
                 return CustomerConvertor.entityToDto(updatedCustomer.get(0));
             }
         }else
-            log.error("Invalid Customer Id For Update Customer");
-            throw new InvalidCustomerId("Invalid customer id for Update");
+            log.error("Invalid Customer Id For Update Customer: " + customerId);
+            throw new InvalidCustomerId(ErrorMessages.INVALID_CUSTOMER_ID.getErrorMessage()+ customerId);
 
     }
 

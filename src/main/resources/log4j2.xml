@@ -6,18 +6,20 @@
         <property name="Customers" value="Customer-log4j2"/>
         <property name="Accounts" value="Account-log4j2"/>
         <property name="Test" value="Test-log4j2"/>
+        <property name="Exception" value="Exception-log4j2"/>
 
         <property name="T_File_Name" value="logs/Transactions/${Transactions}"/>
         <property name="C_File_Name" value="logs/Customers/${Customers}"/>
         <property name="A_File_Name" value="logs/Accounts/${Accounts}"/>
         <property name="Test_File_Name" value="logs/TestCases/${Test}"/>
+        <property name="Exc_File_Name" value="logs/Exceptions/${Exception}"/>
     </Properties>
 <!--    %c:%L class and location-->
     <Appenders>
 <!-- for Console -->
         <Console name="Console" target="SYSTEM_OUT">
         <PatternLayout>
-            <Pattern>%style{%d{dd-MM-yyyy HH:mm:ss.SSS}}{Magenta} %highlight{[ %-5level] %c{2}: %L --> %msg%n}</Pattern>
+            <Pattern>%style{%d{dd-MM-yyyy HH:mm:ss.SSS}}{Magenta} %highlight{[ %-5level] %-40.40C{2}: %L --> %-40msg%n}</Pattern>
         </PatternLayout>
         </Console>
 <!--external folder -->
@@ -49,6 +51,12 @@
             <SizeBasedTriggeringPolicy size="5mb"/>
         </RollingFile>
 
+        <RollingFile name="Exceptions" filePattern="${Exc_File_Name}:Exception-%d{MM-dd-yyyy}.log" ignoreExceptions="false">
+            <PatternLayout>
+                <Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS}{Magenta} %-5level %c{2}: %L --> %msg%n</Pattern>
+            </PatternLayout>
+            <SizeBasedTriggeringPolicy size="5mb"/>
+        </RollingFile>
     </Appenders>
 
     <Loggers>
@@ -57,9 +65,6 @@
             <AppenderRef ref="Accounts"/>
         </Logger>
         <Logger name="com.cognologix.BankingSystem.controllers.AccountController" level="debug" additivity="false">
-            <AppenderRef ref="Accounts"/>
-        </Logger>
-        <Logger name="com.cognologix.BankingSystem.Exceptions" level="debug" additivity="false">
             <AppenderRef ref="Accounts"/>
         </Logger>
 <!--    Customers -->
@@ -77,9 +82,14 @@
             <AppenderRef ref="Transactions"/>
         </Logger>
 <!--        Testing All-->
-        <Logger name="com.cognologix.BankingSystem" level="debug" additivity="false">
+        <Logger name="testFile" level="debug" additivity="false">
             <AppenderRef ref="testFile"/>
         </Logger>
+<!--        Exceptions All-->
+        <Logger name="com.cognologix.BankingSystem.Exceptions" level="Error" additivity="false">
+            <AppenderRef ref="Exceptions"/>
+        </Logger>
+
         <Root level="info">
             <AppenderRef ref="Console"/>
         </Root>

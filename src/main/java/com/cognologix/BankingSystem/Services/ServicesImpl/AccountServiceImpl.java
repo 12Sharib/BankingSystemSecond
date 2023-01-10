@@ -1,5 +1,7 @@
 package com.cognologix.BankingSystem.Services.ServicesImpl;
 
+import com.cognologix.BankingSystem.Enums.Account.AccountType;
+import com.cognologix.BankingSystem.Enums.Error.ErrorMessages;
 import com.cognologix.BankingSystem.Exceptions.InsufficientBalance;
 import com.cognologix.BankingSystem.Exceptions.InvalidAccountNumber;
 import com.cognologix.BankingSystem.Exceptions.InvalidCustomerId;
@@ -11,6 +13,7 @@ import com.cognologix.BankingSystem.Model.Transactions;
 import com.cognologix.BankingSystem.Repository.AccountRepo;
 import com.cognologix.BankingSystem.Repository.CustomerRepository;
 import com.cognologix.BankingSystem.Repository.TransactionsRepository;
+import com.cognologix.BankingSystem.Response.ExceptionResponse;
 import com.cognologix.BankingSystem.Response.SuccessResponse;
 import com.cognologix.BankingSystem.Services.AccountService;
 import com.cognologix.BankingSystem.convertor.AccountConvertor;
@@ -42,12 +45,12 @@ public class AccountServiceImpl implements AccountService {
     public List savingsAccounts() throws AccountsNotExist {
         log.info("Started method..");
         //all saving account with customer details
-        List<Account> allSavingsAccounts = (List<Account>) accountRepo.findByAccountType("savings");
+        List<Account> allSavingsAccounts = (List<Account>) accountRepo.findByAccountType(AccountType.SAVINGS.name());
         //but return only account
         List<AccountDTO> accountList = new ArrayList<>();
         if (allSavingsAccounts.isEmpty()) {
             log.error("savingsAccounts list is empty");
-            throw new AccountsNotExist("Does not have savings accounts");
+            throw new AccountsNotExist(ErrorMessages.ACCOUNT_NOT_EXIST.getErrorMessage());
         }
         else {
             allSavingsAccounts.forEach(
@@ -66,15 +69,15 @@ public class AccountServiceImpl implements AccountService {
     public List currentAccounts() throws AccountsNotExist {
         log.info("Started method..");
         //all current accounts with customer
-        List<Account> allSavingsAccounts = (List<Account>) accountRepo.findByAccountType("current");
+        List<Account> allCurrentAccounts = (List<Account>) accountRepo.findByAccountType(AccountType.CURRENT.name());
         //but return only account details
         List<AccountDTO> accountList = new ArrayList<>();
-        if (allSavingsAccounts.isEmpty()) {
+        if (allCurrentAccounts.isEmpty()) {
             log.error("currentAccount list is empty");
-            throw new AccountsNotExist("Does not have current accounts");
+            throw new AccountsNotExist(ErrorMessages.ACCOUNT_NOT_EXIST.getErrorMessage());
         }
         else {
-            allSavingsAccounts.forEach(
+            allCurrentAccounts.forEach(
                     account -> {
                         accountList.add(AccountConvertor.convertEntityToDTO(account));
                     }
@@ -101,7 +104,7 @@ public class AccountServiceImpl implements AccountService {
             return debitCard;
         } else
             log.error("Invalid account number for Debit Card: " + accountNumber);
-            throw new InvalidAccountNumber("Invalid account number for Debit card");
+            throw new InvalidAccountNumber(ErrorMessages.INVALID_ACCOUNT_NUMBER.getErrorMessage() + accountNumber);
     }
     /*
     * credit card
@@ -125,10 +128,10 @@ public class AccountServiceImpl implements AccountService {
                 return creditCard;
             } else
                 log.error("Not eligible for credit card, Insufficient balance");
-            throw new NotEligibleForCreditCard("Balance Less than 2000, Not Eligible for Credit Card");
+            throw new NotEligibleForCreditCard(ErrorMessages.NOT_ELIGIBLE_FOR_CREDITCARD.getErrorMessage() + accountNumber);
         } else {
             log.error("Invalid account number for credit card: " + accountNumber);
-            throw new InvalidAccountNumber("Invalid account number for credit card: " + accountNumber);
+            throw new InvalidAccountNumber(ErrorMessages.INVALID_ACCOUNT_NUMBER.getErrorMessage() + accountNumber);
         }
 
     }
@@ -162,7 +165,7 @@ public class AccountServiceImpl implements AccountService {
             Account account = accountRepo.findById(accountNumber).get();
             if (account.getAccountInitialBalance() > 0) {
                 log.error("Sufficient balance in account: " + account.getAccountInitialBalance());
-                throw new InsufficientBalance("Account has some balance, Withdraw balance : " + account.getAccountInitialBalance());
+                throw new InsufficientBalance(ErrorMessages.INSUFFICIENT_BALANCE.getErrorMessage() + account.getAccountInitialBalance());
             } else {
                 try {
                     accountRepo.deleteById(accountNumber);
@@ -174,7 +177,7 @@ public class AccountServiceImpl implements AccountService {
             }
         } else {
             log.error("Invalid Account number: " +accountNumber);
-            return new SuccessResponse("Invalid Account Number", false);
+            throw new InvalidAccountNumber(ErrorMessages.INVALID_ACCOUNT_NUMBER.getErrorMessage() + accountNumber);
         }
     }
    /*
@@ -194,7 +197,7 @@ public class AccountServiceImpl implements AccountService {
             return accountDTO;
         }else
             log.error("Invalid customer id: " + customerId);
-            throw new InvalidCustomerId("Invalid Customer Id");
+            throw new InvalidCustomerId(ErrorMessages.INVALID_CUSTOMER_ID.getErrorMessage() + customerId);
     }
     /*
     * delete all accounts
@@ -217,7 +220,8 @@ public class AccountServiceImpl implements AccountService {
             log.info("Completed method..");
             return AccountConvertor.convertEntityToDTO(accountRepo.findById(accountNumber).get());
         }else {
-            throw new InvalidAccountNumber("Invalid Account Number: "+ accountNumber);
+            log.error("Invalid Account Number");
+            throw new InvalidAccountNumber(ErrorMessages.INVALID_ACCOUNT_NUMBER.getErrorMessage() + accountNumber);
         }
     }
 }

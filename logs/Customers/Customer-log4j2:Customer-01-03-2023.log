@@ -1,6 +1,0 @@
-03-01-2023 15:06:13.689 INFO  controllers.CustomerController: 56 --> Starting allCustomer...
-03-01-2023 15:06:13.700 INFO  controllers.CustomerController: 59 --> Completed: 302 FOUND
-03-01-2023 15:07:19.397 INFO  controllers.CustomerController: 56 --> Starting allCustomer...
-03-01-2023 15:07:19.398 INFO  ServicesImpl.CustomerServiceImpl: 171 --> Started method..
-03-01-2023 15:07:19.535 INFO  ServicesImpl.CustomerServiceImpl: 176 --> Completed method..
-03-01-2023 15:07:19.535 INFO  controllers.CustomerController: 59 --> Completed: 302 FOUND

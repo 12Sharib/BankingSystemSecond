@@ -1,5 +1,7 @@
 package com.cognologix.BankingSystem.Services.ServicesImpl;
 
+import com.cognologix.BankingSystem.Enums.Error.ErrorMessages;
+import com.cognologix.BankingSystem.Exceptions.AccountsNotExist;
 import com.cognologix.BankingSystem.Exceptions.InsufficientBalance;
 import com.cognologix.BankingSystem.Exceptions.InvalidAccountNumber;
 import com.cognologix.BankingSystem.Exceptions.InvalidAmount;
@@ -45,7 +47,7 @@ public class TransactionServiceImpl implements TransactionService {
         Double withdraw = null;
         if (withdrawAmount <= 0) {
             log.error("Invalid Amount: " + withdraw);
-            throw new InvalidAmount("Amount is less than zero or Equal to Zero, Invalid amount for withdraw");
+            throw new InvalidAmount(ErrorMessages.INVALID_AMOUNT.getErrorMessage() + withdrawAmount);
         }
         else {
             if (accountRepo.existsById(accountNumber)) {
@@ -54,7 +56,7 @@ public class TransactionServiceImpl implements TransactionService {
 
                 if (prevBalance < withdrawAmount) {
                     log.error("Insufficient balance in first account: " + prevBalance);
-                    throw new InsufficientBalance("WithdrawAmount is greater than Current Account Balance");
+                    throw new InsufficientBalance(ErrorMessages.INSUFFICIENT_BALANCE.getErrorMessage() + prevBalance);
                 } else withdraw = prevBalance - withdrawAmount;
 
                 prevAccount.setAccountInitialBalance(withdraw);
@@ -68,7 +70,7 @@ public class TransactionServiceImpl implements TransactionService {
 
             } else
                 log.error("Invalid account Number: " + accountNumber);
-                throw new InvalidAccountNumber("Invalid account number for withdraw amount");
+                throw new InvalidAccountNumber(ErrorMessages.INVALID_ACCOUNT_NUMBER.getErrorMessage() +accountNumber);
         }
     }
     /*
@@ -106,7 +108,7 @@ public class TransactionServiceImpl implements TransactionService {
         log.info("Started method..");
         if (depositedAmount <= 0) {
             log.error("Invalid amount: " +depositedAmount);
-            throw new InvalidAmount("Amount is less than zero or Equal to Zero, Invalid amount for Deposit");
+            throw new InvalidAmount(ErrorMessages.INVALID_AMOUNT.getErrorMessage()  + depositedAmount);
         } else {
             if (accountRepo.existsById(accountNumber)) {
                 //account
@@ -123,7 +125,7 @@ public class TransactionServiceImpl implements TransactionService {
                 return TransactorConvertor.convertTransactionsEntityToDTO(transactions);
             } else
                 log.error("Invalid account number: " + accountNumber);
-                throw new InvalidAccountNumber("Invalid account number for deposit amount");
+                throw new InvalidAccountNumber(ErrorMessages.INVALID_ACCOUNT_NUMBER.getErrorMessage() + accountNumber);
         }
     }
     /*
@@ -139,13 +141,13 @@ public class TransactionServiceImpl implements TransactionService {
             if(accountRepo.existsById(secondAccountNumber)) {
                 if (amount <= 0) {
                     log.error("Invalid Amount: " + amount);
-                    throw new InvalidAmount("Invalid Amount, provide valid amount");
+                    throw new InvalidAmount(ErrorMessages.INVALID_AMOUNT.getErrorMessage());
                 } else {
                     Account getFirstAccount = accountRepo.findById(firstAccountNumber).get();
                     Double balanceInFirstAccount = getFirstAccount.getAccountInitialBalance();
                     if (balanceInFirstAccount < amount) {
                         log.error("InSufficient Balance for Transfer: " + balanceInFirstAccount);
-                        throw new InsufficientBalance("Invalid balance, because of less balance in first account");
+                        throw new InsufficientBalance(ErrorMessages.INSUFFICIENT_BALANCE.getErrorMessage() + balanceInFirstAccount);
                     } else balanceInFirstAccount = balanceInFirstAccount - amount;
 
                     getFirstAccount.setAccountInitialBalance(balanceInFirstAccount);
@@ -181,11 +183,11 @@ public class TransactionServiceImpl implements TransactionService {
                     return transferDTO;
                 }
             }else
-                log.error("Invalid First Account Number: " + firstAccountNumber);
-                throw new InvalidAccountNumber("provide valid second account number");
+                log.error("Invalid Second Account Number: " + secondAccountNumber);
+                throw new InvalidAccountNumber(ErrorMessages.INVALID_ACCOUNT_NUMBER.getErrorMessage() + secondAccountNumber);
         } else
-            log.error("Invalid Second Account Number: " + secondAccountNumber);
-            throw new InvalidAccountNumber("provide valid first account Number");
+            log.error("Invalid First Account Number: " + firstAccountNumber);
+            throw new InvalidAccountNumber(ErrorMessages.INVALID_ACCOUNT_NUMBER.getErrorMessage() + firstAccountNumber);
 
     }
 
@@ -199,7 +201,7 @@ public class TransactionServiceImpl implements TransactionService {
             return transactionsList;
         }else
             log.error("Invalid Account Number: " + accountNumber);
-            throw new InvalidAccountNumber("Invalid Account Number for Single Account Transactions");
+            throw new InvalidAccountNumber(ErrorMessages.INVALID_ACCOUNT_NUMBER.getErrorMessage() + accountNumber);
 
     }
 
@@ -211,7 +213,7 @@ public class TransactionServiceImpl implements TransactionService {
             return transactionsRepository.findById(transactionId).get();
         }else
             log.error("Invalid Transaction Id: " + transactionId);
-            throw new InvalidTransactionId("Invalid TransactionId");
+            throw new InvalidTransactionId(ErrorMessages.INVALID_TRANSACTION_ID.getErrorMessage() + transactionId);
     }
 
     @Override
@@ -224,15 +226,19 @@ public class TransactionServiceImpl implements TransactionService {
             return new SuccessResponse("Delete Successfully",true);
         }else
             log.error("Invalid transactionId: " + transactionId);
-            throw new InvalidTransactionId("Invalid transactionId");
+            throw new InvalidTransactionId(ErrorMessages.INVALID_TRANSACTION_ID.getErrorMessage() + transactionId);
     }
 
     @Override
     public List byDate(String date) {
         log.info("Started method..");
         List<Transactions> transactionsList = transactionsRepository.findByTransactionDate(date);
-        log.info("Completed method..");
-        return transactionsList;
+        if (transactionsList.isEmpty()){
+            throw new AccountsNotExist(ErrorMessages.ACCOUNT_NOT_EXIST.getErrorMessage());
+        }else {
+            log.info("Completed method..");
+            return transactionsList;
+        }
     }
 
     @Override
@@ -243,7 +249,7 @@ public class TransactionServiceImpl implements TransactionService {
            previousFive = transactionsRepository.previousFiveTransactions(accountNumber);
         }else {
             log.error("Invalid Account Number: " + accountNumber);
-            throw new InvalidAccountNumber("Invalid Account Number for previous Transactions");
+            throw new InvalidAccountNumber(ErrorMessages.INVALID_ACCOUNT_NUMBER.getErrorMessage() + accountNumber);
         }
         log.info("Completed method..");
         return previousFive;

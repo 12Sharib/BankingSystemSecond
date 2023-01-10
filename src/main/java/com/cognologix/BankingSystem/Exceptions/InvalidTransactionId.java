@@ -1,6 +1,6 @@
 package com.cognologix.BankingSystem.Exceptions;
 
-import com.cognologix.BankingSystem.ErrorCodes.Codes;
+import com.cognologix.BankingSystem.Enums.Error.ErrorCodes;
 import com.cognologix.BankingSystem.Response.ExceptionResponse;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Level;
@@ -9,6 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.time.LocalDateTime;
+
 @Component
 @RestControllerAdvice
 @Log4j2
@@ -22,6 +25,6 @@ public class InvalidTransactionId extends RuntimeException{
     @ExceptionHandler(value = InvalidTransactionId.class)
     public ResponseEntity<ExceptionResponse> invalidTransactionId(Exception exception){
         log.throwing(Level.ERROR,exception);
-        return new ResponseEntity<ExceptionResponse>(new ExceptionResponse(exception.getMessage()+": "+ Codes.INVALID_TRANSACTION_ID.getCode(),false), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ExceptionResponse(ErrorCodes.INVALID_TRANSACTION_ID.getCode(),exception.getMessage(),false, LocalDateTime.now()), HttpStatus.BAD_REQUEST);
     }
 }
