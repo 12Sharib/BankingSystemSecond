@@ -55,6 +55,4 @@ public class Customer {
     @Size(min = 5,max = 30)
     private String customerAddress;
 
-
-
 }

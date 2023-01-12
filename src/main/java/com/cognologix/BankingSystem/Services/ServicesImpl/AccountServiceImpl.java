@@ -13,7 +13,6 @@ import com.cognologix.BankingSystem.Model.Transactions;
 import com.cognologix.BankingSystem.Repository.AccountRepo;
 import com.cognologix.BankingSystem.Repository.CustomerRepository;
 import com.cognologix.BankingSystem.Repository.TransactionsRepository;
-import com.cognologix.BankingSystem.Response.ExceptionResponse;
 import com.cognologix.BankingSystem.Response.SuccessResponse;
 import com.cognologix.BankingSystem.Services.AccountService;
 import com.cognologix.BankingSystem.convertor.AccountConvertor;

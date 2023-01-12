@@ -6,9 +6,11 @@
         <property name="Customers" value="Customer-log4j2"/>
         <property name="Accounts" value="Account-log4j2"/>
         <property name="Test" value="Test-log4j2"/>
+        <property name="Loans" value="Loan-log4j2"/>
         <property name="Exception" value="Exception-log4j2"/>
 
         <property name="T_File_Name" value="logs/Transactions/${Transactions}"/>
+        <property name="L_File_Name" value="logs/Loan/${Loans}"/>
         <property name="C_File_Name" value="logs/Customers/${Customers}"/>
         <property name="A_File_Name" value="logs/Accounts/${Accounts}"/>
         <property name="Test_File_Name" value="logs/TestCases/${Test}"/>
@@ -57,6 +59,13 @@
             </PatternLayout>
             <SizeBasedTriggeringPolicy size="5mb"/>
         </RollingFile>
+
+        <RollingFile name="Loans" filePattern="${L_File_Name}:Loan-%d{MM-dd-yyyy}.log" ignoreExceptions="false">
+            <PatternLayout>
+                <Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS}{Magenta} %-5level %c{2}: %L --> %msg%n</Pattern>
+            </PatternLayout>
+            <SizeBasedTriggeringPolicy size="5mb"/>
+        </RollingFile>
     </Appenders>
 
     <Loggers>
@@ -80,6 +89,13 @@
         </Logger>
         <Logger name="com.cognologix.BankingSystem.controllers.TransactionController" level="debug" additivity="false">
             <AppenderRef ref="Transactions"/>
+        </Logger>
+<!--        Loan -->
+        <Logger name="com.cognologix.BankingSystem.Services.ServicesImpl.LoanServiceImpl" level="debug" additivity="false">
+            <AppenderRef ref="Loans"/>
+        </Logger>
+        <Logger name="com.cognologix.BankingSystem.controllers.Loan.LoanController" level="debug" additivity="false">
+            <AppenderRef ref="Loans"/>
         </Logger>
 <!--        Testing All-->
         <Logger name="testFile" level="debug" additivity="false">
